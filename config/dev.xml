@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<application>
+    <server>
+        <debug>true</debug>
+        <port>8000</port>
+        <secret></secret>
+        <!-- <error>app.web.controller.ErrorController</error> -->
+    </server>
+    <use src="settings.json"/>
+    <routes>
+        <!-- Default Static Resources -->
+        <resource id="static" location="static" pattern="/static/{path}" cache="false"/>
+        <controller id="ui.tree.default" class="tama.controller.UIBrowser" pattern="/tree/"/>
+        <controller id="ui.tree" class="tama.controller.UIBrowser" pattern="/tree/{path}"/>
+        <controller id="ui.file.editor" class="tama.controller.UIFileEditor" pattern="/editor/{path}"/>
+        <controller id="api.file" class="tama.controller.APIFile" pattern="/api/file/{path}"/>
+        <redirection pattern="/" destination="/tree/"/>
+    </routes>
+    <service>service.xml</service>
+</application>

@@ -1,0 +1,51 @@
+@import 'css3';
+
+.app-container {
+    @include flex-container-default();
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.editor-chrome {
+    @include flex-container-default();
+    @include flex-item(1 1 auto);
+    @include flex-direction(column);
+
+    .controls {
+        background-color: #333;
+        color: #fff;
+
+        .path {
+            padding: 10px 10px 2px 10px;
+
+            a {
+                display: inline-block;
+                font-size: 12px;
+                color: #000;
+                background-color: #ffcc00;
+                text-decoration: none;
+                padding: 2px 10px 2px 2px;
+                border-top-left-radius: 20px;
+                border-bottom-left-radius: 20px;
+                
+                .icon {
+                    margin-right: 10px;
+                }
+            }
+        }
+
+        .name {
+            padding: 2px 10px 10px 10px;
+        }
+    }
+
+    #editor {
+        @include flex-item-align(stretch);
+        @include flex-item(1 1 auto);
+        @include flex-wrap(wrap);
+        //width: 100%;
+    }
+}

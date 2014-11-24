@@ -1,0 +1,43 @@
+@import 'css3';
+
+.explorer-chrome {
+    width: 100%;
+
+    header {
+        padding: 10px 20px;
+    }
+
+    .blob-list {
+        padding: 10px 10px;
+        @include flex-container-default();
+        list-style: none;
+        margin: 0;
+        overflow: hidden;
+        border-top: 1px solid #ddd;
+
+        .blob {
+            width: 320px;
+
+            a {
+                display: block;
+                padding: 5px 10px;
+                color: #000;
+                border-radius: 5px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-decoration: none;
+
+                &:hover {
+                    background-color: #215498;
+                    color: #fff;
+                    text-decoration: none;
+                }
+            }
+            
+            &[data-name^="."], &[data-name$=".pyc"] {
+                display: none;
+            }
+        }
+    }
+}

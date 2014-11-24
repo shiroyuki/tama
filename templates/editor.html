@@ -1,0 +1,26 @@
+{% extends '_layout_base.html' %}
+
+{% block content %}
+    <div class="editor-chrome">
+        <div class="controls">
+            <div class="path"><a href="{{ app.path('ui.tree', path = parent_path) }}">
+                <span class="icon fa fa-chevron-left"></span>
+                <span class="label">{{ parent_path or '<home>' | escape }}</span>
+            </a></div>
+            <div class="name" title="{{ request_location }}"><span class="fa fa-file-o"></span> {{ file_name or '<new>' | escape }}</div>
+        </div>
+        <div id="editor"></div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    <link href="{{ app.path('static', path = 'css/editor.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block js %}
+    <script>
+        filename = '{{ request_location }}';
+    </script>
+    <script src="{{ app.path('static', path = 'vendors/ace/src-noconflict/ace.js') }}"></script>
+    <script src="{{ app.path('static', path = 'js/editor.js') }}"></script>
+{% endblock %}

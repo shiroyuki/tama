@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<imagination>
+    <entity id="finder" class="tama.service.Finder"></entity>
+</imagination>

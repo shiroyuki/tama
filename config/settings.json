@@ -1,0 +1,15 @@
+{
+    "session": {
+        "class": "tori.session.repository.file.File",
+        "params": {
+            "location": "session.json"
+        }
+    },
+    "db": {
+        "managers": {
+            "default": {
+                "url": "mongodb://localhost/tama"
+            }
+        }
+    }
+}

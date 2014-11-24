@@ -1,0 +1,39 @@
+{% extends '_layout_base.html' %}
+
+{% block head_title %}{{ request_location or '<home>' }}{% endblock %}
+
+{% block css %}
+    <link href="{{ app.path('static', path = 'css/tree.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<article class="explorer-chrome">
+    <header>
+        {% if request_location %}<a href="{{ app.path('ui.tree', path = parent_path) }}">Back to <b>{{ parent_path or '<home>' | escape }}</b></a>{% endif %}
+        <h1><span class="fa fa-folder-o"></span> {{ request_location or '<home>' | escape }}</h1>
+    </header>
+    <ul class="blob-list">
+        {%- for fs_node in fs_nodes -%}
+            {%- set url  = app.path('ui.tree' if fs_node.is_dir else 'ui.file.editor', path = fs_node.referred_path) -%}
+            {%- set icon = 'folder' if fs_node.is_dir else 'file' -%}
+            {%- if fs_node.is_binary -%}
+                {%- set url  = app.path('api.file', path = fs_node.path) -%}
+                {%- set icon = 'cloud-download' -%}
+            {%- endif -%}
+            <li class="blob"
+                data-name="{{ fs_node.name }}"
+                data-type="{{ fs_node.mimetype or '' }}"
+                data-path="{{ fs_node.path }}">
+                <a href="{{ url }}"
+                   title="{{ fs_node.name }}{% if fs_node.is_file %} ({{ fs_node.mimetype }}){% endif %}">
+                    <span class="fa fa-{{ icon }}"></span>
+                    <span class="blob-name">{{ fs_node.name }}</span>
+                </a>
+            </li>
+        {%- endfor -%}
+    </ul>
+</article>
+<script>
+    request_location = '{{ request_location }}';
+</script>
+{% endblock %}

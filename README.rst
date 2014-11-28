@@ -32,8 +32,7 @@ Just run ``python server.py <base_dir>`` and go to http://localhost:8000/.
 Features
 ========
 
-Supported
----------
+Here are currently supported features.
 
 Browser
 ~~~~~~~

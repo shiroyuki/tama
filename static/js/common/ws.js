@@ -3,7 +3,7 @@ function WebSocketClient(url) {
 };
 
 $.extend(WebSocketClient.prototype, {
-    WebSocketClient: function (url) {
+    WebSocketClient: function (url, reconnectOnDemand) {
         this._connected = false;
         this.url    = url;
         this.client = null;
@@ -36,7 +36,7 @@ $.extend(WebSocketClient.prototype, {
 
         this.init();
     },
-    
+
     on: function (eventType, eventHandler) {
         if (this.handlerMap[eventType] === undefined) {
             this.handlerMap[eventType] = [];
@@ -45,10 +45,10 @@ $.extend(WebSocketClient.prototype, {
         this.handlerMap[eventType].push(eventHandler);
     },
 
-    send: function (message) {
+    send: function (message, resendIfFail) {
         this.client.send(JSON.stringify(message));
     },
-    
+
     handleEvent: function (type, data) {
         var handlers,
             i
@@ -71,8 +71,16 @@ $.extend(WebSocketClient.prototype, {
     },
 
     onOpen: function (event) {
+        var i;
+
         this._connected = true;
         this.handleEvent('open', event);
+
+        if (this._reconnectOnDemand) {
+            for (i in this._outbox) {
+                this.send(this._outbox[i]);
+            }
+        }
     },
 
     onClose: function (event) {

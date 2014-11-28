@@ -4,10 +4,6 @@ function ToriRpcClient(url) {
 
 $.extend(ToriRpcClient.prototype, WebSocketClient.prototype, {
     request: function (service, method, data) {
-        if (!this.connected()) {
-            this.connect();
-        }
-
         this.send({
             id: this.getRequestType(service, method),
             service: service,

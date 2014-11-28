@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <imagination>
-    <entity id="finder" class="tama.service.Finder"></entity>
+    <entity id="internal.finder" class="tama.service.Finder"/>
+    <entity id="finder" class="tama.wsrpc.Finder">
+        <param type="entity" name="finder">internal.finder</param>
+    </entity>
 </imagination>

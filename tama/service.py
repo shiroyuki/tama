@@ -4,6 +4,9 @@ from tama.model import FSNode
 
 logging.basicConfig(level = logging.WARN)
 
+class NotFoundError(IOError):
+    """ Not Found Error """
+
 class Finder(object):
     logger = logging.getLogger('tama.service.Finder')
     logger.setLevel(logging.DEBUG)
@@ -26,7 +29,17 @@ class Finder(object):
         actual_path = self._resolve_path(path)
         fs_node     = FSNode(path, actual_path)
 
+        if not fs_node.exists:
+            raise NotFoundError(path)
+
         return fs_node
+
+    def put(self, path, content):
+        fs_node = self.get(path)
+
+        # Update the content
+        fs_node.content = content
+        fs_node.save()
 
     def find(self, path):
         actual_iterating_path = self._resolve_path(path)

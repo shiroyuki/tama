@@ -35,12 +35,16 @@ class FSNode(object):
         if self._content:
             return self._content
 
-        FSNode.logger.debug('Opening {}'.format(self.real_path))
-
-        with open(self.real_path, 'r') as f:
-            self._content = f.read()
+        self.load()
 
         return self._content
+
+    @content.setter
+    def content(self, content):
+        if self.is_dir:
+            raise AttributeError('Directory Node does not have content.')
+
+        self._content = content
 
     @property
     def exists(self):
@@ -71,3 +75,15 @@ class FSNode(object):
 
         # need file peek
         return 'text' not in mimetype if mimetype else None
+
+    def load(self):
+        with open(self.real_path, 'r') as f:
+            self._content = f.read()
+
+        FSNode.logger.debug('Loaded {}'.format(self.real_path))
+
+    def save(self):
+        with open(self.real_path, 'w') as f:
+            f.write(self.content)
+
+        FSNode.logger.debug('Saved {}'.format(self.real_path))

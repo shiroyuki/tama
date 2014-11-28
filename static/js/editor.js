@@ -4,6 +4,8 @@ Editor = function (id, socket) {
     this.editor = null;
     this.theme  = 'monokai';
     this.mode   = 'text';
+    this.node   = null;
+    this.filename = null;
 
     this.activate();
 };
@@ -52,9 +54,7 @@ $.extend(Editor.prototype, {
         this.editor.commands.addCommand({
             name: 'Mock Save',
             bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-            exec: function(editor) {
-                alert('save');
-            },
+            exec: $.proxy(this.onShortCutSave, this),
             readOnly: false
         });
     },
@@ -110,19 +110,64 @@ $.extend(Editor.prototype, {
         return 'text';
     },
 
-    onFinderGet: function (data) {
-        this.load(data.result);
+    onFinderGet: function (response) {
+        var result = response.result;
+
+        if (!result.is_success) {
+            this.node = null;
+            this.filename = null;
+
+            return;
+        }
+
+        this.node = result;
+        this.load(response.result.data);
+    },
+
+    onFinderPut: function (response) {
+        var result = response.result;
+
+        if (!result.is_success) {
+            console.error(result.error_code);
+
+            alert('Failed to save.');
+
+            return;
+        }
+
+        alert('Successfully saved.');
+    },
+
+    onShortCutSave: function (editor) {
+        this.socket.request('finder', 'put', {
+            path:    this.node.path,
+            content: this.editor.getValue()
+        })
     }
 });
 
 var editor;
 var socket;
+var isOpen = false;
 
 function main() {
-    socket = new WebSocketClient(rpcSocketUrl);
+    socket = new ToriRpcClient(rpcSocketUrl);
     editor = new Editor('editor', socket);
-    editor.open(filename);
-    editor.enableKeyBinding();
+
+    socket.on('open', function () {
+        console.log('connected');
+        editor.open(filename);
+        editor.enableKeyBinding();
+    });
+
+    socket.on('close', function () {
+        console.log('disconnected');
+    });
+
+    socket.on('finder.get', $.proxy(editor.onFinderGet, editor));
+    socket.on('finder.put', $.proxy(editor.onFinderPut, editor));
+
+    socket.connect();
 }
 
 $(document).ready(main);

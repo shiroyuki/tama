@@ -1,4 +1,12 @@
 {
+    "remote_vendors": {
+        "enabled": true,
+        "repo": {
+            "font_awesome": "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css",
+            "jquery": "//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js",
+            "ace": "//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"
+        }
+    },
     "session": {
         "class": "tori.session.repository.file.File",
         "params": {

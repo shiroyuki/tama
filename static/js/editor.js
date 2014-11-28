@@ -1,5 +1,6 @@
-Editor = function (id) {
+Editor = function (id, socket) {
     this.id     = id;
+    this.socket = socket;
     this.editor = null;
     this.theme  = 'monokai';
     this.mode   = 'text';
@@ -23,12 +24,15 @@ $.extend(Editor.prototype, {
         css: /\.css$/i,
         scss: /\.scss$/i,
         sql: /\.sql$/i,
-        csv: /\.csv$/i
+        csv: /\.csv$/i,
+        c: /\.c$/i
     },
 
     activate: function () {
         this.editor = ace.edit(this.id);
         this.editor.setTheme('ace/theme/' + this.theme);
+
+        this.socket.on('finder.get', $.proxy(this.onFinderGet, this));
     },
 
     setMode: function (mode) {
@@ -36,8 +40,6 @@ $.extend(Editor.prototype, {
             || this.getModeByExtension(filename)
             || this.getModeByContent(this.editor.getValue())
         ;
-
-        console.log('Mode:', this.mode);
 
         this.editor.getSession().setMode('ace/mode/' + this.mode);
     },
@@ -57,8 +59,17 @@ $.extend(Editor.prototype, {
         });
     },
 
-    open: function (filename) {
+    open: function (filename, readOnly) {
         this.filename = filename;
+        readOnly = readOnly || false;
+
+        this.socket.request('finder', 'get', {path: filename});
+
+        // Fallback AJAX version (reaod-only mode).
+
+        if (!readOnly) {
+            return;
+        }
 
         request_option = {
             url: '/api/file/' + filename,
@@ -69,6 +80,8 @@ $.extend(Editor.prototype, {
     },
 
     load: function (content) {
+        console.log('Load content:', content);
+
         this.setContent(content);
         this.setMode();
         this.editor.gotoLine(0);
@@ -87,17 +100,27 @@ $.extend(Editor.prototype, {
     },
 
     getModeByContent: function (content) {
-        if (content.match(/^#!\/[^\n\r]+python/)) {
-            return 'python';
+        switch (true) {
+            case content.match(/^#!\/[^\n\r]+python/):
+                return 'python';
+            case content.match(/^#!\/[^\n\r]+ruby/):
+                return 'python';
         }
+
         return 'text';
+    },
+
+    onFinderGet: function (data) {
+        this.load(data.result);
     }
 });
 
 var editor;
+var socket;
 
 function main() {
-    editor = new Editor('editor');
+    socket = new WebSocketClient(rpcSocketUrl);
+    editor = new Editor('editor', socket);
     editor.open(filename);
     editor.enableKeyBinding();
 }

@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>Tama - {% block head_title %}{% endblock %}</title>
-<link href="{{ app.path('static', path='vendors/font-awesome-4.2.0/css/font-awesome.min.css') }}" rel="stylesheet">
+{%- if app.settings.remote_vendors.enabled -%}
+    <link href="{{ app.settings.remote_vendors.repo.font_awesome }}" rel="stylesheet">
+{%- else -%}
+    <link href="{{ app.path('static', path='vendors/font-awesome-4.2.0/css/font-awesome.min.css') }}" rel="stylesheet">
+{%- endif -%}
 <link href="{{ app.path('static', path='css/layout_base.css') }}" rel="stylesheet">
 {% block css %}{% endblock %}
 </head>
@@ -12,7 +16,11 @@
 {% include '_header.html' %}
 {% block content %}{% endblock %}
 </div>
+{%- if app.settings.remote_vendors.enabled -%}
+    <script src="{{ app.settings.remote_vendors.repo.jquery }}"></script>
+{%- else -%}
 <script src="{{ app.path('static', path='vendors/jquery.js') }}"></script>
+{%- endif -%}
 {% block js %}{% endblock %}
 </body>
 </html>

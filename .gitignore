@@ -64,3 +64,4 @@ docs/build/*
 build
 .coverage
 test/report
+*.map

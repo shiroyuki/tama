@@ -16,7 +16,7 @@ class UIBrowser(Controller):
             'browser.html',
             request_location = request_location,
             parent_path      = parent_path,
-            fs_nodes         = self.component('finder').find(path)
+            fs_nodes         = self.component('internal.finder').find(path)
         )
 
 class UIFileEditor(Controller):
@@ -33,7 +33,7 @@ class UIFileEditor(Controller):
 
 class APIFile(Controller):
     def get(self, path=''):
-        fs_node = self.component('finder').get(path)
+        fs_node = self.component('internal.finder').get(path)
 
         if fs_node.is_dir:
             raise HTTPError(403)

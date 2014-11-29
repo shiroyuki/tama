@@ -27,7 +27,7 @@ $.extend(Editor.prototype, {
         scss: /\.scss$/i,
         sql: /\.sql$/i,
         csv: /\.csv$/i,
-        c: /\.c$/i
+        c_cpp: /\.c(pp)?$/i
     },
 
     activate: function () {

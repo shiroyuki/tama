@@ -7,6 +7,10 @@
 {% endblock %}
 
 {% block content %}
+<div class="main-controller">
+    <a href="#new"><span class="fa fa-fw fa-plus"></span></a>
+    <a href="#delete"><span class="fa fa-fw fa-trash"></span></a>
+</div>
 <article class="explorer-chrome">
     <header>
         {% if request_location %}<a href="{{ app.path('ui.tree', path = parent_path) }}">Back to <b>{{ parent_path or '<home>' | escape }}</b></a>{% endif %}

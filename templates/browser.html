@@ -6,10 +6,25 @@
     <link href="{{ app.path('static', path = 'css/tree.css') }}" rel="stylesheet">
 {% endblock %}
 
+{% block js %}
+    <script>
+        currentLocation = '{{ request_location }}';
+        rpcSocketUrl    = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
+    </script>
+    <script src="{{ app.path('static', path = 'js/browser.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="main-controller">
-    <a href="#new"><span class="fa fa-fw fa-plus"></span></a>
-    <a href="#delete"><span class="fa fa-fw fa-trash"></span></a>
+    <a class="prev-group"><span class="fa fa-fw fa-arrow-up"></span></a>
+    <div data-group="root">
+        <a data-next="object-creator"><span class="fa fa-fw fa-plus"></span></a>
+        <a><span class="fa fa-fw fa-trash"></span></a>
+    </div>
+    <div data-group="object-creator">
+        <a data-id="new-folder"><span class="fa fa-fw fa-folder"></span></a>
+        <a data-id="new-file"><span class="fa fa-fw fa-file"></span></a>
+    </div>
 </div>
 <article class="explorer-chrome">
     <header>

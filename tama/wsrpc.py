@@ -20,6 +20,24 @@ class Finder(object):
 
         return self._make_response(True)
 
+    def create_folder(self, path, name):
+        is_succeeded = self.finder.create_folder(path, name)
+        error_code   = None
+
+        if not is_succeeded:
+            error_code = 'tama.rpc.finder.FSNodeOverwriteNotAllowed'
+
+        return self._make_response(is_succeeded)
+
+    def create_file(self, path, name):
+        is_succeeded = self.finder.create_file(path, name)
+        error_code   = None
+
+        if not is_succeeded:
+            error_code = 'tama.rpc.finder.FSNodeOverwriteNotAllowed'
+
+        return self._make_response(is_succeeded)
+
     def _make_response(self, is_success, error_code=None):
         return {
             'is_success': is_success,

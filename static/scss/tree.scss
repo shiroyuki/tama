@@ -18,10 +18,33 @@
         padding: 10px 10px;
         font-size: 36px;
         color: #fff;
+        cursor: pointer;
 
         &:hover {
             background-color: #000;
             color: #fff;
+        }
+        
+        &.prev-group {
+            display: none;
+            color: #ff0000;
+            
+            &:hover {
+                color: #fff;
+                background-color: #cc0000;
+            }
+        }
+        
+        &.enabled {
+            display: block;
+        }
+    }
+
+    & > [data-group] {
+        display: none;
+
+        &.active {
+            display: block;
         }
     }
 }
@@ -60,7 +83,7 @@
                     text-decoration: none;
                 }
             }
-            
+
             &[data-name^="."], &[data-name$=".pyc"] {
                 display: none;
             }

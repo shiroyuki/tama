@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 from tama.model import FSNode
 
 logging.basicConfig(level = logging.WARN)
@@ -13,6 +14,7 @@ class Finder(object):
 
     def __init__(self, base_path=None):
         self.__base_path = base_path or ''
+        self.__illegal_pattern = re.compile('(\.\.)')
 
         Finder.logger.debug('Start with location: {}'.format(base_path))
 
@@ -26,6 +28,7 @@ class Finder(object):
         Finder.logger.debug('Change to location: {}'.format(base_path))
 
     def get(self, path):
+        path        = self._sanitize_path(path)
         actual_path = self._resolve_path(path)
         fs_node     = FSNode(path, actual_path)
 
@@ -35,6 +38,7 @@ class Finder(object):
         return fs_node
 
     def put(self, path, content):
+        path    = self._sanitize_path(path)
         fs_node = self.get(path)
 
         # Update the content
@@ -42,6 +46,8 @@ class Finder(object):
         fs_node.save()
 
     def find(self, path):
+        """ Find FS nodes. """
+        path                  = self._sanitize_path(path)
         actual_iterating_path = self._resolve_path(path)
 
         fs_nodes = []
@@ -55,6 +61,31 @@ class Finder(object):
 
         return fs_nodes
 
+    def create_folder(self, path, name):
+        """ Create a blank folder. """
+        referred_path = os.path.join(path, name)
+        actual_path   = self._resolve_path(referred_path)
+
+        if os.path.exists(actual_path):
+            return False
+
+        os.makedirs(actual_path)
+
+        return True
+    
+    def create_file(self, path, name):
+        """ Create a blank file. """
+        referred_path = os.path.join(path, name)
+        actual_path   = self._resolve_path(referred_path)
+
+        if os.path.exists(actual_path):
+            return False
+
+        with open(actual_path, 'w') as f:
+            f.write('')
+
+        return True
+
     def _is_abspath(self, path):
         return '/' == path[0] if path else False
 
@@ -63,3 +94,6 @@ class Finder(object):
             return path
 
         return os.path.join(self.base_path, path)
+
+    def _sanitize_path(self, path):
+        return self.__illegal_pattern.sub('', path)

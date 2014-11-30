@@ -16,11 +16,8 @@
 {% include '_header.html' %}
 {% block content %}{% endblock %}
 </div>
-{%- if app.settings.remote_vendors.enabled -%}
-    <script src="{{ app.settings.remote_vendors.repo.jquery }}"></script>
-{%- else -%}
-<script src="{{ app.path('static', path='vendors/jquery.js') }}"></script>
-{%- endif -%}
+<script src="{{ app.path('static', path='vendors/require.js') }}"></script>
+{%- include '_requirejs.html' -%}
 {% block js %}{% endblock %}
 </body>
 </html>

@@ -1,90 +1,98 @@
-function WebSocketClient(url) {
-    this.WebSocketClient(url);
-};
-
-$.extend(WebSocketClient.prototype, {
-    WebSocketClient: function (url, reconnectOnDemand) {
-        this._connected = false;
-        this.url    = url;
-        this.client = null;
-        this.handlerMap = {
-            open:    [],
-            message: [],
-            close:   []
+define(
+    'common/ws',
+    ['jquery'],
+    function ($) {
+        function WebSocketClient(url) {
+            this.WebSocketClient(url);
         };
-    },
 
-    connected: function () {
-        return this._connected;
-    },
+        $.extend(WebSocketClient.prototype, {
+            WebSocketClient: function (url, reconnectOnDemand) {
+                this._connected = false;
+                this.url    = url;
+                this.client = null;
+                this.handlerMap = {
+                    open:    [],
+                    message: [],
+                    close:   []
+                };
+            },
 
-    reset: function () {
-        this.client = null;
-    },
+            connected: function () {
+                return this._connected;
+            },
 
-    init: function () {
-        this.client = new WebSocket(this.url);
-        this.client.addEventListener('open', $.proxy(this.onOpen, this));
-        this.client.addEventListener('close', $.proxy(this.onClose, this));
-        this.client.addEventListener('message', $.proxy(this.onMessage, this));
-    },
+            reset: function () {
+                this.client = null;
+            },
 
-    connect: function () {
-        if (this.client !== null) {
-            return;
-        }
+            init: function () {
+                this.client = new WebSocket(this.url);
+                this.client.addEventListener('open', $.proxy(this.onOpen, this));
+                this.client.addEventListener('close', $.proxy(this.onClose, this));
+                this.client.addEventListener('message', $.proxy(this.onMessage, this));
+            },
 
-        this.init();
-    },
+            connect: function () {
+                if (this.client !== null) {
+                    return;
+                }
 
-    on: function (eventType, eventHandler) {
-        if (this.handlerMap[eventType] === undefined) {
-            this.handlerMap[eventType] = [];
-        }
+                this.init();
+            },
 
-        this.handlerMap[eventType].push(eventHandler);
-    },
+            on: function (eventType, eventHandler) {
+                if (this.handlerMap[eventType] === undefined) {
+                    this.handlerMap[eventType] = [];
+                }
 
-    send: function (message, resendIfFail) {
-        this.client.send(JSON.stringify(message));
-    },
+                this.handlerMap[eventType].push(eventHandler);
+            },
 
-    handleEvent: function (type, data) {
-        var handlers,
-            i
-        ;
+            send: function (message, resendIfFail) {
+                this.client.send(JSON.stringify(message));
+            },
 
-        handlers = this.handlerMap[type];
+            handleEvent: function (type, data) {
+                var handlers,
+                    i
+                ;
 
-        for (i in handlers) {
-            handlers[i](data);
-        }
-    },
+                handlers = this.handlerMap[type];
 
-    extractDataFromEvent: function (event) {
-        return event.data !== undefined ? JSON.parse(event.data) : null;
-    },
+                for (i in handlers) {
+                    handlers[i](data);
+                }
+            },
 
-    onMessage: function (event) {
-        var data = this.extractDataFromEvent(event);
-        this.handleEvent('message', data);
-    },
+            extractDataFromEvent: function (event) {
+                return event.data !== undefined ? JSON.parse(event.data) : null;
+            },
 
-    onOpen: function (event) {
-        var i;
+            onMessage: function (event) {
+                var data = this.extractDataFromEvent(event);
+                this.handleEvent('message', data);
+            },
 
-        this._connected = true;
-        this.handleEvent('open', event);
+            onOpen: function (event) {
+                var i;
 
-        if (this._reconnectOnDemand) {
-            for (i in this._outbox) {
-                this.send(this._outbox[i]);
+                this._connected = true;
+                this.handleEvent('open', event);
+
+                if (this._reconnectOnDemand) {
+                    for (i in this._outbox) {
+                        this.send(this._outbox[i]);
+                    }
+                }
+            },
+
+            onClose: function (event) {
+                this._connected = false;
+                this.handleEvent('close', event);
             }
-        }
-    },
+        });
 
-    onClose: function (event) {
-        this._connected = false;
-        this.handleEvent('close', event);
+        return WebSocketClient;
     }
-});
+);

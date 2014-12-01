@@ -14,7 +14,11 @@ define(
 
         $.extend(MainController.prototype, {
             enable: function () {
-                var defaultGroupName = this.context.children('[data-group]').eq(0).attr('data-group');
+                var defaultGroupName = $.trim(this.context.attr('data-default'));
+
+                if (defaultGroupName === '') {
+                    defaultGroupName = this.context.children('[data-group]').eq(0).attr('data-group');
+                }
 
                 // Disable highlighting.
                 this.context.on('click', 'a', disableDefault);
@@ -29,6 +33,18 @@ define(
                 this._showGroup(defaultGroupName);
             },
             
+            getTrigger: function (id) {
+                return this.context.find('a[data-id="' + id + '"]');
+            },
+            
+            toggleTriggerActive: function (id) {
+                this.getTrigger(id).toggleClass('active');
+            },
+
+            setTriggerActive: function (id, isActive) {
+                this.getTrigger(id)[isActive ? 'addClass' : 'removeClass']('active');
+            },
+
             on: function (triggerId, handler) {
                 this.context.on('click', 'a[data-id="' + triggerId + '"]', handler);
             },

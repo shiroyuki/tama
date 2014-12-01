@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from tornado.web     import HTTPError
@@ -6,6 +7,7 @@ from tori.socket.rpc import Interface
 
 class UIBrowser(Controller):
     def get(self, path=''):
+        menu_config         = self.settings['menus']['browser']
         request_location    = re.sub('/$', '', path)
         request_path_blocks = re.split('/', request_location)
         parent_path         = os.path.join(*request_path_blocks[:-1]) \
@@ -14,6 +16,8 @@ class UIBrowser(Controller):
 
         self.render(
             'browser.html',
+            menu             = menu_config,
+            menu_in_json     = json.dumps(menu_config),
             request_location = request_location,
             parent_path      = parent_path,
             fs_nodes         = self.component('internal.finder').find(path)

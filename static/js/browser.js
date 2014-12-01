@@ -5,10 +5,30 @@ require(
         'common/trpc'
     ],
     function ($, MainController, ToriSocket) {
-        var mctrl = new MainController('.main-controller'),
-            trpc  = new ToriSocket(rpcSocketUrl);
+        var features = {
+                inEditMode: false
+            },
+            $chrome = $('.explorer-chrome'),
+            $nodeList = $chrome.find('.node-list');
+            mctrl = new MainController('.main-controller'),
+            trpc  = new ToriSocket(rpcSocketUrl)
+        ;
 
-        trpc.on('finder.create_folder', function (response) {
+        function disableDragging(e) {
+            e.preventDefault();
+        }
+
+        function onNodeClickToggleMarker(e) {
+            if (!features.inEditMode) {
+                return;
+            }
+
+            e.preventDefault();
+
+            $(this).parent().toggleClass('selected');
+        }
+
+        function onSocketRpcCreateFolder(response) {
             if (!response.result.is_success) {
                 alert('Failed to create a folder. (' + response.result.error_code + ')');
 
@@ -16,9 +36,9 @@ require(
             }
 
             history.go(0);
-        });
+        }
 
-        trpc.on('finder.create_file', function (response) {
+        function onSocketRpcCreateFile(response) {
             if (!response.result.is_success) {
                 alert('Failed to create a file. (' + response.result.error_code + ')');
 
@@ -26,9 +46,15 @@ require(
             }
 
             history.go(0);
-        });
+        }
 
-        mctrl.on('new-folder', function () {
+        function onMCtrlToggleEditMode() {
+            features.inEditMode = !features.inEditMode;
+            $chrome.toggleClass('edit-mode');
+            mctrl.toggleTriggerActive('manage-objects');
+        }
+
+        function onMCtrlTriggerNewFolder() {
             var name = prompt('What is the name of the new folder?');
 
             if (name === null) {
@@ -42,9 +68,9 @@ require(
             }
 
             trpc.request('finder', 'create_folder', {path: currentLocation, name: name});
-        });
+        }
 
-        mctrl.on('new-file', function () {
+        function onMCtrlTriggerNewFilefunction() {
             var name = prompt('What is the name of the new file?');
 
             if (name === null) {
@@ -58,7 +84,17 @@ require(
             }
 
             trpc.request('finder', 'create_file', {path: currentLocation, name: name});
-        });
+        }
+
+        trpc.on('finder.create_folder', onSocketRpcCreateFolder);
+        trpc.on('finder.create_file', onSocketRpcCreateFile);
+        mctrl.on('manage-objects', onMCtrlToggleEditMode);
+        mctrl.on('new-folder', onMCtrlTriggerNewFolder);
+        mctrl.on('new-file', onMCtrlTriggerNewFilefunction);
+
+        $nodeList.on('click', '.node a', onNodeClickToggleMarker);
+        $nodeList.on('mousedown', '.node a', disableDragging);
+        $nodeList.on('mouseup', '.node a', disableDragging);
 
         trpc.connect();
         mctrl.enable();

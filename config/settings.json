@@ -1,10 +1,61 @@
 {
+    "read_only": true,
     "remote_vendors": {
         "enabled": false,
         "repo": {
             "font_awesome": "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css",
             "jquery": "//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js",
             "ace": "//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"
+        }
+    },
+    "menus": {
+        "browser": {
+            "class": "main-controller",
+            "default": "mode-switches",
+            "prev_group_btn": {
+                "icon": "arrow-up",
+                "label": "Back"
+            },
+            "groups": [
+                {
+                    "name": "mode-switches",
+                    "triggers": [
+                        {
+                            "name": "add-new-object",
+                            "class": null,
+                            "label": "Add new file or folder",
+                            "icon": "plus",
+                            "target": "object-creator"
+                        },
+                        {
+                            "name": "manage-objects",
+                            "class": null,
+                            "label": "Manage files or folder",
+                            "icon": "edit",
+                            "target": null
+                        }
+                    ]
+                },
+                {
+                    "name": "object-creator",
+                    "triggers": [
+                        {
+                            "name": "new-file",
+                            "class": null,
+                            "label": "Add new file",
+                            "icon": "cube",
+                            "target": null
+                        },
+                        {
+                            "name": "new-folder",
+                            "class": null,
+                            "label": "Add new folder",
+                            "icon": "cubes",
+                            "target": null
+                        }
+                    ]
+                }
+            ]
         }
     },
     "session": {

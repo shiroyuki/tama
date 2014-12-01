@@ -1,3 +1,4 @@
+from tori.centre import settings as app_settings
 from tama.service import NotFoundError
 
 class Finder(object):
@@ -13,6 +14,9 @@ class Finder(object):
         return self._simplify_content(fs_node)
 
     def put(self, path, content):
+        if app_settings['read_only']:
+            return self._make_response(False, 'tama.app.ReadOnlyMode')
+
         try:
             self.finder.put(path, content)
         except NotFoundError as e:
@@ -21,6 +25,9 @@ class Finder(object):
         return self._make_response(True)
 
     def create_folder(self, path, name):
+        if app_settings['read_only']:
+            return self._make_response(False, 'tama.app.ReadOnlyMode')
+
         is_succeeded = self.finder.create_folder(path, name)
         error_code   = None
 
@@ -30,6 +37,9 @@ class Finder(object):
         return self._make_response(is_succeeded)
 
     def create_file(self, path, name):
+        if app_settings['read_only']:
+            return self._make_response(False, 'tama.app.ReadOnlyMode')
+
         is_succeeded = self.finder.create_file(path, name)
         error_code   = None
 

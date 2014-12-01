@@ -104,8 +104,8 @@
 }
 
 @mixin transition_with_delay($property, $speed, $delay) {
-    -webkit-transition: $property ease $speed;
-    -moz-transition: $property ease $speed;
-    -ms-transition: $property ease $speed;
-    transition: $property ease $speed;
+    -webkit-transition: $property ease $speed $delay;
+    -moz-transition: $property ease $speed $delay;
+    -ms-transition: $property ease $speed $delay;
+    transition: $property ease $speed $delay;
 }

@@ -15,38 +15,29 @@
 {% endblock %}
 
 {% block content %}
-<div class="main-controller">
-    <a class="prev-group"><span class="fa fa-fw fa-arrow-up"></span></a>
-    <div data-group="root">
-        <a data-next="object-creator"><span class="fa fa-fw fa-plus"></span></a>
-        <a><span class="fa fa-fw fa-trash"></span></a>
-    </div>
-    <div data-group="object-creator">
-        <a data-id="new-folder"><span class="fa fa-fw fa-folder"></span></a>
-        <a data-id="new-file"><span class="fa fa-fw fa-file"></span></a>
-    </div>
-</div>
+{% include '_menu.html' %}
 <article class="explorer-chrome">
     <header>
         {% if request_location %}<a href="{{ app.path('ui.tree', path = parent_path) }}">Back to <b>{{ parent_path or '<home>' | escape }}</b></a>{% endif %}
-        <h1><span class="fa fa-folder-o"></span> {{ request_location or '<home>' | escape }}</h1>
+        <h1><span class="fa fa-dot-circle-o"></span> {{ request_location or '<home>' | escape }}</h1>
     </header>
-    <ul class="blob-list">
+    <ul class="node-list">
         {%- for fs_node in fs_nodes -%}
             {%- set url  = app.path('ui.tree' if fs_node.is_dir else 'ui.file.editor', path = fs_node.referred_path) -%}
-            {%- set icon = 'folder' if fs_node.is_dir else 'file' -%}
+            {%- set icon = 'cubes' if fs_node.is_dir else 'cube' -%}
             {%- if fs_node.is_binary -%}
                 {%- set url  = app.path('api.file', path = fs_node.path) -%}
                 {%- set icon = 'cloud-download' -%}
             {%- endif -%}
-            <li class="blob"
+            <li class="node"
                 data-name="{{ fs_node.name }}"
                 data-type="{{ fs_node.mimetype or '' }}"
                 data-path="{{ fs_node.path }}">
                 <a href="{{ url }}"
                    title="{{ fs_node.name }}{% if fs_node.is_file %} ({{ fs_node.mimetype }}){% endif %}">
-                    <span class="fa fa-{{ icon }}"></span>
-                    <span class="blob-name">{{ fs_node.name }}</span>
+                    <span class="node-marker fa fa-circle-o" title="Pick me!"></span>
+                    <span class="node-icon fa fa-fw fa-{{ icon }}"></span>
+                    <span class="node-name">{{ fs_node.name }}</span>
                 </a>
             </li>
         {%- endfor -%}

@@ -1,7 +1,7 @@
 @import 'css3';
 
 .app-container {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -11,32 +11,70 @@
 .main-controller {
     background-color: #333;
     color: #666;
-    width: 67px;
+    width: 50px;
 
     a {
+        @include transition(all, 500ms);
+
+        position: relative;
         display: block;
         padding: 10px 10px;
-        font-size: 36px;
+        font-size: 24px;
         color: #fff;
         cursor: pointer;
+
+        .text {
+            @include transition_with_delay(all, 500ms, 250ms);
+
+            position: absolute;
+            top: 0;
+            left: 100%;
+            opacity: 0.1;
+            background-color: rgba(0, 0, 0, 0.9);
+            text-transform: uppercase;
+            font-size: 16px;
+            padding: 10px;
+            display: block;
+            white-space: nowrap;
+            margin-left: -800%;
+        }
 
         &:hover {
             background-color: #000;
             color: #fff;
+
+            .text {
+                opacity: 1;
+                margin-left: 0%;
+            }
         }
-        
+
         &.prev-group {
             display: none;
             color: #ff0000;
-            
+
             &:hover {
                 color: #fff;
                 background-color: #cc0000;
+
+                .text {
+                    color: #fff;
+                    background-color: #cc0000;
+                }
             }
         }
-        
+
         &.enabled {
             display: block;
+        }
+
+        &.active {
+            background-color: #215498;
+
+            .text {
+                background-color: #215498;
+                margin-left: 0%;
+            }
         }
     }
 
@@ -51,41 +89,98 @@
 
 .explorer-chrome {
     @include flex-item(1);
+    padding: 40px;
+    background-color: #eee;
+    overflow-x: hidden;
+    overflow-y: auto;
 
     header {
-        padding: 10px 20px;
+        padding: 10px;
     }
 
-    .blob-list {
-        padding: 10px 10px;
+    .node-list {
         @include flex-container-default();
+        padding: 10px 10px;
         list-style: none;
         margin: 0;
         overflow: hidden;
-        border-top: 1px solid #ddd;
 
-        .blob {
-            width: 320px;
-
+        .node {
             a {
+                @include transition(all, 500ms);
+
                 display: block;
+                width: 160px;
+                text-align: center;
                 padding: 5px 10px;
                 color: #000;
-                border-radius: 5px;
+                margin-right: 10px;
+                margin-bottom: 10px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 text-decoration: none;
+                background-color: #fff;
+                position: relative;
 
-                &:hover {
-                    background-color: #215498;
-                    color: #fff;
+                .node-marker {
+                    @include transition(all, 500ms);
+
+                    position: absolute;
+                    top: 10px;
+                    left: 10px;
+                    font-size: 48px;
+                    color: #999;
+
+                    display: none;
+                }
+
+                .node-icon {
+                    @include transition(all, 500ms);
+
+                    height: 160px;
+                    display: block;
+                    font-size: 168px;
+                    color: #eee;
+                }
+
+                .node-name {
+                    border-top: 1px solid #000;
+                    margin-top: 10px;
+                    padding: 10px;
+                    display: block;
+                }
+
+                &:hover, &.selected {
+                    box-shadow: #999 0 0 20px;
                     text-decoration: none;
+
+                    .node-icon {
+                        color: #000;
+                    }
                 }
             }
+        }
+    }
 
-            &[data-name^="."], &[data-name$=".pyc"] {
-                display: none;
+    &.edit-mode .node-list {
+        .node a {
+            opacity: 0.5;
+
+            .node-marker {
+                display: block;
+            }
+        }
+
+        .node.selected a {
+            opacity: 1;
+
+            .node-marker {
+                color: #215498;
+            }
+
+            .node-icon {
+                color: #000;
             }
         }
     }

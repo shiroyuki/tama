@@ -64,6 +64,5 @@ docs/build/*
 build
 .coverage
 test/report
-*.map
 .sass-cache
 *.swp

@@ -6,22 +6,25 @@
     left: 0;
     right: 0;
     bottom: 0;
+    background-color: #eee;
 }
 
 .main-controller {
-    background-color: #333;
     color: #666;
     width: 50px;
+    padding: 10px;
 
     a {
         @include transition(all, 500ms);
 
+        z-index: 10;
         position: relative;
         display: block;
         padding: 10px 10px;
         font-size: 24px;
-        color: #fff;
+        color: #666;
         cursor: pointer;
+        border-radius: 50px;
 
         .text {
             @include transition_with_delay(all, 500ms, 250ms);
@@ -32,11 +35,14 @@
             opacity: 0.1;
             background-color: rgba(0, 0, 0, 0.9);
             text-transform: uppercase;
-            font-size: 16px;
+            font-size: 12px;
             padding: 10px;
             display: block;
             white-space: nowrap;
             margin-left: -800%;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
         }
 
         &:hover {
@@ -45,7 +51,7 @@
 
             .text {
                 opacity: 1;
-                margin-left: 0%;
+                margin-left: 5px;
             }
         }
 
@@ -55,11 +61,11 @@
 
             &:hover {
                 color: #fff;
-                background-color: #cc0000;
+                background-color: #FF4444;
 
                 .text {
                     color: #fff;
-                    background-color: #cc0000;
+                    background-color: #FF4444;
                 }
             }
         }
@@ -69,11 +75,20 @@
         }
 
         &.active {
-            background-color: #215498;
+
+            color: #fff;
+            background-color: #0099CC;
 
             .text {
-                background-color: #215498;
-                margin-left: 0%;
+                background-color: #0099CC;
+            }
+
+            &:hover {
+                background-color: #33B5E5;
+
+                .text {
+                    background-color: #33B5E5;
+                }
             }
         }
     }
@@ -90,7 +105,6 @@
 .explorer-chrome {
     @include flex-item(1);
     padding: 40px;
-    background-color: #eee;
     overflow-x: hidden;
     overflow-y: auto;
 
@@ -122,6 +136,7 @@
                 text-decoration: none;
                 background-color: #fff;
                 position: relative;
+                border: 1px solid #ccc;
 
                 .node-marker {
                     @include transition(all, 500ms);
@@ -152,7 +167,7 @@
                 }
 
                 &:hover, &.selected {
-                    box-shadow: #999 0 0 20px;
+                    border: 1px solid #ccc;
                     text-decoration: none;
 
                     .node-icon {
@@ -176,7 +191,7 @@
             opacity: 1;
 
             .node-marker {
-                color: #215498;
+                color: #33B5E5;
             }
 
             .node-icon {

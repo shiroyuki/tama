@@ -3,16 +3,16 @@
         <span class="icon fa fa-fw fa-{{ menu.prev_group_btn.icon }}"></span>
         <span class="text">{{ menu.prev_group_btn.label }}</span>
     </a>
-    
+
     {%- for g in menu.groups -%}
         <div data-group="{{ g.name }}">
             {%- for i in g.triggers -%}
-                <a title="{{ i.label }}" class="{{ i.class }}"
+                <a{# title="{{ i.label }}"#} class="{{ i.class }}"
                     {%- if i.name %} data-id="{{ i.name }}"{% endif -%}
                     {%- if i.target %} data-next="{{ i.target }}"{% endif -%}
                 >
                     <span class="fa fa-fw fa-{{ i.icon }}"></span>
-                    <span class="text">{{ i.label }}
+                    <span class="text">{{ i.label }}</span>
                 </a>
             {%- endfor -%}
         </div>

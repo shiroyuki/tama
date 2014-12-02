@@ -1,7 +1,8 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale = 1.0, user-scalable = no"/>
 <title>Tama - {% block head_title %}{% endblock %}</title>
 {%- if app.settings.remote_vendors.enabled -%}
     <link href="{{ app.settings.remote_vendors.repo.font_awesome }}" rel="stylesheet">
@@ -13,7 +14,7 @@
 </head>
 <body>
 <div class="app-container">
-{% include '_header.html' %}
+{#{% include '_header.html' %}#}
 {% block content %}{% endblock %}
 </div>
 <script src="{{ app.path('static', path='vendors/require.js') }}"></script>

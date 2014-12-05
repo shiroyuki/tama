@@ -97,3 +97,15 @@ class Finder(object):
 
     def _sanitize_path(self, path):
         return self.__illegal_pattern.sub('', path)
+
+class BroadcastService(object):
+    def __init__(self, WebSocketInterfaceClass):
+        self.WebSocketInterfaceClass = WebSocketInterfaceClass
+
+    def broadcast(self, message):
+        channels = self.WebSocketInterfaceClass._channel_table
+
+        for object_hash in channels:
+            channel = channels[object_hash]
+
+            channel.write_message(message)

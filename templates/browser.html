@@ -23,18 +23,19 @@
     </header>
     <ul class="node-list">
         {%- for fs_node in fs_nodes -%}
-            {%- set url  = app.path('ui.tree' if fs_node.is_dir else 'ui.file.editor', path = fs_node.referred_path) -%}
-            {%- set icon = 'cubes' if fs_node.is_dir else 'cube' -%}
+            {%- set mtype = fs_node.mimetype or 'unknown' -%}
+            {%- set url   = app.path('ui.tree' if fs_node.is_dir else 'ui.file.editor', path = fs_node.referred_path) -%}
+            {%- set icon  = 'cubes' if fs_node.is_dir else 'cube' -%}
             {%- if fs_node.is_binary -%}
                 {%- set url  = app.path('api.file', path = fs_node.path) -%}
                 {%- set icon = 'cloud-download' -%}
             {%- endif -%}
             <li class="node"
                 data-name="{{ fs_node.name }}"
-                data-type="{{ fs_node.mimetype or '' }}"
+                data-type="{{ mtype }}"
                 data-path="{{ fs_node.path }}">
                 <a href="{{ url }}"
-                   title="{{ fs_node.name }}{% if fs_node.is_file %} ({{ fs_node.mimetype }}){% endif %}">
+                   title="{{ fs_node.name }}{% if fs_node.is_file %} ({{ mtype }}){% endif %}">
                     <span class="node-marker fa fa-circle-o" title="Pick me!"></span>
                     <span class="node-icon fa fa-fw fa-{{ icon }}"></span>
                     <span class="node-name">{{ fs_node.name }}</span>

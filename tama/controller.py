@@ -4,6 +4,7 @@ import re
 from tornado.web     import HTTPError
 from tori.controller import Controller
 from tori.socket.rpc import Interface
+from tori.socket.websocket import WebSocket
 
 class UIBrowser(Controller):
     def get(self, path=''):
@@ -44,5 +45,4 @@ class APIFile(Controller):
 
         self.finish(fs_node.content)
 
-class RPCSocket(Interface):
-    pass
+class SyncService(Interface): pass

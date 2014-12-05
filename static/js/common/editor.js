@@ -31,7 +31,7 @@ define(
                 scss: /\.scss$/i,
                 sql: /\.sql$/i,
                 csv: /\.csv$/i,
-                c_cpp: /\.c(pp)?$/i
+                c_cpp: /\.(c|cpp|m|h)?$/i
             },
 
             activate: function () {

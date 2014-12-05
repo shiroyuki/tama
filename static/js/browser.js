@@ -8,6 +8,7 @@ require(
         var features = {
                 inEditMode: false
             },
+            $syncStatus = $('.sync-status'),
             $chrome = $('.explorer-chrome'),
             $nodeList = $chrome.find('.node-list');
             mctrl = new MainController('.main-controller'),
@@ -16,6 +17,16 @@ require(
 
         function disableDragging(e) {
             e.preventDefault();
+        }
+
+        function onConnected(e) {
+            console.log('Connected');
+            $syncStatus.addClass('socket-connected');
+        }
+
+        function onDisconnected(e) {
+            console.log('Disconnected');
+            $syncStatus.removeClass('socket-connected');
         }
 
         function onNodeClickToggleMarker(e) {
@@ -88,6 +99,9 @@ require(
 
         trpc.on('finder.create_folder', onSocketRpcCreateFolder);
         trpc.on('finder.create_file', onSocketRpcCreateFile);
+        trpc.on('open', onConnected);
+        trpc.on('close', onDisconnected);
+
         mctrl.on('manage-objects', onMCtrlToggleEditMode);
         mctrl.on('new-folder', onMCtrlTriggerNewFolder);
         mctrl.on('new-file', onMCtrlTriggerNewFilefunction);

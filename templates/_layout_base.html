@@ -17,6 +17,7 @@
 {#{% include '_header.html' %}#}
 {% block content %}{% endblock %}
 </div>
+<div class="sync-status"></div>
 <script src="{{ app.path('static', path='vendors/require.js') }}"></script>
 {%- include '_requirejs.html' -%}
 {% block js %}{% endblock %}

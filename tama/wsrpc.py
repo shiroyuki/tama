@@ -1,6 +1,13 @@
 from tori.centre import settings as app_settings
 from tama.service import NotFoundError
 
+class GhostCensor(object):
+    def __init__(self, broadcaster):
+        self.broadcaster = broadcaster
+
+    def notify(self, message):
+        self.broadcaster.broadcast(message)
+
 class Finder(object):
     def __init__(self, finder):
         self.finder = finder

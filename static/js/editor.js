@@ -20,8 +20,8 @@ require(
             console.log('disconnected');
         });
 
-        socket.on('finder.get', $.proxy(editor.onFinderGet, editor));
-        socket.on('finder.put', $.proxy(editor.onFinderPut, editor));
+        socket.on('rpc.finder.get', $.proxy(editor.onFinderGet, editor));
+        socket.on('rpc.finder.put', $.proxy(editor.onFinderPut, editor));
 
         socket.connect();
     }

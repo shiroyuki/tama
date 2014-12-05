@@ -4,11 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale = 1.0, user-scalable = no"/>
 <title>Tama - {% block head_title %}{% endblock %}</title>
-{%- if app.settings.remote_vendors.enabled -%}
-    <link href="{{ app.settings.remote_vendors.repo.font_awesome }}" rel="stylesheet">
-{%- else -%}
-    <link href="{{ app.path('static', path='vendors/font-awesome-4.2.0/css/font-awesome.min.css') }}" rel="stylesheet">
-{%- endif -%}
+<link href="{{ static_path('font_awesome') }}" rel="stylesheet">
 <link href="{{ app.path('static', path='css/layout_base.css') }}" rel="stylesheet">
 {% block css %}{% endblock %}
 </head>
@@ -18,7 +14,7 @@
 {% block content %}{% endblock %}
 </div>
 <div class="sync-status"></div>
-<script src="{{ app.path('static', path='vendors/require.js') }}"></script>
+<script src="{{ static_path('requirejs') }}"></script>
 {%- include '_requirejs.html' -%}
 {% block js %}{% endblock %}
 </body>

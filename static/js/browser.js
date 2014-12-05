@@ -78,7 +78,7 @@ require(
                 return;
             }
 
-            trpc.request('finder', 'create_folder', {path: currentLocation, name: name});
+            trpc.request('rpc.finder', 'create_folder', {path: currentLocation, name: name});
         }
 
         function onMCtrlTriggerNewFilefunction() {
@@ -94,11 +94,11 @@ require(
                 return;
             }
 
-            trpc.request('finder', 'create_file', {path: currentLocation, name: name});
+            trpc.request('rpc.finder', 'create_file', {path: currentLocation, name: name});
         }
 
-        trpc.on('finder.create_folder', onSocketRpcCreateFolder);
-        trpc.on('finder.create_file', onSocketRpcCreateFile);
+        trpc.on('rpc.finder.create_folder', onSocketRpcCreateFolder);
+        trpc.on('rpc.finder.create_file', onSocketRpcCreateFile);
         trpc.on('open', onConnected);
         trpc.on('close', onDisconnected);
 

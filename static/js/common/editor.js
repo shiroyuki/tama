@@ -38,7 +38,7 @@ define(
                 this.editor = ace.edit(this.id);
                 this.editor.setTheme('ace/theme/' + this.theme);
 
-                this.socket.on('finder.get', $.proxy(this.onFinderGet, this));
+                this.socket.on('rpc.finder.get', $.proxy(this.onFinderGet, this));
             },
 
             setMode: function (mode) {
@@ -67,7 +67,7 @@ define(
                 this.filename = filename;
                 readOnly = readOnly || false;
 
-                this.socket.request('finder', 'get', {path: filename});
+                this.socket.request('rpc.finder', 'get', {path: filename});
 
                 // Fallback AJAX version (reaod-only mode).
 
@@ -143,7 +143,7 @@ define(
             },
 
             onShortCutSave: function (editor) {
-                this.socket.request('finder', 'put', {
+                this.socket.request('rpc.finder', 'put', {
                     path:    this.node.path,
                     content: this.editor.getValue()
                 })

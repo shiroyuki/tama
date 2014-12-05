@@ -2,9 +2,30 @@ import json
 import os
 import re
 from tornado.web     import HTTPError
-from tori.controller import Controller
+from tori.controller import Controller as BaseController
 from tori.socket.rpc import Interface
 from tori.socket.websocket import WebSocket
+
+class Controller(BaseController):
+    def render_template(self, template_name, **contexts):
+        contexts['static_path'] = self.resolve_static_path
+
+        return super(Controller, self).render_template(template_name, **contexts)
+
+    def resolve_static_path(self, key):
+        router   = self.component('routing_map')
+        settings = self.settings['asset_manager']
+
+        local_path  = settings['local'][key]  if key in settings['local']  else None
+        remote_path = settings['remote'][key] if key in settings['remote'] else None
+
+        if local_path:
+            local_path = router.resolve('static', path = local_path)
+
+        if not settings['enabled']:
+            return local_path or '/e404/' + key
+
+        return remote_path or local_path or '/e404/' + key
 
 class UIBrowser(Controller):
     def get(self, path=''):

@@ -1,14 +1,8 @@
 <script>
 requirejs.config({
     baseUrl: '{{ app.path('static', path='js') }}',
-    {%- if app.settings.remote_vendors.enabled -%}
-        paths: {
-            jquery: "{{ app.settings.remote_vendors.repo.jquery }}"
-        }
-    {%- else -%}
-        paths: {
-            jquery: "{{ app.path('static', path='vendors/jquery') }}"
-        }
-    {%- endif -%}
+    paths: {
+        jquery: "{{ static_path('jquery') }}"
+    }
 });
 </script>

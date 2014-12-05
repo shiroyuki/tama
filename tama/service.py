@@ -1,7 +1,7 @@
 import logging
 import os
 import re
-from tama.model import FSNode
+from tama.model import FSNode, FSNodeNotFoundError
 
 logging.basicConfig(level = logging.WARN)
 
@@ -41,9 +41,22 @@ class Finder(object):
         path    = self._sanitize_path(path)
         fs_node = self.get(path)
 
+        if not fs_node.exists:
+            raise NotFoundError(path)
+
         # Update the content
         fs_node.content = content
         fs_node.save()
+
+    def delete(self, path):
+        path    = self._sanitize_path(path)
+        fs_node = self.get(path)
+
+        # Remove the content
+        try:
+            fs_node.delete()
+        except FSNodeNotFoundError as e:
+            raise NotFoundError('{}: {}'.format(path, e.message))
 
     def find(self, path):
         """ Find FS nodes. """
@@ -72,7 +85,7 @@ class Finder(object):
         os.makedirs(actual_path)
 
         return True
-    
+
     def create_file(self, path, name):
         """ Create a blank file. """
         referred_path = os.path.join(path, name)

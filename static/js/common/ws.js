@@ -79,12 +79,6 @@ define(
 
                 this._connected = true;
                 this.handleEvent('open', event);
-
-                if (this._reconnectOnDemand) {
-                    for (i in this._outbox) {
-                        this.send(this._outbox[i]);
-                    }
-                }
             },
 
             onClose: function (event) {

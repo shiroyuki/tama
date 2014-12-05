@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block css %}
-    <link href="{{ app.path('static', path = 'css/editor.css') }}" rel="stylesheet">
+    <link href="{{ static_path('app.editor.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block js %}
@@ -24,11 +24,7 @@
         rpcSocketUrl = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
         filename = '{{ request_location }}';
     </script>
-    {%- if app.settings.remote_vendors.enabled -%}
-        <script src="{{ app.settings.remote_vendors.repo.ace }}"></script>
-    {%- else -%}
-        <script src="{{ app.path('static', path = 'vendors/ace/src-noconflict/ace.js') }}"></script>
-    {%- endif -%}
+    <script src="{{ static_path('ace') }}"></script>
     <script src="{{ app.path('static', path = 'js/common/ws.js') }}"></script>
     <script src="{{ app.path('static', path = 'js/common/trpc.js') }}"></script>
     <script src="{{ app.path('static', path = 'js/editor.js') }}"></script>

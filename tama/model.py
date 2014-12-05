@@ -4,6 +4,9 @@ import os
 
 logging.basicConfig(level = logging.WARN)
 
+class FSNodeNotFoundError(IOError):
+    """ File-system Node Not Found """
+
 class FSNodeType(object):
     FILE = 'file'
     DIR  = 'dir'
@@ -77,6 +80,9 @@ class FSNode(object):
         return 'text' not in mimetype if mimetype else None
 
     def load(self):
+        if not self.exists:
+            raise FSNodeNotFoundError('Unable to load.')
+        
         with open(self.real_path, 'r') as f:
             self._content = f.read()
 
@@ -87,3 +93,13 @@ class FSNode(object):
             f.write(self.content)
 
         FSNode.logger.debug('Saved {}'.format(self.real_path))
+
+    def delete(self, path):
+        if not self.exists:
+            raise FSNodeNotFoundError('Unable to locate the node.')
+        
+        if self.is_file:
+            os.unlink(self.real_path)
+            return
+
+        os.removedirs(self.real_path)

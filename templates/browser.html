@@ -3,7 +3,7 @@
 {% block head_title %}{{ request_location or '<home>' }}{% endblock %}
 
 {% block css %}
-    <link href="{{ app.path('static', path = 'css/tree.css') }}" rel="stylesheet">
+    <link href="{{ static_path('app.browser.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block js %}
@@ -11,7 +11,7 @@
         currentLocation = '{{ request_location }}';
         rpcSocketUrl    = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
     </script>
-    <script src="{{ app.path('static', path = 'js/browser.js') }}"></script>
+    <script src="{{ static_path('app.browser.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -42,6 +42,19 @@
                 </a>
             </li>
         {%- endfor -%}
+        <script id="entry-template" type="text/x-handlebars-template">{%- raw -%}
+            <li class="node"
+                data-name="{{ name }}"
+                data-type="{{ mtype }}"
+                data-path="{{ path }}">
+                <a href="{{ url }}"
+                   title="{{ title }}">
+                    <span class="node-marker fa fa-circle-o" title="Pick me!"></span>
+                    <span class="node-icon fa fa-fw fa-{{ icon }}"></span>
+                    <span class="node-name">{{ name }}</span>
+                </a>
+            </li>
+        {%- endraw -%}</script>
     </ul>
 </article>
 <script>

@@ -13,15 +13,17 @@
             "font_awesome": "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css",
             "jquery":       "//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min",
             "ace":          "//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js",
-            "handlebar":    "//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.runtime.amd.min"
+            "handlebars":   "//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.runtime.amd.min"
         },
         "local": {
             "font_awesome": "vendors/font-awesome-4.2.0/css/font-awesome.min.css",
             "jquery":       "vendors/jquery",
             "ace":          "vendors/ace/src-noconflict/ace.js",
-            "handlebar":    "vendors/handlebars.runtime.js",
+            "handlebars":   "vendors/handlebars.runtime",
             "requirejs":    "vendors/require.js",
-            "app.editor.css": "css/editor.css"
+            "app.browser.js":  "js/browser.js",
+            "app.browser.css": "css/tree.css",
+            "app.editor.css":  "css/editor.css"
         }
     },
     "menus": {

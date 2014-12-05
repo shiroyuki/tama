@@ -1,10 +1,11 @@
 require(
     [
         'jquery',
+        'handlebars',
         'common/mainctrl',
         'common/trpc'
     ],
-    function ($, MainController, ToriSocket) {
+    function ($, hb, MainController, ToriSocket) {
         var features = {
                 inEditMode: false
             },

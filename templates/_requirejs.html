@@ -2,7 +2,8 @@
 requirejs.config({
     baseUrl: '{{ app.path('static', path='js') }}',
     paths: {
-        jquery: "{{ static_path('jquery') }}"
+        jquery: "{{ static_path('jquery') }}",
+        handlebars: "{{ static_path('handlebars') }}"
     }
 });
 </script>

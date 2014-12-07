@@ -1,19 +1,23 @@
 require(
     [
         'jquery',
-        'handlebars',
+        'common/template',
         'common/mainctrl',
         'common/trpc'
     ],
-    function ($, hb, MainController, ToriSocket) {
-        var features = {
+    function ($, Template, MainController, ToriSocket) {
+        /*var */features = {
                 inEditMode: false
             },
+            nodes = {},
+            popStateCount = 0,
             $syncStatus = $('.sync-status'),
             $chrome = $('.explorer-chrome'),
-            $nodeList = $chrome.find('.node-list');
+            $currentLocation = $('.current-location'),
+            $nodeList = $chrome.find('.node-list'),
             mctrl = new MainController('.main-controller'),
-            trpc  = new ToriSocket(rpcSocketUrl)
+            trpc  = new ToriSocket(rpcSocketUrl),
+            tmpl  = new Template()
         ;
 
         function disableDragging(e) {
@@ -23,6 +27,7 @@ require(
         function onConnected(e) {
             console.log('Connected');
             $syncStatus.addClass('socket-connected');
+            trpc.request('rpc.finder', 'find', { path: currentLocation });
         }
 
         function onDisconnected(e) {
@@ -30,14 +35,39 @@ require(
             $syncStatus.removeClass('socket-connected');
         }
 
-        function onNodeClickToggleMarker(e) {
-            if (!features.inEditMode) {
-                return;
-            }
+        function onSocketRpcFind(response) {
+            var output,
+                path = response.result.path;
 
-            e.preventDefault();
+            $nodeList.empty();
 
-            $(this).parent().toggleClass('selected');
+            $currentLocation.text(path.length === 0 ? '<home>' : path);
+
+            $.each(response.result.nodes, function () {
+                var node = this,
+                    $node;
+
+                node.mtype = node.mimetype || 'unknown';
+                node.url   = url_prefix_file + node.path;
+                node.icon  = 'cube';
+
+                if (node.is_dir) {
+                    node.mtype = 'directory';
+                    node.url   = url_prefix_dir + node.path;
+                    node.icon  = 'cubes';
+                } else if (node.is_binary) {
+                    node.url   = url_prefix_dl + node.path;
+                    node.icon  = 'cloud-download';
+                }
+
+                nodes[node.path] = node;
+
+                output = tmpl.render('node', node);
+
+                $node = $(output);
+
+                $node.appendTo($nodeList);
+            });
         }
 
         function onSocketRpcCreateFolder(response) {
@@ -98,6 +128,36 @@ require(
             trpc.request('rpc.finder', 'create_file', {path: currentLocation, name: name});
         }
 
+        function onNodeClickUpdate(e) {
+            var $anchor = $(this),
+                $node = $anchor.closest('.node'),
+                path = $node.attr('data-path'),
+                type = $node.attr('data-type'),
+                node = nodes[path];
+
+            if (features.inEditMode) {
+                e.preventDefault();
+
+                $node.toggleClass('selected');
+
+                return;
+            }
+
+            if (node.is_dir) {
+                e.preventDefault();
+
+                if (--popStateCount) {
+                    popStateCount = 0;
+                }
+                
+                if (popStateCount === 0) {
+                    window.history.pushState(node.path, null, $anchor.attr('href'));
+                }
+                trpc.request('rpc.finder', 'find', { path: node.path });
+            }
+        }
+
+        trpc.on('rpc.finder.find', onSocketRpcFind);
         trpc.on('rpc.finder.create_folder', onSocketRpcCreateFolder);
         trpc.on('rpc.finder.create_file', onSocketRpcCreateFile);
         trpc.on('open', onConnected);
@@ -107,11 +167,19 @@ require(
         mctrl.on('new-folder', onMCtrlTriggerNewFolder);
         mctrl.on('new-file', onMCtrlTriggerNewFilefunction);
 
-        $nodeList.on('click', '.node a', onNodeClickToggleMarker);
-        $nodeList.on('mousedown', '.node a', disableDragging);
-        $nodeList.on('mouseup', '.node a', disableDragging);
+        $nodeList.on('click',             '.node a', onNodeClickUpdate);
+        $nodeList.on('mousedown mouseup', '.node a', disableDragging);
 
         trpc.connect();
         mctrl.enable();
+
+        // Handle browser's navigation
+        window.onpopstate = function(event) {
+            var path = String(document.location.pathname).replace(/^\/tree\//, '');
+            
+            popStateCount++;
+            
+            trpc.request('rpc.finder', 'find', { path: path });
+        };
     }
 );

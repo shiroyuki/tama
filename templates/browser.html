@@ -8,8 +8,12 @@
 
 {% block js %}
     <script>
-        currentLocation = '{{ request_location }}';
-        rpcSocketUrl    = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
+        url_prefix_dir   = '{{ app.path('ui.tree', path = '')}}';
+        url_prefix_file  = '{{ app.path('ui.file.editor', path = '')}}';
+        url_prefix_dl    = '{{ app.path('api.file', path = '')}}';
+        request_location = '{{ request_location }}';
+        currentLocation  = '{{ request_location }}';
+        rpcSocketUrl     = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
     </script>
     <script src="{{ static_path('app.browser.js') }}"></script>
 {% endblock %}
@@ -19,9 +23,10 @@
 <article class="explorer-chrome">
     <header>
         {% if request_location %}<a href="{{ app.path('ui.tree', path = parent_path) }}">Back to <b>{{ parent_path or '<home>' | escape }}</b></a>{% endif %}
-        <h1><span class="fa fa-dot-circle-o"></span> {{ request_location or '<home>' | escape }}</h1>
+        <h1><span class="fa fa-dot-circle-o"></span> <span class="current-location">{{ request_location or '<home>' | escape }}</span></h1>
     </header>
     <ul class="node-list">
+        {#
         {%- for fs_node in fs_nodes -%}
             {%- set mtype = fs_node.mimetype or 'unknown' -%}
             {%- set url   = app.path('ui.tree' if fs_node.is_dir else 'ui.file.editor', path = fs_node.referred_path) -%}
@@ -42,22 +47,20 @@
                 </a>
             </li>
         {%- endfor -%}
-        <script id="entry-template" type="text/x-handlebars-template">{%- raw -%}
-            <li class="node"
-                data-name="{{ name }}"
-                data-type="{{ mtype }}"
-                data-path="{{ path }}">
-                <a href="{{ url }}"
-                   title="{{ title }}">
-                    <span class="node-marker fa fa-circle-o" title="Pick me!"></span>
-                    <span class="node-icon fa fa-fw fa-{{ icon }}"></span>
-                    <span class="node-name">{{ name }}</span>
-                </a>
-            </li>
-        {%- endraw -%}</script>
+        #}
     </ul>
+    <script data-name="node" type="text/x-handlebars-template">{%- raw -%}
+        <li class="node"
+            data-name="{{ name }}"
+            data-type="{{ mtype }}"
+            data-path="{{ path }}">
+            <a href="{{ url }}"
+               title="{{ title }}">
+                <span class="node-marker fa fa-circle-o" title="Pick me!"></span>
+                <span class="node-icon fa fa-fw fa-{{ icon }}"></span>
+                <span class="node-name">{{ name }}</span>
+            </a>
+        </li>
+    {%- endraw -%}</script>
 </article>
-<script>
-    request_location = '{{ request_location }}';
-</script>
 {% endblock %}

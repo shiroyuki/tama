@@ -1,3 +1,4 @@
+import re
 from tori.centre import settings as app_settings
 from tama.service import NotFoundError
 
@@ -11,13 +12,30 @@ class GhostCensor(object):
 class Finder(object):
     def __init__(self, finder):
         self.finder = finder
+        self.cachedIgnorePatterns = {}
 
     def find(self, path):
         fs_nodes = self.finder.find(path)
-        
-        print(self.settings)
 
-        return []
+        simplified_nodes = []
+
+        for fs_node in fs_nodes:
+            if self._is_ignored(fs_node):
+                continue
+
+            simplified_nodes.append({
+                'name':      fs_node.name,
+                'path':      fs_node.referred_path,
+                'type':      fs_node.mimetype,
+                'is_dir':    fs_node.is_dir,
+                'is_file':   fs_node.is_file,
+                'is_binary': fs_node.is_binary
+            })
+
+        return {
+            'path':  path,
+            'nodes': simplified_nodes
+        }
 
     def get(self, path):
         try:
@@ -103,3 +121,16 @@ class Finder(object):
         })
 
         return response
+
+    def _is_ignored(self, fs_node):
+        for pattern in app_settings['ignored_list']:
+            if self._is_ignored_by_pattern(pattern, fs_node):
+                return True
+
+        return False
+
+    def _is_ignored_by_pattern(self, pattern, fs_node):
+        if pattern not in self.cachedIgnorePatterns:
+            self.cachedIgnorePatterns[pattern] = re.compile(pattern)
+
+        return bool(self.cachedIgnorePatterns[pattern].search(fs_node.name))

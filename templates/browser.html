@@ -18,6 +18,14 @@
     <script src="{{ static_path('app.browser.js') }}"></script>
 {% endblock %}
 
+{% block dialogs %}
+<div class="dialog-backdrop active">
+    <div class="dialog open-file">
+        ABC
+    </div>
+</div>
+{% endblock %}
+
 {% block content %}
 {% include '_menu.html' %}
 <article class="explorer-chrome">

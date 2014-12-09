@@ -63,7 +63,6 @@ class Finder(object):
         try:
             self.finder.delete(path)
         except NotFoundError as e:
-            print(dir(e))
             return self._make_response(False, e)
 
         return self._make_response(True)

@@ -16,22 +16,23 @@ define(
 
         $.extend(Editor.prototype, {
             modeToExtensionMap: {
-                python: /\.py$/i,
-                sh: /\.sh$/i,
-                django: /\.(django|twig|jinja)$/i,
-                php: /\.(php|phtml)$/i,
-                perl: /\.pl$/i,
-                markdown: /\.md$/i,
+                python:     /\.py$/i,
+                sh:         /\.sh$/i,
+                django:     /\.(html)$/i,
+                php:        /\.(php|phtml)$/i,
+                perl:       /\.pl$/i,
+                markdown:   /\.md$/i,
                 javascript: /\.js$/i,
-                json: /\.json$/i,
-                makefile: /Makefile/,
-                html: /\.(html|htm|xhtml)$/i,
-                xml: /\.xml$/i,
-                css: /\.css$/i,
-                scss: /\.scss$/i,
-                sql: /\.sql$/i,
-                csv: /\.csv$/i,
-                c_cpp: /\.(c|cpp|m|h)?$/i
+                json:       /\.json$/i,
+                makefile:   /Makefile/,
+                html:       /\.(html?|xhtml)$/i,
+                xml:        /\.xml$/i,
+                css:        /\.css$/i,
+                scss:       /\.scss$/i,
+                sql:        /\.sql$/i,
+                csv:        /\.csv$/i,
+                c_cpp:      /\.(c|cpp|m|h)?$/i,
+                yaml:       /\.(ya?ml)?$/i
             },
 
             activate: function () {

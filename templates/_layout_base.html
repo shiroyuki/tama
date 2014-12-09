@@ -11,6 +11,7 @@
 <body>
 <div class="app-container">
 {#{% include '_header.html' %}#}
+{% block dialogs %}{% endblock %}
 {% block content %}{% endblock %}
 </div>
 <div class="sync-status"></div>

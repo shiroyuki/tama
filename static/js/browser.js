@@ -47,24 +47,25 @@ require(
                 var node = this,
                     $node;
 
-                node.mtype = node.mimetype || 'unknown';
+                node.mtype = node.type || 'unknown';
                 node.url   = url_prefix_file + node.path;
                 node.icon  = 'cube';
+                node.title = node.name + ' (' + node.mtype + ')';
 
                 if (node.is_dir) {
                     node.mtype = 'directory';
                     node.url   = url_prefix_dir + node.path;
                     node.icon  = 'cubes';
+                    node.title = node.name;
                 } else if (node.is_binary) {
-                    node.url   = url_prefix_dl + node.path;
-                    node.icon  = 'cloud-download';
+                    node.url  = url_prefix_dl + node.path;
+                    node.icon = 'cloud-download';
                 }
 
                 nodes[node.path] = node;
 
                 output = tmpl.render('node', node);
-
-                $node = $(output);
+                $node  = $(output);
 
                 $node.appendTo($nodeList);
             });
@@ -153,7 +154,10 @@ require(
                 if (popStateCount === 0) {
                     window.history.pushState(node.path, null, $anchor.attr('href'));
                 }
+                
                 trpc.request('rpc.finder', 'find', { path: node.path });
+            } else if (node.is_binary) {
+                e.preventDefault();
             }
         }
 

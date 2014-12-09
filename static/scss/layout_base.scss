@@ -57,3 +57,28 @@ body, input, button {
         content: 'Connected';
     }
 }
+
+.dialog-backdrop {
+    @include flex-container-default();
+    @include flex-container-align-items(center);
+    @include flex-justify-content(center);
+    
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    
+    .dialog {
+        padding: 20px 30px;
+        background-color: #fff;
+        border: 1px solid #999;
+        min-width: 240px;
+    }
+    
+    &.active ~ * {
+        @include filter(blur(5px));
+    }
+}

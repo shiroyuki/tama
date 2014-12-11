@@ -6,13 +6,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #eee;
 }
 
 .main-controller {
     color: #666;
     width: 50px;
     padding: 10px;
+    padding-top: 50px;
 
     a {
         @include transition(all, 500ms);

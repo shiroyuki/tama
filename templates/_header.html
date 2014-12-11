@@ -1,3 +1,4 @@
+{#
 {%- block dev_help -%}
     <div class="dev-help">
         <b>Development Manual:</b>
@@ -12,3 +13,17 @@
         <a href="http://requirejs.org/docs/jquery.html">Require JS</a>
     </div>
 {%- endblock -%}
+#}
+
+<div class="app-header">
+    <div class="section alpha">
+        <div class="user">{{ c.icon('user', ['fw']) }} <a class="user-alias">developer</a></div>
+        {% block app_header_alpha %}{% endblock %}
+    </div>
+    <div class="section bravo">
+        {% block app_header_bravo %}{% endblock %}
+        <div class="sync-status">
+            {{ c.icon('sort', ['fw'], ['indicator']) }}
+        </div>
+    </div>
+</div>

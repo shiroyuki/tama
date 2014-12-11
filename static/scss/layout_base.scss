@@ -2,15 +2,95 @@
 @import 'element';
 @import 'font';
 @import 'mixins';
+@import 'dialog';
 
-body, input, button {
+body, input {
     @include font-sans-serif-set();
     margin: 0;
     padding: 0;
+    background-color: #eee;
+}
+
+button {
+    @include font-sans-serif-set();
+}
+
+script[type="text/x-handlebars-template"] {
+    display: none !important;
 }
 
 .app-container {
     @include flex-container-default();
+}
+
+.app-header {
+    @include flex-container-default();
+    @include flex-justify-content(space-between);
+
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    padding: 0 10px;
+    background-color: #666;
+    border-bottom: 1px solid #888;
+    color: #ccc;
+    overflow: hidden;
+
+    .section {
+        @include flex-container-default();
+
+        & > div {
+            padding: 5px;
+        }
+
+        &.alpha {
+            @include flex-container-align-items(flex-start);
+        }
+
+        &.bravo {
+            @include flex-container-align-items(flex-end);
+        }
+    }
+
+    .user {
+    }
+
+    .sync-status {
+        @include flex-container-default();
+
+        .indicator {
+            display: block;
+            color: #FF4444;
+        }
+
+        .desc {
+            display: none;
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .desc:before {
+            content: 'Offline';
+        }
+
+        &:hover .desc {
+            display: block;
+        }
+
+        &.socket-connected {
+            .indicator {
+                @include transition_with_delay(all, 250ms, 250ms);
+
+                display: block;
+                color: #99CC00;
+            }
+
+            .desc:before {
+                content: 'Online';
+            }
+        }
+    }
 }
 
 .dev-help {
@@ -38,47 +118,5 @@ body, input, button {
 
     &:hover {
         margin-left: 0;
-    }
-}
-
-.sync-status {
-    position: fixed;
-    top: 5px;
-    right: 5px;
-    padding: 5px;
-    background-color: #000;
-    color: #fff;
-
-    &:before {
-        content: 'Disconnected';
-    }
-
-    &.socket-connected:before {
-        content: 'Connected';
-    }
-}
-
-.dialog-backdrop {
-    @include flex-container-default();
-    @include flex-container-align-items(center);
-    @include flex-justify-content(center);
-    
-    position: fixed;
-    z-index: 100;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.2);
-    
-    .dialog {
-        padding: 20px 30px;
-        background-color: #fff;
-        border: 1px solid #999;
-        min-width: 240px;
-    }
-    
-    &.active ~ * {
-        @include filter(blur(5px));
     }
 }

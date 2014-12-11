@@ -1,0 +1,16 @@
+{% macro dialog_template(name, classes=[], options=[])-%}
+    <script data-name="{{ name }}" type="text/x-handlebars-template">
+        <div class="dialog {% for class in classes -%} {{ class }}{%- endfor %}" data-name="{{ name }}">
+            {% if not 'disabled-close-button' in options %}<button class="close">{{ icon('close', ['fw']) }}</button>{% endif %}
+            {{ caller() }}
+        </div>
+    </script>
+{%- endmacro %}
+
+{% macro icon(id, options=[], classes=[]) -%}
+    <span class="fa fa-{{ id }}{% for option in options %} fa-{{ option }}{% endfor %}{% for class in classes %} {{ class }}{% endfor %}"></span>
+{%- endmacro %}
+
+{% macro button(content, type='button', classes=[]) -%}
+    <button type="{{ type }}" class="{% for class in classes %} {{ class }}{% endfor %}"></button>
+{%- endmacro %}

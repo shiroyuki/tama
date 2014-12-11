@@ -19,45 +19,18 @@
 {% endblock %}
 
 {% block dialogs %}
-<div class="dialog-backdrop active">
-    <div class="dialog open-file">
-        ABC
-    </div>
-</div>
 {% endblock %}
 
 {% block content %}
-{% include '_menu.html' %}
-<article class="explorer-chrome">
-    <header>
-        {% if request_location %}<a href="{{ app.path('ui.tree', path = parent_path) }}">Back to <b>{{ parent_path or '<home>' | escape }}</b></a>{% endif %}
-        <h1><span class="fa fa-dot-circle-o"></span> <span class="current-location">{{ request_location or '<home>' | escape }}</span></h1>
-    </header>
-    <ul class="node-list">
-        {#
-        {%- for fs_node in fs_nodes -%}
-            {%- set mtype = fs_node.mimetype or 'unknown' -%}
-            {%- set url   = app.path('ui.tree' if fs_node.is_dir else 'ui.file.editor', path = fs_node.referred_path) -%}
-            {%- set icon  = 'cubes' if fs_node.is_dir else 'cube' -%}
-            {%- if fs_node.is_binary -%}
-                {%- set url  = app.path('api.file', path = fs_node.path) -%}
-                {%- set icon = 'cloud-download' -%}
-            {%- endif -%}
-            <li class="node"
-                data-name="{{ fs_node.name }}"
-                data-type="{{ mtype }}"
-                data-path="{{ fs_node.path }}">
-                <a href="{{ url }}"
-                   title="{{ fs_node.name }}{% if fs_node.is_file %} ({{ mtype }}){% endif %}">
-                    <span class="node-marker fa fa-circle-o" title="Pick me!"></span>
-                    <span class="node-icon fa fa-fw fa-{{ icon }}"></span>
-                    <span class="node-name">{{ fs_node.name }}</span>
-                </a>
-            </li>
-        {%- endfor -%}
-        #}
-    </ul>
-    <script data-name="node" type="text/x-handlebars-template">{%- raw -%}
+    {% include '_menu.html' %}
+    <article class="explorer-chrome">
+        <header>
+            {% if request_location %}<a href="{{ app.path('ui.tree', path = parent_path) }}">Back to <b>{{ parent_path or '<home>' | escape }}</b></a>{% endif %}
+            <h1>{{ c.icon('dot-circle-o') }} <span class="current-location">{{ request_location or '<home>' | escape }}</span></h1>
+        </header>
+        <ul class="node-list"></ul>
+    </article>
+    <script data-name="explorer-chrome/node" type="text/x-handlebars-template">{%- raw -%}
         <li class="node"
             data-name="{{ name }}"
             data-type="{{ mtype }}"
@@ -70,5 +43,4 @@
             </a>
         </li>
     {%- endraw -%}</script>
-</article>
 {% endblock %}

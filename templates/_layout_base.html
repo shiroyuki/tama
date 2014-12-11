@@ -1,3 +1,4 @@
+{% import '_common.html' as c -%}
 <!doctype html>
 <html>
 <head>
@@ -9,12 +10,11 @@
 {% block css %}{% endblock %}
 </head>
 <body>
-<div class="app-container">
-{#{% include '_header.html' %}#}
-{% block dialogs %}{% endblock %}
-{% block content %}{% endblock %}
-</div>
-<div class="sync-status"></div>
+    {% include '_dialog_base.html' %}
+    {% include '_header.html' %}
+    <div class="app-container">
+        {% block content %}{% endblock %}
+    </div>
 <script src="{{ static_path('requirejs') }}"></script>
 {%- include '_requirejs.html' -%}
 {% block js %}{% endblock %}

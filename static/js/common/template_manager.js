@@ -10,31 +10,44 @@ define(
 
         $.extend(TemplateManager.prototype, {
             render: function(name, contexts) {
+                return (this.get(name))(contexts);
+            },
+
+            get: function (name) {
                 this.loadOne(name);
 
                 if (this.repo[name] === undefined) {
                     throw 'js.template.NotFound: ' + node;
                 }
 
-                return this.repo[name](contexts);
+                return this.repo[name];
+            },
+
+            getSelector: function (name) {
+                if (name === undefined) {
+                    throw 'tama.common.DialogManager.UndefinedTemplateName';
+                }
+
+                return 'script[type="text/x-handlebars-template"][data-name="' + name + '"]';
             },
 
             loadOne: function (name) {
                 var source,
-                    selector = 'script[data-name="' + name + '"]';
+                    selector = this.getSelector(name)
+                ;
 
                 if (this.repo[name] !== undefined) {
                     return;
                 }
 
                 source = $(selector).html();
-                
+
                 if (source === undefined) {
                     console.warn('Cannot find source. (' + selector + ')');
                     return;
                 }
 
-                this.repo[name] = hb.compile(source);
+                this.repo[name] = hb.compile(source, {noEscape: true});
             },
 
             load: function (names) {

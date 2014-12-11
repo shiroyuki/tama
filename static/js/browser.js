@@ -2,23 +2,35 @@ require(
     [
         'jquery',
         'common/template_manager',
+        'common/dialog_manager',
         'common/mainctrl',
         'common/trpc'
     ],
-    function ($, Template, MainController, ToriSocket) {
-        /*var */features = {
+    function ($, TemplateManager, DialogManager, MainController, ToriSocket) {
+        var features = {
                 inEditMode: false
             },
-            nodes = {},
-            popStateCount = 0,
-            $syncStatus = $('.sync-status'),
-            $chrome = $('.explorer-chrome'),
+            nodes            = {},
+            popStateCount    = 0,
+            $syncStatus      = $('.sync-status'),
+            $chrome          = $('.explorer-chrome'),
             $currentLocation = $('.current-location'),
-            $nodeList = $chrome.find('.node-list'),
-            mctrl = new MainController('.main-controller'),
-            trpc  = new ToriSocket(rpcSocketUrl),
-            tmpl  = new Template()
+            $nodeList        = $chrome.find('.node-list'),
+            $appHeader       = $('.app-header'),
+            mctrl            = new MainController('.main-controller'),
+            trpc             = new ToriSocket(rpcSocketUrl),
+            templateManager  = new TemplateManager(),
+            dialogManager    = new DialogManager($('.dialog-backdrop'), templateManager)
         ;
+
+        function alert(message) {
+            dialogManager.use(
+                'dialog/base',
+                {
+                    content: message.replace(/\n/g, '<br/>')
+                }
+            );
+        }
 
         function disableDragging(e) {
             e.preventDefault();
@@ -64,7 +76,7 @@ require(
 
                 nodes[node.path] = node;
 
-                output = tmpl.render('node', node);
+                output = templateManager.render('explorer-chrome/node', node);
                 $node  = $(output);
 
                 $node.appendTo($nodeList);
@@ -150,11 +162,11 @@ require(
                 if (--popStateCount) {
                     popStateCount = 0;
                 }
-                
+
                 if (popStateCount === 0) {
                     window.history.pushState(node.path, null, $anchor.attr('href'));
                 }
-                
+
                 trpc.request('rpc.finder', 'find', { path: node.path });
             } else if (node.is_binary) {
                 e.preventDefault();
@@ -170,20 +182,48 @@ require(
         mctrl.on('manage-objects', onMCtrlToggleEditMode);
         mctrl.on('new-folder', onMCtrlTriggerNewFolder);
         mctrl.on('new-file', onMCtrlTriggerNewFilefunction);
+        mctrl.on('app-about', function (e) {
+            dialogManager.use('dialog/about');
+        });
+
+        dialogManager.on('dialog/about', 'click', '.open-source', function (e) {
+            var projects = [
+                'Python',
+                'Tornado Framework (Facebook)',
+                'Jinja2',
+                'Tori',
+                'Passerine',
+                'jQuery',
+                'Require.js',
+                'Font Awesome',
+                'Handlebars',
+                'Ace (Cloud 9)'
+            ];
+
+            dialogManager.use(
+                'dialog/base',
+                {
+                    content: '<h3>Projects</h3><ul><li>' + projects.join('</li><li>') + '</li></ul>'
+                }
+            );
+        });
 
         $nodeList.on('click',             '.node a', onNodeClickUpdate);
         $nodeList.on('mousedown mouseup', '.node a', disableDragging);
 
+        // Initialization
         trpc.connect();
         mctrl.enable();
 
         // Handle browser's navigation
         window.onpopstate = function(event) {
             var path = String(document.location.pathname).replace(/^\/tree\//, '');
-            
+
             popStateCount++;
-            
+
             trpc.request('rpc.finder', 'find', { path: path });
         };
+
+        dialogManager.use('dialog/about');
     }
 );

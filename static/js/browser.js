@@ -1,7 +1,7 @@
 require(
     [
         'jquery',
-        'common/template',
+        'common/template_manager',
         'common/mainctrl',
         'common/trpc'
     ],

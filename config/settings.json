@@ -8,7 +8,7 @@
         "\\.DS_Store$"
     ],
     "asset_manager": {
-        "enabled": false,
+        "enabled": true,
         "remote": {
             "font_awesome": "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css",
             "jquery-old":   "//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min",

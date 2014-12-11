@@ -200,6 +200,8 @@ require(
                 'Ace (Cloud 9)'
             ];
 
+            e.preventDefault();
+
             dialogManager.use(
                 'dialog/base',
                 {

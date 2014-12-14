@@ -3,16 +3,26 @@
 {% block head_title %}{{ request_location or '<home>' }}{% endblock %}
 
 {% block content %}
-    <div class="editor-chrome">
-        <div class="controls">
-            <div class="path"><a href="{{ app.path('ui.tree', path = parent_path) }}">
-                <span class="icon fa fa-chevron-left"></span>
-                <span class="label">{{ parent_path or '<home>' | escape }}</span>
-            </a></div>
-            <div class="name" title="{{ request_location }}"><span class="fa fa-file-o"></span> {{ file_name or '<new>' | escape }}</div>
+    <article class="editor-chrome">
+        <header class="location-bar">
+            <ul class="current-location"></ul>
+            <div class="root-location">
+                <a href="{{ app.path('ui.tree.default') }}">{{ c.icon('home') }}</a>
+            </div>
+        </header>
+        <div class="metadata">
+            <div class="name" title="{{ request_location }}">{{ c.icon('file-o', classes=['icon']) }}<span class="name">{{ file_name or '<new>' | escape }}</span></div>
         </div>
         <div id="editor"></div>
-    </div>
+    </article>
+
+    {%- call c.hb_template('editor/step') -%}
+        {%- raw -%}
+            <li class="step" data-name="{{ name }}" data-path="{{ path }}">
+                <a href="{{ url }}" title="{{ name }}">{{ name }}</a>
+            </li>
+        {%- endraw -%}
+    {%- endcall -%}
 {% endblock %}
 
 {% block css %}
@@ -21,9 +31,10 @@
 
 {% block js %}
     <script>
-        url_prefix_dir   = '{{ app.path('ui.tree', path = '')}}';
-        rpcSocketUrl = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
-        filename = '{{ request_location }}';
+        url_prefix_dir = '{{ app.path('ui.tree', path = '')}}';
+        parentPath     = '{{ parent_path }}';
+        rpcSocketUrl   = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
+        filename       = '{{ request_location }}';
     </script>
     <script src="{{ static_path('ace') }}"></script>
     <script src="{{ static_path('app.editor.js') }}"></script>

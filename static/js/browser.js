@@ -2,8 +2,6 @@ require(
     [
         'jquery',
         'common/misc',
-        'common/template_manager',
-        'common/dialog_manager',
         'common/state_controller',
         'common/mainctrl',
         'component/core',
@@ -11,18 +9,21 @@ require(
         'component/location_bar',
         'component/node_grid',
     ],
-    function ($, misc, TemplateManager, DialogManager, StateController, MainController, Core, FileBrowser, LocationBar, NodeGrid) {
+    function ($, misc, StateController, MainController, Core, FileBrowser, LocationBar, NodeGrid) {
         var features = {
                 inEditMode: false
             },
             $chrome          = null,
             sctrl            = new StateController(),
             mctrl            = new MainController('.main-controller'),
-            templateManager  = new TemplateManager(),
-            dialogManager    = new DialogManager($('.dialog-backdrop'), templateManager),
+            templateManager  = misc.templateManager,
+            dialogManager    = misc.dialogManager,
             core             = new Core(rpcSocketUrl),
             trpc             = core.rpc,
-            locationBar      = new LocationBar($('.explorer-chrome .current-location'), templateManager),
+            locationBar      = new LocationBar($('.explorer-chrome .current-location'), templateManager, {
+                enablePJAX:       true,
+                stepTemplateName: 'explorer/step'
+            }),
             fsNodeGrid       = new NodeGrid($('.explorer-chrome .node-list'), templateManager, {
                 keyExtractor: function (node) {
                     return node.path;
@@ -52,15 +53,6 @@ require(
             }),
             browser          = new FileBrowser($('.explorer-chrome'), trpc, locationBar, fsNodeGrid)
         ;
-
-        window.alert = function (message) {
-            dialogManager.use(
-                'dialog/base',
-                {
-                    content: message.replace(/\n/g, '<br/>')
-                }
-            );
-        }
 
         function onMCtrlToggleEditMode() {
             var inEditMode     = !browser.getFeature('inEditMode'),

@@ -12,7 +12,8 @@ define(
 
             this.context = context;
             this.options = {
-                enablePJAX: false
+                enablePJAX:       false,
+                stepTemplateName: null
             };
 
             if (options !== undefined) {
@@ -40,7 +41,7 @@ define(
                             path: step_path,
                             url:  url_prefix_dir + step_path
                         },
-                        $output = $(this.templateManager.render('explorer/step', contexts));
+                        $output = $(this.templateManager.render(this.options.stepTemplateName, contexts));
                     ;
 
                     if (!this.options.enablePJAX) {

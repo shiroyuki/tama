@@ -4,26 +4,32 @@ var socket;
 require(
     [
         'common/trpc',
-        'common/editor'
+        'common/editor',
+        'common/misc',
+        'component/core',
+        'component/location_bar'
     ],
-    function (RpcInterface, Editor) {
-        var socket = new RpcInterface(rpcSocketUrl),
-            editor = new Editor('editor', socket)
+    function (RpcInterface, Editor, misc, Core, LocationBar) {
+        var core        = new Core(rpcSocketUrl),
+            editor      = new Editor('editor', core.rpc),
+            locationBar = new LocationBar($('.location-bar .current-location'), misc.templateManager, {
+                enablePJAX:       true,
+                stepTemplateName: 'editor/step'
+            })
         ;
 
-        socket.on('open', function () {
-            console.log('connected');
+        core.on('connected', function () {
             editor.open(filename);
             editor.enableKeyBinding();
         });
 
-        socket.on('close', function () {
-            console.log('disconnected');
-        });
+        core.rpc.on('rpc.finder.get', $.proxy(editor.onFinderGet, editor));
+        core.rpc.on('rpc.finder.put', $.proxy(editor.onFinderPut, editor));
 
-        socket.on('rpc.finder.get', $.proxy(editor.onFinderGet, editor));
-        socket.on('rpc.finder.put', $.proxy(editor.onFinderPut, editor));
+        core.rpc.connect();
 
-        socket.connect();
+        locationBar.set(parentPath);
+        
+        $('.app-container').css('top', $('.app-header').outerHeight());
     }
 );

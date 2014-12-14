@@ -10,7 +10,7 @@ define(
             this.EventBaseClass();
 
             this.rpcSocketUrl = rpcSocketUrl;
-            this.rpc = new RpcSocket(this.rpcSocketUrl);
+            this.rpc          = new RpcSocket(this.rpcSocketUrl);
 
             this.$header     = $('.app-header');
             this.$syncStatus = $('.sync-status');
@@ -43,6 +43,7 @@ define(
 
             onDisconnected: function (e) {
                 this.$syncStatus.removeClass('socket-connected');
+                this.dispatch('disconnected');
             }
         });
 

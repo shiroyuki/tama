@@ -1,6 +1,26 @@
 define(
-    function () {
+    [
+        'common/template_manager',
+        'common/dialog_manager'
+    ],
+    function (TemplateManager, DialogManager) {
+        var templateManager = new TemplateManager(),
+            dialogManager   = new DialogManager($('.dialog-backdrop'), templateManager)
+        ;
+
+        window.alert = function (message) {
+            dialogManager.use(
+                'dialog/base',
+                {
+                    content: message.replace(/\n/g, '<br/>')
+                }
+            );
+        };
+
         return {
+            templateManager: templateManager,
+            dialogManager:   dialogManager,
+            
             isStringEmpty: function (sample) {
                 return sample === undefined || sample === null || sample.length === 0;
             },

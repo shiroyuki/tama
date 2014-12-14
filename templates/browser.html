@@ -52,12 +52,13 @@
 {% block content %}
     {% include '_menu.html' %}
     <article class="explorer-chrome">
-        <header>
+        <header class="location-bar">
             <ul class="current-location"></ul>
             <div class="root-location">
                 <a data-pjax="{{ app.path('ui.tree.default') }}" href="{{ app.path('ui.tree.default') }}">{{ c.icon('home') }}</a>
             </div>
         </header>
+
         <ul class="node-list"></ul>
     </article>
 

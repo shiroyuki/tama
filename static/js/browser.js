@@ -15,11 +15,7 @@ require(
         var features = {
                 inEditMode: false
             },
-            $syncStatus      = $('.sync-status'),
-            $chrome          = $('.explorer-chrome'),
-            $currentLocation = $('.current-location'),
-            $nodeList        = $chrome.find('.node-list'),
-            $appHeader       = $('.app-header'),
+            $chrome          = null,
             sctrl            = new StateController(),
             mctrl            = new MainController('.main-controller'),
             templateManager  = new TemplateManager(),
@@ -54,7 +50,7 @@ require(
                 },
                 nodeTemplateName: 'explorer/node'
             }),
-            browser          = new FileBrowser(trpc, locationBar, fsNodeGrid)
+            browser          = new FileBrowser($('.explorer-chrome'), trpc, locationBar, fsNodeGrid)
         ;
 
         window.alert = function (message) {
@@ -67,7 +63,17 @@ require(
         }
 
         function onMCtrlToggleEditMode() {
-            browser.setFeature('inEditMode', !browser.getFeature('inEditMode'));
+            var inEditMode     = !browser.getFeature('inEditMode'),
+                selectionCount = browser.fsNodeGrid.context.children('.selected').length
+            ;
+
+            browser.setFeature('inEditMode', inEditMode);
+
+            if (!inEditMode && selectionCount > 0) {
+                dialogManager.use('dialog/batch-operation', {
+                    selectionCount: selectionCount + ' node' + (selectionCount === 1 ? '' : 's')
+                });
+            }
         }
 
         function onMCtrlTriggerNewFolder() {
@@ -102,6 +108,10 @@ require(
             browser.createFile(currentLocation, name);
         }
 
+        function onMCtrlOpenAbout(e) {
+            dialogManager.use('dialog/about');
+        }
+
         function onNextState(e) {
             var nextPath = browser.getNodePath(e.path);
 
@@ -116,18 +126,6 @@ require(
 
         function onCoreConnected() {
             browser.open(currentLocation);
-        }
-
-        function onSwitchToEditMode(enabled) {
-            mctrl.setTriggerActive('manage-objects', enabled);
-
-            if (enabled) {
-                $chrome.addClass('edit-mode');
-
-                return;
-            }
-
-            $chrome.removeClass('edit-mode');
         }
 
         function onNodeDrive(e) {
@@ -146,20 +144,23 @@ require(
             dialogManager.use('dialog/open-node', contexts);
         }
 
-        browser.on('node.drive', onNodeDrive);
-        browser.on('node.open.unknown', onNodeOpenUnknown);
+        function onSwitchToEditMode(enabled) {
+            mctrl.setTriggerActive('manage-objects', enabled);
+        }
 
         mctrl.on('manage-objects', onMCtrlToggleEditMode);
-        mctrl.on('new-folder', onMCtrlTriggerNewFolder);
-        mctrl.on('new-file', onMCtrlTriggerNewFilefunction);
-        mctrl.on('app-about', function (e) {
-            dialogManager.use('dialog/about');
-        });
+        mctrl.on('new-folder',     onMCtrlTriggerNewFolder);
+        mctrl.on('new-file',       onMCtrlTriggerNewFilefunction);
+        mctrl.on('app-about',      onMCtrlOpenAbout);
 
         sctrl.on('push', onNextState);
         sctrl.on('pop', onPreviousState);
 
         core.on('connected', onCoreConnected);
+
+        browser.on('feature.inEditMode.change', onSwitchToEditMode);
+        browser.on('node.drive',                onNodeDrive);
+        browser.on('node.open.unknown',         onNodeOpenUnknown);
 
         // Initialization
         trpc.connect();

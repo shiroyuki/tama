@@ -6,9 +6,10 @@ require(
         'common/trpc',
         'common/editor'
     ],
-    function (ToriRpcClient, Editor) {
-        socket = new ToriRpcClient(rpcSocketUrl);
-        editor = new Editor('editor', socket);
+    function (RpcInterface, Editor) {
+        var socket = new RpcInterface(rpcSocketUrl),
+            editor = new Editor('editor', socket)
+        ;
 
         socket.on('open', function () {
             console.log('connected');

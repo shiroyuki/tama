@@ -5,11 +5,12 @@ define(
         'common/event_base_class'
     ],
     function ($, misc, EventBaseClass) {
-        function FileBrowser(rpc, locationBar, fsNodeGrid) {
+        function FileBrowser(context, rpc, locationBar, fsNodeGrid) {
             this.EventBaseClass();
 
             this.rpc = rpc;
 
+            this.context     = context;
             this.locationBar = locationBar;
             this.fsNodeGrid  = fsNodeGrid;
 
@@ -22,6 +23,8 @@ define(
             this.rpc.on('rpc.finder.create_file',   $.proxy(this.onSocketRpcCreateFile, this));
 
             this.fsNodeGrid.on('node.click', $.proxy(this.onNodeClickUpdate, this));
+
+            this.on('feature.inEditMode.change', $.proxy(this.onSwitchToEditMode, this));
         };
 
         $.extend(FileBrowser.prototype, EventBaseClass.prototype, {
@@ -46,7 +49,7 @@ define(
 
                 this.features[k] = v;
 
-                this.on('feature.' + k + '.change', v);
+                this.dispatch('feature.' + k + '.change', v);
             },
 
             getNodePath: function (requestPath) {
@@ -139,6 +142,16 @@ define(
                 }
 
                 this.dispatch('node.open.editor', eventData);
+            },
+
+            onSwitchToEditMode: function (enabled) {
+                if (enabled) {
+                    this.context.addClass('edit-mode');
+
+                    return;
+                }
+
+                this.context.removeClass('edit-mode');
             }
         });
 

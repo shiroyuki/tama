@@ -47,7 +47,7 @@ define(
                 $renderedDialog.attr('data-id', ++this.lastId);
                 $renderedDialog.removeClass('inactive');
                 $renderedDialog.on('click', this.disableEventBubbling);
-                $renderedDialog.on('click', 'button.close', $.proxy(this.onClickCancelLastDialog, this));
+                $renderedDialog.on('click', '.close', $.proxy(this.onClickCancelLastDialog, this));
 
                 if (this.nameToEventMap[name] !== undefined) {
                     var i;

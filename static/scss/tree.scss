@@ -11,29 +11,11 @@
 
 .dialog[data-name="dialog/open-node"] {
     width: 440px;
+}
 
-    .actions {
-        @include flex-container-default();
-        @include flex-justify-content(space-around);
-
-        a {
-            display: block;
-            background-color: #333;
-            color: #fff;
-            padding: 15px 20px;
-            text-decoration: none;
-
-            .icon {
-                margin-right: 10px;
-            }
-
-            .text {}
-
-            &:hover {
-                background-color: #0099CC;
-                text-decoration: none;
-            }
-        }
+.dialog[data-name="dialog/batch-operation"] {
+    button.close {
+        display: none;
     }
 }
 

@@ -21,17 +21,29 @@
     {%- call c.dialog_template('dialog/open-node') -%}
         {%- raw -%}
             <h3>Opening "{{ node.name }}" ...</h3>
-            
+
             <p>
                 Unfortunately, we could not automatically determine what to do
                 with this type of file. So, it is up to you.
             </p>
-            
+
             <h4>What would you like to do with this file?</h4>
-            
+
             <div class="actions">
                 <a href="{{ url_editor }}">{%- endraw -%}{{ c.icon('pencil', ['fw'], ['icon']) }}{%- raw -%} <span class="text">Use the editor</span></a>
                 <a href="{{ url_dl }}">{%- endraw -%}{{ c.icon('cloud-download', ['fw'], ['icon']) }}{%- raw -%} <span class="text">Download</span></a>
+            </div>
+        {%- endraw -%}
+    {%- endcall -%}
+
+    {%- call c.dialog_template('dialog/batch-operation') -%}
+        {%- raw -%}
+            <h3>You have selected {{ selectionCount }}. So, what would you like to do next?</h3>
+
+            <div class="actions">
+                <a data-action="delete">{%- endraw -%}{{ c.icon('trash', ['fw'], ['icon']) }}{%- raw -%} <span class="text">Delete</span></a>
+                <a data-action="move">{%- endraw -%}{{ c.icon('truck', ['fw'], ['icon']) }}{%- raw -%} <span class="text">Move</span></a>
+                <a class="close"><span class="text">Cancel</span></a>
             </div>
         {%- endraw -%}
     {%- endcall -%}

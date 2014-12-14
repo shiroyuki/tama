@@ -18,6 +18,7 @@ define(
                 this._connected = false;
                 this.url    = url;
                 this.client = null;
+                this.debug  = true;
             },
 
             isConnected: function () {
@@ -59,20 +60,32 @@ define(
 
             onMessage: function (event) {
                 var data = this.extractDataFromEvent(event);
+
+                this.inspectActivity('message', data);
                 this.dispatch('message', data);
             },
 
             onOpen: function (event) {
-                var i;
-
                 this._connected = true;
+
+                this.inspectActivity('open', event);
                 this.dispatch('open', event);
             },
 
             onClose: function (event) {
                 this.client     = null;
                 this._connected = false;
+
+                this.inspectActivity('close', event);
                 this.dispatch('close', event);
+            },
+
+            inspectActivity: function (type, data) {
+                if (!this.debug) {
+                    return;
+                }
+
+                console.log(new Date(), type, data);
             }
         });
 

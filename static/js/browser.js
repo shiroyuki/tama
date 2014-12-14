@@ -7,9 +7,11 @@ require(
         'common/state_controller',
         'common/mainctrl',
         'component/core',
-        'component/file_browser'
+        'component/file_browser',
+        'component/location_bar',
+        'component/node_grid',
     ],
-    function ($, misc, TemplateManager, DialogManager, StateController, MainController, Core, FileBrowser) {
+    function ($, misc, TemplateManager, DialogManager, StateController, MainController, Core, FileBrowser, LocationBar, NodeGrid) {
         var features = {
                 inEditMode: false
             },
@@ -26,7 +28,12 @@ require(
             dialogManager    = new DialogManager($('.dialog-backdrop'), templateManager),
             core             = new Core(rpcSocketUrl),
             trpc             = core.rpc,
-            browser          = new FileBrowser(trpc)
+            browser          = new FileBrowser(trpc),
+            locationBar      = new LocationBar($('.current-location'), templateManager),
+            fsNodeGrid       = new NodeGrid($('.explorer-chrome .node-list'), templateManager, {
+                keyExtractor:     function (node) { return node.path; },
+                nodeTemplateName: 'explorer/node'
+            })
         ;
 
         window.alert = function (message) {
@@ -40,56 +47,11 @@ require(
 
         function onSocketRpcFind(response) {
             var output,
-                path  = response.result.path,
-                steps = path.split(/\//g),
-                i
+                path  = response.result.path
             ;
 
-            $nodeList.empty();
-            $currentLocation.empty();
-
-            if (path.length > 0) {
-                for (i in steps) {
-                    var step_name = steps[i],
-                        step_path = steps.slice(0, i + 1).join('/')
-                        contexts = {
-                            name: step_name,
-                            path: step_path,
-                            url:  url_prefix_dir + step_path
-                        },
-                        output = templateManager.render('explorer/step', contexts);
-                    ;
-
-                    $currentLocation.append(output);
-                }
-            }
-
-            $.each(response.result.nodes, function () {
-                var node = this,
-                    $node;
-
-                node.mtype = node.type || 'unknown';
-                node.url   = url_prefix_file + node.path;
-                node.icon  = 'cube';
-                node.title = node.name + ' (' + node.mtype + ')';
-
-                if (node.is_dir) {
-                    node.mtype = 'directory';
-                    node.url   = url_prefix_dir + node.path;
-                    node.icon  = 'cubes';
-                    node.title = node.name;
-                } else if (node.is_binary) {
-                    node.url  = url_prefix_dl + node.path;
-                    node.icon = 'cloud-download';
-                }
-
-                nodes[node.path] = node;
-
-                output = templateManager.render('explorer/node', node);
-                $node  = $(output);
-
-                $node.appendTo($nodeList);
-            });
+            locationBar.set(path);
+            fsNodeGrid.update(response.result.nodes);
         }
 
         function onSocketRpcCreateFolder(response) {

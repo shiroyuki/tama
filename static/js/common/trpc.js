@@ -24,6 +24,7 @@ define(
                     type = this.getRequestType(data.service, data.method);
                 }
 
+                this.inspectActivity(type, data);
                 this.dispatch(type, data);
             },
 

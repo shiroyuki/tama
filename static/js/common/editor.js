@@ -85,8 +85,6 @@ define(
             },
 
             load: function (content) {
-                console.log('Load content:', content);
-
                 this.setContent(content);
                 this.setMode();
                 this.editor.gotoLine(0);
@@ -150,7 +148,7 @@ define(
                 })
             }
         });
-        
+
         return Editor;
     }
 );

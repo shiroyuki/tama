@@ -11,7 +11,6 @@
         url_prefix_dir   = '{{ app.path('ui.tree', path = '')}}';
         url_prefix_file  = '{{ app.path('ui.file.editor', path = '')}}';
         url_prefix_dl    = '{{ app.path('api.file', path = '')}}';
-        request_location = '{{ request_location }}';
         currentLocation  = '{{ request_location }}';
         rpcSocketUrl     = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
     </script>
@@ -19,6 +18,19 @@
 {% endblock %}
 
 {% block dialogs %}
+    {%- call c.dialog_template('dialog/open-node') -%}
+        {%- raw -%}
+            <h3>What would you like to do with this file?</h3>
+            <p>
+                Unfortunately, we could not automatically determine what to do
+                with this type of file. So, it is up to you.
+            </p>
+            <div class="actions">
+                <a href="{{ url_editor }}">{%- endraw -%}{{ c.icon('pencil') }}{%- raw -%}</a>
+                <a href="{{ url_dl }}">{%- endraw -%}{{ c.icon('cloud-download') }}{%- raw -%}</a>
+            </div>
+        {%- endraw -%}
+    {%- endcall -%}
 {% endblock %}
 
 {% block content %}

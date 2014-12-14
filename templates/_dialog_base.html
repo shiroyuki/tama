@@ -16,7 +16,11 @@
         <p>
             This (demo) service is operating in read-only mode and for demonstration purposes.
         </p>
-        <p><a href="#used-opensource-projects" class="open-source">List of used open-source projects</a></p>
+        <p>{%- endraw -%}
+            This project uses the libraries, software and/or media from
+            {{ ', '.join(app.settings.opensource_projects) }}
+            under respective open-source licenses.
+        {%- raw -%}</p>
     {%- endraw -%}
 {% endcall %}
 

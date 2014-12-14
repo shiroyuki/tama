@@ -1,10 +1,18 @@
-{% macro dialog_template(name, classes=[], options=[])-%}
-    <script data-name="{{ name }}" type="text/x-handlebars-template">
+{% set mimetype_handlebar = 'text/x-handlebars-template' %}
+
+{% macro dialog_template(name, classes=[], options=[]) -%}
+    <script data-name="{{ name }}" type="{{ mimetype_handlebar }}">
         <div class="dialog {% for class in classes -%} {{ class }}{%- endfor %}" data-name="{{ name }}">
-            {% if not 'disabled-close-button' in options %}<button class="close">{{ icon('close', ['fw']) }}</button>{% endif %}
-            {{ caller() }}
+            <div class="dialog-inner">
+                {% if not 'disabled-close-button' in options %}<button class="close">{{ icon('close', ['fw']) }}</button>{% endif %}
+                {{ caller() }}
+            </div>
         </div>
     </script>
+{%- endmacro %}
+
+{% macro hb_template(name, classes=[], options=[]) -%}
+    <script data-name="{{ name }}" type="{{ mimetype_handlebar }}">{{ caller() }}</script>
 {%- endmacro %}
 
 {% macro icon(id, options=[], classes=[]) -%}

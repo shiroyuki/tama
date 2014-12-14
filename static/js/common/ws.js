@@ -1,25 +1,31 @@
 define(
     'common/ws',
-    ['jquery'],
-    function ($) {
+    ['jquery', 'common/event_base_class'],
+    function ($, EventBaseClass) {
         function WebSocketClient(url) {
             this.WebSocketClient(url);
         };
 
-        $.extend(WebSocketClient.prototype, {
-            WebSocketClient: function (url, reconnectOnDemand) {
+        $.extend(WebSocketClient.prototype, EventBaseClass.prototype, {
+            WebSocketClient: function (url) {
+                this.EventBaseClass({
+                    open:  [],
+                    close: [],
+                    message:    [],
+                    connecting: []
+                });
+
                 this._connected = false;
                 this.url    = url;
                 this.client = null;
-                this.handlerMap = {
-                    open:    [],
-                    message: [],
-                    close:   []
-                };
             },
 
-            connected: function () {
+            isConnected: function () {
                 return this._connected;
+            },
+
+            isConnecting: function () {
+                return !this._connected && this.client !== null;
             },
 
             reset: function () {
@@ -27,6 +33,8 @@ define(
             },
 
             init: function () {
+                this.dispatch('connecting');
+
                 this.client = new WebSocket(this.url);
                 this.client.addEventListener('open', $.proxy(this.onOpen, this));
                 this.client.addEventListener('close', $.proxy(this.onClose, this));
@@ -41,28 +49,8 @@ define(
                 this.init();
             },
 
-            on: function (eventType, eventHandler) {
-                if (this.handlerMap[eventType] === undefined) {
-                    this.handlerMap[eventType] = [];
-                }
-
-                this.handlerMap[eventType].push(eventHandler);
-            },
-
             send: function (message, resendIfFail) {
                 this.client.send(JSON.stringify(message));
-            },
-
-            handleEvent: function (type, data) {
-                var handlers,
-                    i
-                ;
-
-                handlers = this.handlerMap[type];
-
-                for (i in handlers) {
-                    handlers[i](data);
-                }
             },
 
             extractDataFromEvent: function (event) {
@@ -71,19 +59,20 @@ define(
 
             onMessage: function (event) {
                 var data = this.extractDataFromEvent(event);
-                this.handleEvent('message', data);
+                this.dispatch('message', data);
             },
 
             onOpen: function (event) {
                 var i;
 
                 this._connected = true;
-                this.handleEvent('open', event);
+                this.dispatch('open', event);
             },
 
             onClose: function (event) {
+                this.client     = null;
                 this._connected = false;
-                this.handleEvent('close', event);
+                this.dispatch('close', event);
             }
         });
 

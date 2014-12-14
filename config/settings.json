@@ -1,5 +1,5 @@
 {
-    "read_only": true,
+    "read_only": false,
     "ignored_list": [
         "\\.py(o|c)$",
         "__pycache__$",
@@ -8,7 +8,7 @@
         "\\.DS_Store$"
     ],
     "asset_manager": {
-        "enabled": true,
+        "enabled": false,
         "remote": {
             "font_awesome": "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css",
             "jquery-old":   "//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min",
@@ -84,6 +84,18 @@
             ]
         }
     },
+    "opensource_projects": [
+        "Python",
+        "Tornado Framework",
+        "Jinja2",
+        "Tori",
+        "Passerine",
+        "jQuery",
+        "Require.js",
+        "Font Awesome",
+        "Handlebars",
+        "Ace"
+    ],
     "session": {
         "class": "tori.session.repository.file.File",
         "params": {

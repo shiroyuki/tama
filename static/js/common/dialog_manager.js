@@ -5,6 +5,7 @@ define(
             this.dropZone        = context;
             this.templateManager = templateManager;
             this.nameToEventMap  = {};
+            this.lastId          = 0;
 
             this.dropZone.on('click', $.proxy(this.onClickCancelLastDialog, this));
         }
@@ -43,13 +44,14 @@ define(
                 $dialogs.addClass('inactive');
 
                 $renderedDialog = $dialogs.last();
+                $renderedDialog.attr('data-id', ++this.lastId);
                 $renderedDialog.removeClass('inactive');
                 $renderedDialog.on('click', this.disableEventBubbling);
                 $renderedDialog.on('click', 'button.close', $.proxy(this.onClickCancelLastDialog, this));
 
                 if (this.nameToEventMap[name] !== undefined) {
                     var i;
-                    
+
                     events = this.nameToEventMap[name];
 
                     for (i in events) {
@@ -69,12 +71,22 @@ define(
             },
 
             cancelLastDialog: function () {
-                // Remove the last one.
-                this.getDialogs().last().remove();
+                this.cancelDialog();
+            },
+
+            cancelDialog: function (id) {
+                var $target = (id === undefined) ? this.getDialogs().last() : this.getDialogs().filter('[data-id=' + id + ']');
 
                 // Re-enable the second last one.
-                this.getDialogs().last().removeClass('inactive');
+                $target.prev().removeClass('inactive');
 
+                // Remove the last one.
+                $target.remove();
+
+                this.cancelBackdrop();
+            },
+
+            cancelBackdrop: function () {
                 if (this.getDialogs().length === 0) {
                     this.dropZone.removeClass('active');
                 }

@@ -6,23 +6,26 @@
     display: none;
 
     position: fixed;
-    z-index: 100;
+    z-index: 1000;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.7);
 
     .dialog {
-        @include transition(all, 250ms);
+        @include transition(all, 500ms);
 
-        padding: 20px 25px;
-        background-color: #fff;
-        border: 1px solid #999;
-        min-width: 240px;
-        max-width: 480px;
+        color: #999;
+        background-color: #000;
+        border-top: 3px solid #0099CC;
         max-height: 80%;
+        overflow: hidden;
         box-shadow: rgba(0, 0, 0, 0.5) 0 5px 20px;
+
+        h1, h2, h3, h4, h5 {
+            color: #fff;
+        }
 
         button.close {
             float: right;
@@ -41,14 +44,28 @@
             }
         }
 
+        a {
+            color: #0099CC;
+
+            &:hover {
+                color: #0099CC;
+            }
+        }
+
+        .dialog-inner {
+            @include transition(all, 250ms);
+
+            padding: 20px 25px;
+            overflow: auto;
+            min-width: 240px;
+            max-width: 480px;
+        }
+
         &.inactive {
+            zoom: 0;
             opacity: 0;
-            min-width: 0;
-            padding: 0;
             border-width: 0;
             width: 0;
-            overflow: hidden;
-            max-height: 0;
 
             button.close {
                 display: none;

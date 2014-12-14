@@ -1,5 +1,4 @@
 define(
-    'common/trpc',
     ['jquery', 'common/ws'],
     function ($, WebSocketClient) {
         function ToriRpcClient(url) {
@@ -25,9 +24,7 @@ define(
                     type = this.getRequestType(data.service, data.method);
                 }
 
-                console.log('On Message:', type, ':', data);
-
-                this.handleEvent(type, data);
+                this.dispatch(type, data);
             },
 
             getRequestType: function (service, method) {

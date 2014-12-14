@@ -25,22 +25,35 @@
     {% include '_menu.html' %}
     <article class="explorer-chrome">
         <header>
-            {% if request_location %}<a href="{{ app.path('ui.tree', path = parent_path) }}">Back to <b>{{ parent_path or '<home>' | escape }}</b></a>{% endif %}
-            <h1>{{ c.icon('dot-circle-o') }} <span class="current-location">{{ request_location or '<home>' | escape }}</span></h1>
+            <ul class="current-location"></ul>
+            <div class="root-location">
+                <a data-pjax="{{ app.path('ui.tree.default') }}" href="{{ app.path('ui.tree.default') }}">{{ c.icon('home') }}</a>
+            </div>
         </header>
         <ul class="node-list"></ul>
     </article>
-    <script data-name="explorer-chrome/node" type="text/x-handlebars-template">{%- raw -%}
-        <li class="node"
-            data-name="{{ name }}"
-            data-type="{{ mtype }}"
-            data-path="{{ path }}">
-            <a href="{{ url }}"
-               title="{{ title }}">
-                <span class="node-marker fa fa-circle-o" title="Pick me!"></span>
-                <span class="node-icon fa fa-fw fa-{{ icon }}"></span>
-                <span class="node-name">{{ name }}</span>
-            </a>
-        </li>
-    {%- endraw -%}</script>
+
+    {%- call c.hb_template('explorer/step') -%}
+        {%- raw -%}
+            <li class="step" data-name="{{ name }}" data-path="{{ path }}">
+                <a data-pjax="{{ url }}" href="{{ url }}" title="{{ name }}">{{ name }}</a>
+            </li>
+        {%- endraw -%}
+    {%- endcall -%}
+
+    {%- call c.hb_template('explorer/node') -%}
+        {%- raw -%}
+            <li class="node"
+                data-name="{{ name }}"
+                data-type="{{ mtype }}"
+                data-path="{{ path }}">
+                <a href="{{ url }}"
+                   title="{{ title }}">
+                    <span class="node-marker fa fa-circle-o" title="Pick me!"></span>
+                    <span class="node-icon fa fa-fw fa-{{ icon }}"></span>
+                    <span class="node-name">{{ name }}</span>
+                </a>
+            </li>
+        {%- endraw -%}
+    {%- endcall -%}
 {% endblock %}

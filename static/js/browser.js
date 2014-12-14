@@ -1,29 +1,35 @@
 require(
     [
         'jquery',
+        'common/misc',
         'common/template_manager',
         'common/dialog_manager',
+        'common/state_controller',
         'common/mainctrl',
-        'common/trpc'
+        'component/core',
+        'component/file_browser'
     ],
-    function ($, TemplateManager, DialogManager, MainController, ToriSocket) {
+    function ($, misc, TemplateManager, DialogManager, StateController, MainController, Core, FileBrowser) {
         var features = {
                 inEditMode: false
             },
             nodes            = {},
-            popStateCount    = 0,
+            popStateCount    = 0, // deprecated
             $syncStatus      = $('.sync-status'),
             $chrome          = $('.explorer-chrome'),
             $currentLocation = $('.current-location'),
             $nodeList        = $chrome.find('.node-list'),
             $appHeader       = $('.app-header'),
+            sctrl            = new StateController(),
             mctrl            = new MainController('.main-controller'),
-            trpc             = new ToriSocket(rpcSocketUrl),
             templateManager  = new TemplateManager(),
-            dialogManager    = new DialogManager($('.dialog-backdrop'), templateManager)
+            dialogManager    = new DialogManager($('.dialog-backdrop'), templateManager),
+            core             = new Core(rpcSocketUrl),
+            trpc             = core.rpc,
+            browser          = new FileBrowser(trpc)
         ;
 
-        function alert(message) {
+        window.alert = function (message) {
             dialogManager.use(
                 'dialog/base',
                 {
@@ -32,28 +38,31 @@ require(
             );
         }
 
-        function disableDragging(e) {
-            e.preventDefault();
-        }
-
-        function onConnected(e) {
-            console.log('Connected');
-            $syncStatus.addClass('socket-connected');
-            trpc.request('rpc.finder', 'find', { path: currentLocation });
-        }
-
-        function onDisconnected(e) {
-            console.log('Disconnected');
-            $syncStatus.removeClass('socket-connected');
-        }
-
         function onSocketRpcFind(response) {
             var output,
-                path = response.result.path;
+                path  = response.result.path,
+                steps = path.split(/\//g),
+                i
+            ;
 
             $nodeList.empty();
+            $currentLocation.empty();
 
-            $currentLocation.text(path.length === 0 ? '<home>' : path);
+            if (path.length > 0) {
+                for (i in steps) {
+                    var step_name = steps[i],
+                        step_path = steps.slice(0, i + 1).join('/')
+                        contexts = {
+                            name: step_name,
+                            path: step_path,
+                            url:  url_prefix_dir + step_path
+                        },
+                        output = templateManager.render('explorer/step', contexts);
+                    ;
+
+                    $currentLocation.append(output);
+                }
+            }
 
             $.each(response.result.nodes, function () {
                 var node = this,
@@ -76,7 +85,7 @@ require(
 
                 nodes[node.path] = node;
 
-                output = templateManager.render('explorer-chrome/node', node);
+                output = templateManager.render('explorer/node', node);
                 $node  = $(output);
 
                 $node.appendTo($nodeList);
@@ -90,7 +99,8 @@ require(
                 return;
             }
 
-            history.go(0);
+            // Soft-reload
+            browser.open(browser.getNodePath());
         }
 
         function onSocketRpcCreateFile(response) {
@@ -100,7 +110,8 @@ require(
                 return;
             }
 
-            history.go(0);
+            // Soft-reload
+            browser.open(browser.getNodePath());
         }
 
         function onMCtrlToggleEditMode() {
@@ -122,7 +133,7 @@ require(
                 return;
             }
 
-            trpc.request('rpc.finder', 'create_folder', {path: currentLocation, name: name});
+            browser.createFile(currentLocation, name);
         }
 
         function onMCtrlTriggerNewFilefunction() {
@@ -138,7 +149,7 @@ require(
                 return;
             }
 
-            trpc.request('rpc.finder', 'create_file', {path: currentLocation, name: name});
+            browser.createFile(currentLocation, name);
         }
 
         function onNodeClickUpdate(e) {
@@ -159,25 +170,31 @@ require(
             if (node.is_dir) {
                 e.preventDefault();
 
-                if (--popStateCount) {
-                    popStateCount = 0;
-                }
-
-                if (popStateCount === 0) {
-                    window.history.pushState(node.path, null, $anchor.attr('href'));
-                }
-
-                trpc.request('rpc.finder', 'find', { path: node.path });
+                sctrl.push(node.path, $anchor.attr('href'));
             } else if (node.is_binary) {
                 e.preventDefault();
             }
         }
 
+        function onNextState(e) {
+            var nextPath = browser.getNodePath(e.path);
+
+            browser.open(nextPath);
+        }
+
+        function onPreviousState(e) {
+            var previousPath = browser.getNodePath();
+
+            browser.open(previousPath);
+        }
+
+        function onCoreConnected() {
+            browser.open(currentLocation);
+        }
+
         trpc.on('rpc.finder.find', onSocketRpcFind);
         trpc.on('rpc.finder.create_folder', onSocketRpcCreateFolder);
         trpc.on('rpc.finder.create_file', onSocketRpcCreateFile);
-        trpc.on('open', onConnected);
-        trpc.on('close', onDisconnected);
 
         mctrl.on('manage-objects', onMCtrlToggleEditMode);
         mctrl.on('new-folder', onMCtrlTriggerNewFolder);
@@ -186,46 +203,17 @@ require(
             dialogManager.use('dialog/about');
         });
 
-        dialogManager.on('dialog/about', 'click', '.open-source', function (e) {
-            var projects = [
-                'Python',
-                'Tornado Framework (Facebook)',
-                'Jinja2',
-                'Tori',
-                'Passerine',
-                'jQuery',
-                'Require.js',
-                'Font Awesome',
-                'Handlebars',
-                'Ace (Cloud 9)'
-            ];
+        sctrl.on('push', onNextState);
+        sctrl.on('pop', onPreviousState);
 
-            e.preventDefault();
-
-            dialogManager.use(
-                'dialog/base',
-                {
-                    content: '<h3>Projects</h3><ul><li>' + projects.join('</li><li>') + '</li></ul>'
-                }
-            );
-        });
+        core.on('connected', onCoreConnected);
 
         $nodeList.on('click',             '.node a', onNodeClickUpdate);
-        $nodeList.on('mousedown mouseup', '.node a', disableDragging);
+        $nodeList.on('mousedown mouseup', '.node a', misc.eventHandlerDisableDragging);
 
         // Initialization
         trpc.connect();
         mctrl.enable();
-
-        // Handle browser's navigation
-        window.onpopstate = function(event) {
-            var path = String(document.location.pathname).replace(/^\/tree\//, '');
-
-            popStateCount++;
-
-            trpc.request('rpc.finder', 'find', { path: path });
-        };
-
-        dialogManager.use('dialog/about');
+        sctrl.enable();
     }
 );

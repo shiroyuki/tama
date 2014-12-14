@@ -20,14 +20,18 @@
 {% block dialogs %}
     {%- call c.dialog_template('dialog/open-node') -%}
         {%- raw -%}
-            <h3>What would you like to do with this file?</h3>
+            <h3>Opening "{{ node.name }}" ...</h3>
+            
             <p>
                 Unfortunately, we could not automatically determine what to do
                 with this type of file. So, it is up to you.
             </p>
+            
+            <h4>What would you like to do with this file?</h4>
+            
             <div class="actions">
-                <a href="{{ url_editor }}">{%- endraw -%}{{ c.icon('pencil') }}{%- raw -%}</a>
-                <a href="{{ url_dl }}">{%- endraw -%}{{ c.icon('cloud-download') }}{%- raw -%}</a>
+                <a href="{{ url_editor }}">{%- endraw -%}{{ c.icon('pencil', ['fw'], ['icon']) }}{%- raw -%} <span class="text">Use the editor</span></a>
+                <a href="{{ url_dl }}">{%- endraw -%}{{ c.icon('cloud-download', ['fw'], ['icon']) }}{%- raw -%} <span class="text">Download</span></a>
             </div>
         {%- endraw -%}
     {%- endcall -%}
@@ -59,8 +63,7 @@
                 data-name="{{ name }}"
                 data-type="{{ mtype }}"
                 data-path="{{ path }}">
-                <a href="{{ url }}"
-                   title="{{ title }}">
+                <a href="{{ url }}" title="{{ title }}">
                     <span class="node-marker fa fa-circle-o" title="Pick me!"></span>
                     <span class="node-icon fa fa-fw fa-{{ icon }}"></span>
                     <span class="node-name">{{ name }}</span>

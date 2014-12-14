@@ -17,7 +17,7 @@ define(
                 this.loadOne(name);
 
                 if (this.repo[name] === undefined) {
-                    throw 'js.template.NotFound: ' + node;
+                    throw 'js.template.NotFound: ' + name;
                 }
 
                 return this.repo[name];

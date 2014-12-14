@@ -15,8 +15,6 @@ require(
         var features = {
                 inEditMode: false
             },
-            nodes            = {},
-            popStateCount    = 0, // deprecated
             $syncStatus      = $('.sync-status'),
             $chrome          = $('.explorer-chrome'),
             $currentLocation = $('.current-location'),
@@ -28,12 +26,35 @@ require(
             dialogManager    = new DialogManager($('.dialog-backdrop'), templateManager),
             core             = new Core(rpcSocketUrl),
             trpc             = core.rpc,
-            browser          = new FileBrowser(trpc),
-            locationBar      = new LocationBar($('.current-location'), templateManager),
+            locationBar      = new LocationBar($('.explorer-chrome .current-location'), templateManager),
             fsNodeGrid       = new NodeGrid($('.explorer-chrome .node-list'), templateManager, {
-                keyExtractor:     function (node) { return node.path; },
+                keyExtractor: function (node) {
+                    return node.path;
+                },
+                nodeTemplateContexts: function (node) {
+                    var contexts = {};
+
+                    $.extend(contexts, node);
+
+                    contexts.mtype = contexts.type || 'unknown';
+                    contexts.url   = url_prefix_file + contexts.path;
+                    contexts.icon  = 'cube';
+                    contexts.title = contexts.name + ' (' + contexts.mtype + ')';
+
+                    if (contexts.is_dir) {
+                        contexts.mtype = 'directory';
+                        contexts.url   = url_prefix_dir + contexts.path;
+                        contexts.icon  = 'cubes';
+                        contexts.title = contexts.name;
+                    } else if (contexts.is_binary) {
+                        contexts.url  = url_prefix_dl + contexts.path;
+                    }
+
+                    return contexts;
+                },
                 nodeTemplateName: 'explorer/node'
-            })
+            }),
+            browser          = new FileBrowser(trpc, locationBar, fsNodeGrid)
         ;
 
         window.alert = function (message) {
@@ -45,41 +66,8 @@ require(
             );
         }
 
-        function onSocketRpcFind(response) {
-            var output,
-                path  = response.result.path
-            ;
-
-            locationBar.set(path);
-            fsNodeGrid.update(response.result.nodes);
-        }
-
-        function onSocketRpcCreateFolder(response) {
-            if (!response.result.is_success) {
-                alert('Failed to create a folder. (' + response.result.error_code + ')');
-
-                return;
-            }
-
-            // Soft-reload
-            browser.open(browser.getNodePath());
-        }
-
-        function onSocketRpcCreateFile(response) {
-            if (!response.result.is_success) {
-                alert('Failed to create a file. (' + response.result.error_code + ')');
-
-                return;
-            }
-
-            // Soft-reload
-            browser.open(browser.getNodePath());
-        }
-
         function onMCtrlToggleEditMode() {
-            features.inEditMode = !features.inEditMode;
-            $chrome.toggleClass('edit-mode');
-            mctrl.toggleTriggerActive('manage-objects');
+            browser.setFeature('inEditMode', !browser.getFeature('inEditMode'));
         }
 
         function onMCtrlTriggerNewFolder() {
@@ -114,30 +102,6 @@ require(
             browser.createFile(currentLocation, name);
         }
 
-        function onNodeClickUpdate(e) {
-            var $anchor = $(this),
-                $node = $anchor.closest('.node'),
-                path = $node.attr('data-path'),
-                type = $node.attr('data-type'),
-                node = nodes[path];
-
-            if (features.inEditMode) {
-                e.preventDefault();
-
-                $node.toggleClass('selected');
-
-                return;
-            }
-
-            if (node.is_dir) {
-                e.preventDefault();
-
-                sctrl.push(node.path, $anchor.attr('href'));
-            } else if (node.is_binary) {
-                e.preventDefault();
-            }
-        }
-
         function onNextState(e) {
             var nextPath = browser.getNodePath(e.path);
 
@@ -154,9 +118,36 @@ require(
             browser.open(currentLocation);
         }
 
-        trpc.on('rpc.finder.find', onSocketRpcFind);
-        trpc.on('rpc.finder.create_folder', onSocketRpcCreateFolder);
-        trpc.on('rpc.finder.create_file', onSocketRpcCreateFile);
+        function onSwitchToEditMode(enabled) {
+            mctrl.setTriggerActive('manage-objects', enabled);
+
+            if (enabled) {
+                $chrome.addClass('edit-mode');
+
+                return;
+            }
+
+            $chrome.removeClass('edit-mode');
+        }
+
+        function onNodeDrive(e) {
+            sctrl.push(e.node.path, e.anchor.attr('href'));
+        }
+
+        function onNodeOpenUnknown(e) {
+            var path = e.node.path,
+                contexts = {
+                    node:       e.node,
+                    url_dl:     url_prefix_dl + path,
+                    url_editor: url_prefix_file + path
+                }
+            ;
+
+            dialogManager.use('dialog/open-node', contexts);
+        }
+
+        browser.on('node.drive', onNodeDrive);
+        browser.on('node.open.unknown', onNodeOpenUnknown);
 
         mctrl.on('manage-objects', onMCtrlToggleEditMode);
         mctrl.on('new-folder', onMCtrlTriggerNewFolder);
@@ -169,9 +160,6 @@ require(
         sctrl.on('pop', onPreviousState);
 
         core.on('connected', onCoreConnected);
-
-        $nodeList.on('click',             '.node a', onNodeClickUpdate);
-        $nodeList.on('mousedown mouseup', '.node a', misc.eventHandlerDisableDragging);
 
         // Initialization
         trpc.connect();

@@ -9,6 +9,7 @@ define(
             EventBaseClass: function (defaultHandlerMap) {
                 defaultHandlerMap = defaultHandlerMap || {};
                 this.handlerMap   = defaultHandlerMap;
+                this.debugMode    = true;
             },
 
             on: function (eventType, eventHandler) {
@@ -26,6 +27,8 @@ define(
                     i
                 ;
 
+                this.inspectActivity('EBC/' + type, data);
+
                 handlers = this.handlerMap[type];
 
                 for (i in handlers) {
@@ -34,6 +37,14 @@ define(
 
                 return this;
             },
+
+            inspectActivity: function (type, data) {
+                if (!this.debugMode) {
+                    return;
+                }
+
+                console.log(new Date(), type, data);
+            }
         });
 
         return EventBaseClass;

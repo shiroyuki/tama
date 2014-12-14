@@ -1,28 +1,38 @@
 define(
     [
         'jquery',
+        'common/misc',
         'common/event_base_class'
     ],
-    function ($, EventBaseClass) {
+    function ($, misc, EventBaseClass) {
         function NodeGrid(context, templateManager, options) {
             this.EventBaseClass();
-
-            this.templateManager = templateManager;
-
-            this.nodes   = {}
-            this.context = context;
-            this.options = {
-                nodeTemplateName: null,
-                keyExtractor: null,
-                enablePJAX: false
-            };
-
-            if (options !== undefined) {
-                $.extend(this.options, options);
-            }
+            this.NodeGrid(context, templateManager, options);
         }
 
         $.extend(NodeGrid.prototype, EventBaseClass.prototype, {
+            NodeGrid: function (context, templateManager, options) {
+                this.templateManager = templateManager;
+
+                this.nodes   = {}
+                this.context = context;
+                this.options = {
+                    nodeTemplateName:     null,
+                    keyExtractor:         null,
+                    nodeTemplateContexts: null,
+                    enablePJAX:           false
+                };
+
+                if (options !== undefined) {
+                    $.extend(this.options, options);
+                }
+
+                this.context.on('click', misc.eventHandlerNoPropagation);
+
+                this.context.on('click',             '.node a', $.proxy(this.onNodeClick, this));
+                this.context.on('mousedown mouseup', '.node a', misc.eventHandlerDisableDragging);
+            },
+
             update: function (nodes) {
                 this.context.empty();
 
@@ -36,26 +46,15 @@ define(
             },
 
             renderNode: function (node) {
-                var output;
+                var contexts = this.options.nodeTemplateContexts(node);
 
-                node.mtype = node.type || 'unknown';
-                node.url   = url_prefix_file + node.path;
-                node.icon  = 'cube';
-                node.title = node.name + ' (' + node.mtype + ')';
+                this.nodes[this.options.keyExtractor(node)] = contexts;
 
-                if (node.is_dir) {
-                    node.mtype = 'directory';
-                    node.url   = url_prefix_dir + node.path;
-                    node.icon  = 'cubes';
-                    node.title = node.name;
-                } else if (node.is_binary) {
-                    node.url  = url_prefix_dl + node.path;
-                    node.icon = 'cloud-download';
-                }
+                return this.templateManager.render(this.options.nodeTemplateName, contexts);
+            },
 
-                this.nodes[this.options.keyExtractor(node)] = node;
-
-                return this.templateManager.render(this.options.nodeTemplateName, node);
+            onNodeClick: function (e) {
+                this.dispatch('node.click', e);
             }
         });
 

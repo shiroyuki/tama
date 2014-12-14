@@ -11,6 +11,7 @@
 </head>
 <body>
     {% include '_dialog_base.html' %}
+    {%- block dialogs -%}{%- endblock -%}
     {% include '_header.html' %}
     <div class="app-container">
         {% block content %}{% endblock %}

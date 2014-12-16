@@ -30,8 +30,8 @@
             <h4>What would you like to do with this file?</h4>
 
             <div class="actions">
-                <a href="{{ url_editor }}">{%- endraw -%}{{ c.icon('pencil', ['fw'], ['icon']) }}{%- raw -%} <span class="text">Use the editor</span></a>
-                <a href="{{ url_dl }}">{%- endraw -%}{{ c.icon('cloud-download', ['fw'], ['icon']) }}{%- raw -%} <span class="text">Download</span></a>
+                <a href="{{ url_editor }}">{%- endraw -%}{{ c.icon('pencil', classes=['icon']) }}{%- raw -%} <span class="text">Use the editor</span></a>
+                <a href="{{ url_dl }}">{%- endraw -%}{{ c.icon('cloud-download', classes=['icon']) }}{%- raw -%} <span class="text">Download</span></a>
             </div>
         {%- endraw -%}
     {%- endcall -%}

@@ -105,9 +105,7 @@ require(
         }
 
         function onNextState(e) {
-            var nextPath = browser.getNodePath(e.path);
-
-            browser.open(nextPath);
+            browser.open(e.state);
         }
 
         function onPreviousState(e) {
@@ -120,8 +118,13 @@ require(
             browser.open(currentLocation);
         }
 
+        function onCoreDisconnected() {
+            alert('Disconnected');
+        }
+
         function onNodeDrive(e) {
-            sctrl.push(e.node.path, e.anchor.attr('href'));
+            console.log('onNodeDrive', e, e.anchor.attr('href'));
+            sctrl.push(e.anchor.attr('href'), e.node.path);
         }
 
         function onNodeOpenUnknown(e) {
@@ -149,6 +152,7 @@ require(
         sctrl.on('pop', onPreviousState);
 
         core.on('connected', onCoreConnected);
+        core.on('disconnected', onCoreDisconnected);
 
         browser.on('feature.inEditMode.change', onSwitchToEditMode);
         browser.on('node.drive',                onNodeDrive);

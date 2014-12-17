@@ -4,16 +4,18 @@
 
 {% block content %}
     <article class="editor-chrome">
+        <div class="metadata">
+            <div class="name" title="{{ request_location }}">{{ c.icon('file-o', classes=['icon']) }}<span class="name">{{ file_name or '<new>' | escape }}</span></div>
+        </div>
+
+        <div id="editor"></div>
+
         <header class="location-bar">
             <ul class="current-location"></ul>
             <div class="root-location">
                 <a href="{{ app.path('ui.tree.default') }}">{{ c.icon('home') }}</a>
             </div>
         </header>
-        <div class="metadata">
-            <div class="name" title="{{ request_location }}">{{ c.icon('file-o', classes=['icon']) }}<span class="name">{{ file_name or '<new>' | escape }}</span></div>
-        </div>
-        <div id="editor"></div>
     </article>
 
     {%- call c.hb_template('editor/step') -%}

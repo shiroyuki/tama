@@ -49,7 +49,8 @@ define(
                 this.init();
             },
 
-            send: function (message, resendIfFail) {
+            send: function (message) {
+                this.inspectActivity('send', message)
                 this.client.send(JSON.stringify(message));
             },
 

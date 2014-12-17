@@ -1,6 +1,8 @@
 @import 'css3';
 @import 'component_location_bar';
 
+$base-color: #33342d; // #23251e;
+
 .app-header {
     border-bottom: none;
 }
@@ -20,7 +22,7 @@
     @include flex-direction(column);
 
     .location-bar {
-        background-color: #333;
+        background-color: $base-color;
 
         [class*="-location"] {
             border: none;
@@ -41,7 +43,7 @@
     }
 
     .metadata {
-        background-color: #333;
+        background-color: $base-color;
         padding: 10px 20px;
         color: #fff;
 

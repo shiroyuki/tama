@@ -127,6 +127,14 @@ define(
                     return;
                 }
 
+                if (node.is_link) {
+                    e.preventDefault();
+
+                    this.dispatch('node.drive.blocked', eventData);
+
+                    return;
+                }
+
                 if (node.is_dir) {
                     e.preventDefault();
 

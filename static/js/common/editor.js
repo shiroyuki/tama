@@ -1,54 +1,66 @@
 define(
     'common/editor',
-    ['jquery'],
-    function ($) {
-        Editor = function (id, socket) {
-            this.id     = id;
-            this.socket = socket;
-            this.editor = null;
-            this.theme  = 'monokai';
-            this.mode   = 'text';
-            this.node   = null;
+    [
+        'jquery',
+        'ace/ace',
+        'ace/ext-modelist', // just loading
+        'common/event_base_class'
+    ],
+    function ($, ace, aceExtModeList, EventBaseClass) {
+        var modelist = ace.require('ace/ext/modelist');
+
+        function Editor(id, socket) {
+            this.EventBaseClass();
+
+            this.id       = id;
+            this.socket   = socket;
+            this.editor   = null;
+            this.theme    = this.themes[this.defaultTheme];
+            this.mode     = null;
+            this.node     = null;
             this.filename = null;
 
             this.activate();
         };
 
-        $.extend(Editor.prototype, {
-            modeToExtensionMap: {
-                python:     /\.py$/i,
-                sh:         /\.sh$/i,
-                django:     /\.(html)$/i,
-                php:        /\.(php|phtml)$/i,
-                perl:       /\.pl$/i,
-                markdown:   /\.md$/i,
-                javascript: /\.js$/i,
-                json:       /\.json$/i,
-                makefile:   /Makefile/,
-                html:       /\.(html?|xhtml)$/i,
-                xml:        /\.xml$/i,
-                css:        /\.css$/i,
-                scss:       /\.scss$/i,
-                sql:        /\.sql$/i,
-                csv:        /\.csv$/i,
-                c_cpp:      /\.(c|cpp|m|h)?$/i,
-                yaml:       /\.(ya?ml)?$/i
+        $.extend(Editor.prototype, EventBaseClass.prototype, {
+            defaultTheme: 'Default',
+            themes: {
+                'Default':         'monokai',
+                'Clouds':          'clouds',
+                'Cobalt':          'cobalt',
+                'Mono Industrial': 'mono_industrial',
+                'Monokai':         'monokai',
+                'Solarized Dark':  'solarized_dark',
+                'Solarized Light': 'solarized_light',
+                'Terminal':        'terminal',
+                'Twilight':        'twilight'
             },
+            modes: null,
 
             activate: function () {
                 this.editor = ace.edit(this.id);
                 this.editor.setTheme('ace/theme/' + this.theme);
 
+                if (!this.modes) {
+                    this.modes = modelist.modes;
+                }
+
                 this.socket.on('rpc.finder.get', $.proxy(this.onFinderGet, this));
+                this.socket.on('rpc.finder.put', $.proxy(this.onFinderPut, this));
             },
 
             setMode: function (mode) {
+                var aceMode = modelist.getModeForPath(filename);
+
                 this.mode = mode
-                    || this.getModeByExtension(filename)
+                    || aceMode.name
                     || this.getModeByContent(this.editor.getValue())
                 ;
 
                 this.editor.getSession().setMode('ace/mode/' + this.mode);
+
+                this.dispatch('mode.change', { mode: this.mode });
             },
 
             setContent: function (content) {
@@ -82,6 +94,13 @@ define(
                 };
 
                 $.ajax(request_option);
+            },
+
+            save: function () {
+                this.socket.request('rpc.finder', 'put', {
+                    path:    this.node.path,
+                    content: this.editor.getValue()
+                });
             },
 
             load: function (content) {
@@ -133,20 +152,25 @@ define(
                 if (!result.is_success) {
                     console.error(result.error_code);
 
-                    alert('Failed to save.');
+                    this.dispatch('save.failed', result);
 
                     return;
                 }
 
-                alert('Successfully saved.');
+                this.dispatch('save.ok', result);
             },
 
             onShortCutSave: function (editor) {
-                this.socket.request('rpc.finder', 'put', {
-                    path:    this.node.path,
-                    content: this.editor.getValue()
-                })
-            }
+                this.save();
+            },
+
+            onClickSave: function (e) {
+                e.preventDefault();
+
+                this.dispatch('save.in_progress', this.node);
+
+                this.save();
+            },
         });
 
         return Editor;

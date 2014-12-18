@@ -65,6 +65,9 @@ class Finder(object):
 
         fs_nodes = []
 
+        if not os.path.exists(actual_iterating_path):
+            raise NotFoundError('Failed to iterating on {} ({})'.format(path, actual_iterating_path))
+
         for fs_node_name in os.listdir(actual_iterating_path):
             next_path   = os.path.join(path, fs_node_name)
             actual_path = self._resolve_path(next_path)

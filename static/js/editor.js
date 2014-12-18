@@ -1,35 +1,116 @@
-var editor;
-var socket;
+dependencies = [
+    'common/misc',
+    'common/trpc',
+    'common/editor',
+    'common/misc',
+    'component/core',
+    'component/location_bar'
+];
 
-require(
-    [
-        'common/trpc',
-        'common/editor',
-        'common/misc',
-        'component/core',
-        'component/location_bar'
-    ],
-    function (RpcInterface, Editor, misc, Core, LocationBar) {
-        var core        = new Core(rpcSocketUrl),
-            editor      = new Editor('editor', core.rpc),
-            locationBar = new LocationBar($('.location-bar .current-location'), misc.templateManager, {
-                enablePJAX:       true,
-                stepTemplateName: 'editor/step'
-            })
-        ;
+function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
+    var isLoaded    = false,
+        core        = new Core(rpcSocketUrl),
+        editor      = new Editor('editor', core.rpc),
+        locationBar = new LocationBar($('.location-bar .current-location'), misc.templateManager, {
+            enablePJAX:       true,
+            stepTemplateName: 'editor/step'
+        }),
+        dialogManager = misc.dialogManager,
+        $metadataMenu = $('.metadata .menu'),
+        $metadataFile = $('.metadata .file')
+    ;
 
-        core.on('connected', function () {
-            editor.open(filename);
-            editor.enableKeyBinding();
-        });
+    function onCoreConnected() {
+        if (isLoaded) {
+            alert('Reconnected.');
+        }
 
-        core.rpc.on('rpc.finder.get', $.proxy(editor.onFinderGet, editor));
-        core.rpc.on('rpc.finder.put', $.proxy(editor.onFinderPut, editor));
+        editor.open(filename); // global
+        editor.enableKeyBinding();
 
-        core.rpc.connect();
-
-        locationBar.set(parentPath);
-        
-        $('.app-container').css('top', $('.app-header').outerHeight());
+        isLoaded = true;
     }
-);
+
+    function onMoreOptionClick(e) {
+        e.preventDefault();
+
+        dialogManager.useVPrompt(
+            'Options',
+            [
+                {
+                    id:    'save',
+                    label: 'Save the changes',
+                    action: $.proxy(editor.onClickSave, editor)
+                },
+                {
+                    id:    'delete',
+                    label: 'Delete this file'
+                },
+                {
+                    id:    'revert',
+                    label: 'Revert the changes'
+                },
+                {
+                    id:    'mode-switch',
+                    label: 'Change the syntax highlighter',
+                    action: onEditorModeSwitchPrompt
+                }
+            ]
+        );
+    }
+
+    function onEditorSaveInProgress(node) {
+        alert('Saving...');
+    }
+
+    function onEditorSaveOk() {
+        dialogManager.cancelLastDialog();
+        alert('Saved');
+    }
+
+    function onEditorSaveFailed(result) {
+        dialogManager.cancelLastDialog();
+        alert('Failed to save (' + result.error_code + ')');
+    }
+
+    function onEditorModeChange(event) {
+        $metadataFile.children('.mode').html(event.mode);
+    }
+
+    function onEditorModeSwitchPrompt() {
+        var $dialog = dialogManager.use('dialog/mode-selection', { modes: editor.modes });
+
+        $dialog.find('[data-value="' + editor.mode + '"]').addClass('used');
+    }
+
+    function onEditNewModeSelected(e) {
+        var mode = $(this).attr('data-value');
+
+        dialogManager.cancelLastDialog();
+        editor.setMode(mode);
+    }
+
+    core.on('connected', onCoreConnected);
+
+    editor.on('mode.change', onEditorModeChange);
+    editor.on('save.in_progress', onEditorSaveInProgress);
+    editor.on('save.ok', onEditorSaveOk);
+    editor.on('save.failed', onEditorSaveFailed);
+
+    dialogManager.on('dialog/mode-selection', 'click', 'a[data-option="mode.change"]', onEditNewModeSelected);
+
+    $metadataFile.on('click', '.mode', onEditorModeSwitchPrompt);
+    $metadataMenu.on('click', '.options', onMoreOptionClick);
+
+    core.rpc.connect();
+
+    locationBar.set(parentPath);
+
+    $('.app-container').css('top', $('.app-header').outerHeight());
+}
+
+try {
+    require(dependencies, main);
+} catch (e) {
+    alert('Failed to initialize the editor. (Reason: ' + e + ')');
+}

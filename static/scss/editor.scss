@@ -1,29 +1,33 @@
 @import 'css3';
 @import 'component_location_bar';
 
+$base-color: #222; // #33342d; // #23251e;
+
 .app-header {
     border-bottom: none;
 }
 
 .app-container {
     @include flex-container-default();
+    @include flex-item(1 1 auto);
+    @include flex-direction(column);
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-}
-
-.editor-chrome {
-    @include flex-container-default();
-    @include flex-item(1 1 auto);
-    @include flex-direction(column);
 
     .location-bar {
-        background-color: #333;
+        background-color: $base-color;
 
         [class*="-location"] {
             border: none;
+        }
+
+        .root-location a {
+            background-color: #000;
+            padding-left: 17px;
+            margin-left: -10px;
         }
 
         .current-location li {
@@ -41,19 +45,118 @@
     }
 
     .metadata {
-        background-color: #333;
+        @include flex-container-default();
+        @include flex-justify-content(space-between);
+
+        background-color: $base-color;
         padding: 10px 20px;
         color: #fff;
 
-        .icon {
-            padding-right: 10px;
+        .file {
+            .icon {
+                padding-right: 10px;
+            }
+
+            .mode {
+                display: inline-block;
+                color: #333;
+                background-color: #000;
+                padding: 3px 5px;
+                margin: -3px 5px;
+                border-radius: 3px;
+                font-weight: 400;
+                cursor: pointer;
+
+                &:after {
+                    content: " →";
+                }
+
+                &:hover {
+                    background-color: #0099CC;
+                    color: #fff;
+                }
+            }
         }
 
+        .menu {
+            @include flex-container-default();
+
+            margin-right:  -10px;
+            margin-top:    -5px;
+            margin-bottom: -5px;
+
+            a {
+                cursor: pointer;
+                padding: 5px;
+                margin: 0;
+                background-color: #000;
+                color: #ccc;
+
+                &:hover {
+                    background-color: #fff;
+                    color: #000;
+                }
+            }
+
+            a:first-child {
+                border-top-left-radius: 5px;
+                border-bottom-left-radius: 5px;
+            }
+
+            a:last-child {
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+        }
     }
 
     #editor {
         @include flex-item-align(stretch);
         @include flex-item(1 1 auto);
         @include flex-wrap(wrap);
+    }
+}
+
+.dialog-backdrop {
+    &.active {
+        background-color: rgba(255, 255, 255, 0.3);
+
+        & ~ div {
+            &.app-container > * {
+                @include filter(blur(0px) !important);
+            }
+
+            &.app-container > div > * {
+                @include filter(blur(3px));
+            }
+        }
+    }
+}
+
+.dialog[data-name="dialog/mode-selection"] {
+    max-width: 90%;
+
+    .dialog-inner {
+        max-width: none;
+
+        .options a {
+            @include flex-order(3);
+
+            min-width: 120px;
+
+            &.used {
+                @include flex-order(1);
+
+                background-color: #669900;
+
+                &:hover {
+                    background-color: #99CC00;
+                }
+            }
+
+            &.close {
+                @include flex-order(2);
+            }
+        }
     }
 }

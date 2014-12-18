@@ -20,6 +20,8 @@ define(
 
             this.rpc.on('open',  $.proxy(this.onConnected, this));
             this.rpc.on('close', $.proxy(this.onDisconnected, this));
+
+            misc.dialogManager.on('dialog/reconnection', 'click', '.reconnect', $.proxy(this.onAlertReconnectButtonClickReconnect, this));
         }
 
         $.extend(Core.prototype, EventBaseClass.prototype, {
@@ -36,12 +38,27 @@ define(
                 this.rpc.connect();
             },
 
+            onAlertReconnectButtonClickReconnect: function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                misc.dialogManager.cancelLastDialog();
+
+                if (this.$syncStatus.hasClass('socket-connected')) {
+                    return;
+                }
+
+                this.rpc.connect();
+            },
+
             onConnected: function (e) {
                 this.$syncStatus.addClass('socket-connected');
                 this.dispatch('connected');
             },
 
             onDisconnected: function (e) {
+                misc.dialogManager.use('dialog/reconnection');
+
                 this.$syncStatus.removeClass('socket-connected');
                 this.dispatch('disconnected');
             }

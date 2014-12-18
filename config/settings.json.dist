@@ -8,18 +8,17 @@
         "\\.DS_Store$"
     ],
     "asset_manager": {
-        "enabled": false,
+        "enabled": true,
         "remote": {
             "font_awesome": "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css",
             "jquery-old":   "//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min",
             "jquery":       "//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min",
-            "ace":          "//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js",
             "handlebars":   "//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min"
         },
         "local": {
             "font_awesome": "vendors/font-awesome-4.2.0/css/font-awesome.min.css",
             "jquery":       "vendors/jquery",
-            "ace":          "vendors/ace/src-noconflict/ace.js",
+            "ace":          "vendors/ace",
             "handlebars":   "vendors/handlebars-v2.0.0",
             "requirejs":    "vendors/require.js",
             "app.browser.js":  "js/browser.js",

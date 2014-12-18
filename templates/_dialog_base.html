@@ -5,6 +5,45 @@
     {%- endraw -%}
 {% endcall %}
 
+{% call c.dialog_template('dialog/reconnection', ['alert', 'offline'], ['disabled-close-button']) %}
+    <p>The server appears to be offline.</p>
+
+    <div class="actions">
+        <a class="reconnect">Reconnect</a>
+        <a class="close">Stay offline</a>
+    </div>
+{% endcall %}
+
+{% call c.dialog_template('dialog/h-prompt', ['prompt', 'horizontal'], ['disabled-close-button']) %}
+    {%- raw -%}
+        {{#if message}}
+            <p>{{ message }}</p>
+        {{/if}}
+        <div class="options">
+            {{#each options}}
+                <a data-option="{{ id }}" class="{{ classes }}">{{ label }}</a>
+            {{/each}}
+
+            <a class="close">Cancel</a>
+        </div>
+    {%- endraw -%}
+{% endcall %}
+
+{% call c.dialog_template('dialog/v-prompt', ['prompt', 'vertical'], ['disabled-close-button']) %}
+    {%- raw -%}
+        {{#if message}}
+            <p>{{ message }}</p>
+        {{/if}}
+        <div class="options">
+            {{#each options}}
+                <a data-option="{{ id }}" class="{{ classes }}">{{ label }}</a>
+            {{/each}}
+
+            <a class="close">Cancel</a>
+        </div>
+    {%- endraw -%}
+{% endcall %}
+
 {% call c.dialog_template('dialog/about') %}
     {%- raw -%}
         <h3>Project Tama v0.1-dev</h3>

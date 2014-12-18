@@ -66,6 +66,44 @@ define(
                 return $renderedDialog;
             },
 
+            useAlert: function (message) {
+                this.use(
+                    'dialog/base',
+                    {
+                        content: message.replace(/\n/g, '<br/>')
+                    }
+                );
+            },
+
+            useHPrompt: function (message, options) {
+                this.useXPrompt('h', message, options);
+            },
+
+            useVPrompt: function (message, options) {
+                this.useXPrompt('v', message, options);
+            },
+
+            useXPrompt: function (type, message, options) {
+                var optionIndex,
+                    $dialog = this.use(
+                        'dialog/' + type + '-prompt',
+                        {
+                            message: message,
+                            options: options
+                        }
+                    )
+                ;
+
+                for (optionIndex in options) {
+                    var option   = options[optionIndex],
+                        selector = '.options [data-option="' + option.id + '"]',
+                        $anchor  = $dialog.find(selector)
+                    ;
+
+                    $anchor.on('click', option.action);
+                }
+            },
+
             getDialogs: function () {
                 return this.dropZone.children('div');
             },

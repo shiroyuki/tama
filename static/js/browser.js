@@ -13,46 +13,59 @@ require(
         var features = {
                 inEditMode: false
             },
-            $chrome          = null,
-            sctrl            = new StateController(),
-            mctrl            = new MainController('.main-controller'),
-            templateManager  = misc.templateManager,
-            dialogManager    = misc.dialogManager,
-            core             = new Core(rpcSocketUrl),
-            trpc             = core.rpc,
-            locationBar      = new LocationBar($('.explorer-chrome .current-location'), templateManager, {
-                enablePJAX:       true,
-                stepTemplateName: 'explorer/step'
-            }),
-            fsNodeGrid       = new NodeGrid($('.explorer-chrome .node-list'), templateManager, {
-                keyExtractor: function (node) {
-                    return node.path;
-                },
-                nodeTemplateContexts: function (node) {
-                    var contexts = {};
-
-                    $.extend(contexts, node);
-
-                    contexts.mtype = contexts.type || 'unknown';
-                    contexts.url   = url_prefix_file + contexts.path;
-                    contexts.icon  = 'cube';
-                    contexts.title = contexts.name + ' (' + contexts.mtype + ')';
-
-                    if (contexts.is_dir) {
-                        contexts.mtype = 'directory';
-                        contexts.url   = url_prefix_dir + contexts.path;
-                        contexts.icon  = 'cubes';
-                        contexts.title = contexts.name;
-                    } else if (contexts.is_binary) {
-                        contexts.url  = url_prefix_dl + contexts.path;
-                    }
-
-                    return contexts;
-                },
-                nodeTemplateName: 'explorer/node'
-            }),
-            browser          = new FileBrowser($('.explorer-chrome'), trpc, locationBar, fsNodeGrid)
+            $chrome         = null,
+            sctrl           = new StateController(),
+            mctrl           = new MainController('.main-controller'),
+            templateManager = misc.templateManager,
+            dialogManager   = misc.dialogManager,
+            core            = new Core(rpcSocketUrl),
+            trpc            = core.rpc,
+            locationBar,
+            fsNodeGrid,
+            browser
         ;
+
+        locationBar = new LocationBar($('.explorer-chrome .current-location'), templateManager, {
+            enablePJAX:       true,
+            stepTemplateName: 'explorer/step'
+        });
+
+        fsNodeGrid = new NodeGrid($('.explorer-chrome .node-list'), templateManager, {
+            keyExtractor: function (node) {
+                return node.path;
+            },
+
+            nodeTemplateContexts: function (fsNode) {
+                var vnode = {};
+
+                $.extend(vnode, fsNode);
+
+                vnode.mtype = vnode.type || 'unknown';
+                vnode.url   = url_prefix_file + vnode.path;
+                vnode.icon  = 'cube';
+                vnode.title = vnode.name + ' (' + vnode.mtype + ')';
+
+                if (vnode.is_link) {
+                    vnode.mtype = 'link';
+                    vnode.url   = '#disabled'
+                    vnode.icon  = 'link';
+                    vnode.title = vnode.name;
+                } else if (vnode.is_dir) {
+                    vnode.mtype = 'directory';
+                    vnode.url   = url_prefix_dir + vnode.path;
+                    vnode.icon  = 'cubes';
+                    vnode.title = vnode.name;
+                } else if (vnode.is_binary) {
+                    vnode.url  = url_prefix_dl + vnode.path;
+                }
+
+                return vnode;
+            },
+
+            nodeTemplateName: 'explorer/node'
+        });
+
+        browser = new FileBrowser($('.explorer-chrome'), trpc, locationBar, fsNodeGrid);
 
         function onMCtrlToggleEditMode() {
             var inEditMode     = !browser.getFeature('inEditMode'),
@@ -105,9 +118,7 @@ require(
         }
 
         function onNextState(e) {
-            var nextPath = browser.getNodePath(e.path);
-
-            browser.open(nextPath);
+            browser.open(e.state);
         }
 
         function onPreviousState(e) {
@@ -120,8 +131,17 @@ require(
             browser.open(currentLocation);
         }
 
+        function onCoreDisconnected() {
+            alert('Disconnected');
+        }
+
         function onNodeDrive(e) {
-            sctrl.push(e.node.path, e.anchor.attr('href'));
+            //console.log('onNodeDrive', e, e.anchor.attr('href'));
+            sctrl.push(e.anchor.attr('href'), e.node.path);
+        }
+
+        function onNodeDriveBlocked(e) {
+            alert('Access to symbolic link denied!');
         }
 
         function onNodeOpenUnknown(e) {
@@ -149,9 +169,11 @@ require(
         sctrl.on('pop', onPreviousState);
 
         core.on('connected', onCoreConnected);
+        core.on('disconnected', onCoreDisconnected);
 
         browser.on('feature.inEditMode.change', onSwitchToEditMode);
         browser.on('node.drive',                onNodeDrive);
+        browser.on('node.drive.blocked',        onNodeDriveBlocked);
         browser.on('node.open.unknown',         onNodeOpenUnknown);
 
         // Initialization

@@ -101,13 +101,7 @@ define(
                     ;
 
                     $anchor.on('click', option.action);
-
-                    console.log('Binded:', option.id, 'to', selector, 'count', $anchor.length);
                 }
-
-                $dialog.find('options > a[data-option]:not(.close)').each(function (index) {
-                    var $anchor = $(this)
-                });
             },
 
             getDialogs: function () {

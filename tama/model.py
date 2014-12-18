@@ -13,7 +13,7 @@ class FSNodeType(object):
 
 class FSNode(object):
     logger = logging.getLogger('tama.model.FSNode')
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.WARNING)
 
     EXTRA_TEXT_TYPES = [
         'application/json',

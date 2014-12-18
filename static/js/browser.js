@@ -55,7 +55,7 @@ require(
                     vnode.url   = url_prefix_dir + vnode.path;
                     vnode.icon  = 'cubes';
                     vnode.title = vnode.name;
-                } else if (contexts.is_binary) {
+                } else if (vnode.is_binary) {
                     vnode.url  = url_prefix_dl + vnode.path;
                 }
 

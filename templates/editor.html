@@ -2,24 +2,40 @@
 
 {% block head_title %}{{ request_location or '<home>' }}{% endblock %}
 
+{% block dialogs %}
+    {%- call c.dialog_template('dialog/mode-selection', ['prompt', 'horizontal'], ['disabled-close-button']) -%}
+        {%- raw -%}
+            <p>Change the syntax highlighter for:</p>
+            <div class="options">
+                {{#each modes}}
+                    <a data-option="mode.change" data-value="{{ name }}">{{ caption }}</a>
+                {{/each}}
+                <a class="close">Not now</a>
+            </div>
+        {%- endraw -%}
+    {%- endcall -%}
+{% endblock %}
+
 {% block content %}
-    <article class="editor-chrome">
-        <div class="metadata">
-            <div class="name" title="{{ request_location }}">{{ c.icon('file-o', classes=['icon']) }}<span class="name">{{ file_name or '<new>' | escape }}</span></div>
-            <div class="menu" data-key-bind="[escape]">
-                <a class="options">{{ c.icon('bars', ['fw']) }}</a>
-            </div>
+    <div class="metadata">
+        <div class="file" title="{{ request_location }}">
+            {{ c.icon('file-o', classes=['icon']) }}
+            <span class="name">{{ file_name or '<new>' | escape }}</span>
+            <span class="mode"></span>
         </div>
+        <div class="menu" data-key-bind="[escape]">
+            <a class="options">{{ c.icon('bars', ['fw']) }}</a>
+        </div>
+    </div>
 
-        <div id="editor"></div>
+    <div id="editor"></div>
 
-        <header class="location-bar">
-            <ul class="current-location"></ul>
-            <div class="root-location">
-                <a href="{{ app.path('ui.tree.default') }}">{{ c.icon('home') }}</a>
-            </div>
-        </header>
-    </article>
+    <header class="location-bar">
+        <ul class="current-location"></ul>
+        <div class="root-location">
+            <a href="{{ app.path('ui.tree.default') }}">{{ c.icon('home') }}</a>
+        </div>
+    </header>
 
     {%- call c.hb_template('editor/step') -%}
         {%- raw -%}
@@ -41,6 +57,6 @@
         rpcSocketUrl   = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
         filename       = '{{ request_location }}';
     </script>
-    <script src="{{ static_path('ace') }}"></script>
+    {#}<script src="{{ static_path('ace') }}"></script>{#}
     <script src="{{ static_path('app.editor.js') }}"></script>
 {% endblock %}

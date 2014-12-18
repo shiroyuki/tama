@@ -5,6 +5,15 @@
     {%- endraw -%}
 {% endcall %}
 
+{% call c.dialog_template('dialog/reconnection', ['alert', 'offline'], ['disabled-close-button']) %}
+    <p>The server appears to be offline.</p>
+
+    <div class="actions">
+        <a class="reconnect">Reconnect</a>
+        <a class="close">Stay offline</a>
+    </div>
+{% endcall %}
+
 {% call c.dialog_template('dialog/h-prompt', ['prompt', 'horizontal'], ['disabled-close-button']) %}
     {%- raw -%}
         {{#if message}}

@@ -2,10 +2,14 @@ define(
     'common/editor',
     [
         'jquery',
+        'ace/ace',
+        'ace/ext-modelist', // just loading
         'common/event_base_class'
     ],
-    function ($, EventBaseClass) {
-        Editor = function (id, socket) {
+    function ($, ace, aceExtModeList, EventBaseClass) {
+        var modelist = ace.require('ace/ext/modelist');
+
+        function Editor(id, socket) {
             this.EventBaseClass();
 
             this.id       = id;
@@ -20,9 +24,9 @@ define(
         };
 
         $.extend(Editor.prototype, EventBaseClass.prototype, {
-            defaultTheme: 'XCode',
+            defaultTheme: 'Default',
             themes: {
-                'Default':         'clouds',
+                'Default':         'monokai',
                 'Clouds':          'clouds',
                 'Cobalt':          'cobalt',
                 'Mono Industrial': 'mono_industrial',
@@ -30,44 +34,33 @@ define(
                 'Solarized Dark':  'solarized_dark',
                 'Solarized Light': 'solarized_light',
                 'Terminal':        'terminal',
-                'Twilight':        'twilight',
-                'XCode':           'xcode'
+                'Twilight':        'twilight'
             },
-            modeToExtensionMap: {
-                python:     /\.py$/i,
-                sh:         /\.sh$/i,
-                django:     /\.(html)$/i,
-                php:        /\.(php|phtml)$/i,
-                perl:       /\.pl$/i,
-                markdown:   /\.md$/i,
-                javascript: /\.js$/i,
-                json:       /\.json$/i,
-                makefile:   /Makefile/,
-                html:       /\.(html?|xhtml)$/i,
-                xml:        /\.xml$/i,
-                css:        /\.css$/i,
-                scss:       /\.scss$/i,
-                sql:        /\.sql$/i,
-                csv:        /\.csv$/i,
-                c_cpp:      /\.(c|cpp|m|h)?$/i,
-                yaml:       /\.(ya?ml)?$/i
-            },
+            modes: null,
 
             activate: function () {
                 this.editor = ace.edit(this.id);
                 this.editor.setTheme('ace/theme/' + this.theme);
+
+                if (!this.modes) {
+                    this.modes = modelist.modes;
+                }
 
                 this.socket.on('rpc.finder.get', $.proxy(this.onFinderGet, this));
                 this.socket.on('rpc.finder.put', $.proxy(this.onFinderPut, this));
             },
 
             setMode: function (mode) {
+                var aceMode = modelist.getModeForPath(filename);
+
                 this.mode = mode
-                    || this.getModeByExtension(filename)
+                    || aceMode.name
                     || this.getModeByContent(this.editor.getValue())
                 ;
 
                 this.editor.getSession().setMode('ace/mode/' + this.mode);
+
+                this.dispatch('mode.change', { mode: this.mode });
             },
 
             setContent: function (content) {

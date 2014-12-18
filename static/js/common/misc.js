@@ -9,12 +9,7 @@ define(
         ;
 
         window.alert = function (message) {
-            dialogManager.use(
-                'dialog/base',
-                {
-                    content: message.replace(/\n/g, '<br/>')
-                }
-            );
+            dialogManager.useAlert(message.replace(/\n/g, '<br/>'));
         };
 
         return {

@@ -1,20 +1,38 @@
 define(
     'common/editor',
-    ['jquery'],
-    function ($) {
+    [
+        'jquery',
+        'common/event_base_class'
+    ],
+    function ($, EventBaseClass) {
         Editor = function (id, socket) {
-            this.id     = id;
-            this.socket = socket;
-            this.editor = null;
-            this.theme  = 'monokai';
-            this.mode   = 'text';
-            this.node   = null;
+            this.EventBaseClass();
+
+            this.id       = id;
+            this.socket   = socket;
+            this.editor   = null;
+            this.theme    = this.themes[this.defaultTheme];
+            this.mode     = null;
+            this.node     = null;
             this.filename = null;
 
             this.activate();
         };
 
-        $.extend(Editor.prototype, {
+        $.extend(Editor.prototype, EventBaseClass.prototype, {
+            defaultTheme: 'XCode',
+            themes: {
+                'Default':         'clouds',
+                'Clouds':          'clouds',
+                'Cobalt':          'cobalt',
+                'Mono Industrial': 'mono_industrial',
+                'Monokai':         'monokai',
+                'Solarized Dark':  'solarized_dark',
+                'Solarized Light': 'solarized_light',
+                'Terminal':        'terminal',
+                'Twilight':        'twilight',
+                'XCode':           'xcode'
+            },
             modeToExtensionMap: {
                 python:     /\.py$/i,
                 sh:         /\.sh$/i,
@@ -40,6 +58,7 @@ define(
                 this.editor.setTheme('ace/theme/' + this.theme);
 
                 this.socket.on('rpc.finder.get', $.proxy(this.onFinderGet, this));
+                this.socket.on('rpc.finder.put', $.proxy(this.onFinderPut, this));
             },
 
             setMode: function (mode) {
@@ -82,6 +101,13 @@ define(
                 };
 
                 $.ajax(request_option);
+            },
+
+            save: function () {
+                this.socket.request('rpc.finder', 'put', {
+                    path:    this.node.path,
+                    content: this.editor.getValue()
+                });
             },
 
             load: function (content) {
@@ -133,20 +159,25 @@ define(
                 if (!result.is_success) {
                     console.error(result.error_code);
 
-                    alert('Failed to save.');
+                    this.dispatch('save.failed', result);
 
                     return;
                 }
 
-                alert('Successfully saved.');
+                this.dispatch('save.ok', result);
             },
 
             onShortCutSave: function (editor) {
-                this.socket.request('rpc.finder', 'put', {
-                    path:    this.node.path,
-                    content: this.editor.getValue()
-                })
-            }
+                this.save();
+            },
+
+            onClickSave: function (e) {
+                e.preventDefault();
+
+                this.dispatch('save.in_progress', this.node);
+
+                this.save();
+            },
         });
 
         return Editor;

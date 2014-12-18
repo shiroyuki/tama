@@ -29,7 +29,8 @@ class Finder(object):
                 'type':      fs_node.mimetype,
                 'is_dir':    fs_node.is_dir,
                 'is_file':   fs_node.is_file,
-                'is_binary': fs_node.is_binary
+                'is_binary': fs_node.is_binary,
+                'is_link':   fs_node.is_link
             })
 
         return {

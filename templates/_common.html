@@ -2,7 +2,7 @@
 
 {% macro dialog_template(name, classes=[], options=[]) -%}
     <script data-name="{{ name }}" type="{{ mimetype_handlebar }}">
-        <div class="dialog {% for class in classes -%} {{ class }}{%- endfor %}" data-name="{{ name }}">
+        <div class="dialog{% for class in classes %} {{ class }}{% endfor %}" data-name="{{ name }}">
             <div class="dialog-inner">
                 {% if not 'disabled-close-button' in options %}<button class="close">{{ icon('close', ['fw']) }}</button>{% endif %}
                 {{ caller() }}

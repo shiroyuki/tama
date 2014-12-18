@@ -90,6 +90,28 @@
             }
         }
 
+        .options {
+            @include flex-container-default();
+
+            margin: 0 -25px -20px -25px;
+
+            a {
+                color: #fff;
+
+                &:hover {
+                    background-color: #222;
+                }
+            }
+
+            .close {
+                background-color: #cc0000;
+
+                &:hover {
+                    background-color: #ff3333;
+                }
+            }
+        }
+
         &.inactive {
             zoom: 0;
             opacity: 0;
@@ -98,6 +120,29 @@
 
             button.close {
                 display: none;
+            }
+        }
+
+        &.prompt {
+            p:first-child {
+                margin-top: 0;
+            }
+
+            &.vertical {
+                .options {
+                    @include flex-direction(column);
+
+                    a {
+                        margin: 0;
+                        padding: 10px 25px;
+                    }
+                }
+            }
+
+            &.horizontal {
+                .options {
+                    @include flex-direction(row);
+                }
             }
         }
     }

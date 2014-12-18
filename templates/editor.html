@@ -6,6 +6,9 @@
     <article class="editor-chrome">
         <div class="metadata">
             <div class="name" title="{{ request_location }}">{{ c.icon('file-o', classes=['icon']) }}<span class="name">{{ file_name or '<new>' | escape }}</span></div>
+            <div class="menu" data-key-bind="[escape]">
+                <a class="options">{{ c.icon('bars', ['fw']) }}</a>
+            </div>
         </div>
 
         <div id="editor"></div>

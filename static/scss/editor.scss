@@ -1,7 +1,7 @@
 @import 'css3';
 @import 'component_location_bar';
 
-$base-color: #33342d; // #23251e;
+$base-color: #333; // #33342d; // #23251e;
 
 .app-header {
     border-bottom: none;
@@ -28,6 +28,12 @@ $base-color: #33342d; // #23251e;
             border: none;
         }
 
+        .root-location a {
+            background-color: #000;
+            padding-left: 17px;
+            margin-left: -10px;
+        }
+
         .current-location li {
             border: none;
         }
@@ -43,6 +49,9 @@ $base-color: #33342d; // #23251e;
     }
 
     .metadata {
+        @include flex-container-default();
+        @include flex-justify-content(space-between);
+
         background-color: $base-color;
         padding: 10px 20px;
         color: #fff;
@@ -51,6 +60,36 @@ $base-color: #33342d; // #23251e;
             padding-right: 10px;
         }
 
+        .menu {
+            @include flex-container-default();
+            
+            margin-right:  -10px;
+            margin-top:    -5px;
+            margin-bottom: -5px;
+            
+            a {
+                cursor: pointer;
+                padding: 5px;
+                margin: 0;
+                background-color: #000;
+                color: #ccc;
+                
+                &:hover {
+                    background-color: #fff;
+                    color: #000;
+                }
+            }
+            
+            a:first-child {
+                border-top-left-radius: 5px;
+                border-bottom-left-radius: 5px;
+            }
+            
+            a:last-child {
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+        }
     }
 
     #editor {

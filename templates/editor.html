@@ -57,6 +57,7 @@
         rpcSocketUrl   = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
         filename       = '{{ request_location }}';
     </script>
-    {#}<script src="{{ static_path('ace') }}"></script>{#}
+    <script src="{{ static_path('ace.ace') }}"></script>
+    <script src="{{ static_path('ace.ext.modelist') }}"></script>
     <script src="{{ static_path('app.editor.js') }}"></script>
 {% endblock %}

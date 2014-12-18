@@ -2,11 +2,9 @@ define(
     'common/editor',
     [
         'jquery',
-        'ace/ace',
-        'ace/ext-modelist', // just loading
         'common/event_base_class'
     ],
-    function ($, ace, aceExtModeList, EventBaseClass) {
+    function ($, EventBaseClass) {
         var modelist = ace.require('ace/ext/modelist');
 
         function Editor(id, socket) {

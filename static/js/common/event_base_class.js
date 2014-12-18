@@ -9,7 +9,7 @@ define(
             EventBaseClass: function (defaultHandlerMap) {
                 defaultHandlerMap = defaultHandlerMap || {};
                 this.handlerMap   = defaultHandlerMap;
-                this.debugMode    = true;
+                this.debugMode    = false;
             },
 
             on: function (eventType, eventHandler) {
@@ -43,7 +43,9 @@ define(
                     return;
                 }
 
-                console.log(new Date(), type, data);
+                if (console) {
+                    console.log(new Date(), type, data);
+                }
             }
         });
 

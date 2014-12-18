@@ -16,15 +16,16 @@
             "handlebars":   "//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.min"
         },
         "local": {
-            "font_awesome": "vendors/font-awesome-4.2.0/css/font-awesome.min.css",
-            "jquery":       "vendors/jquery",
-            "ace":          "vendors/ace",
-            "handlebars":   "vendors/handlebars-v2.0.0",
-            "requirejs":    "vendors/require.js",
-            "app.browser.js":  "js/browser.js",
-            "app.browser.css": "css/tree.css",
-            "app.editor.js": "js/editor.js",
-            "app.editor.css":  "css/editor.css"
+            "font_awesome":     "vendors/font-awesome-4.2.0/css/font-awesome.min.css",
+            "jquery":           "vendors/jquery",
+            "ace.ace":          "vendors/ace/ace.js",
+            "ace.ext.modelist": "vendors/ace/ext-modelist.js",
+            "handlebars":       "vendors/handlebars-v2.0.0",
+            "requirejs":        "vendors/require.js",
+            "app.browser.js":   "js/browser.js",
+            "app.browser.css":  "css/tree.css",
+            "app.editor.js":    "js/editor.js",
+            "app.editor.css":   "css/editor.css"
         }
     },
     "menus": {

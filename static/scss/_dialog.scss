@@ -1,8 +1,9 @@
+@import 'colours';
+
 .dialog-backdrop {
     @include flex-container-default();
     @include flex-container-align-items(center);
     @include flex-justify-content(center);
-    @include transition(all, 250ms);
 
     position: fixed;
     z-index: 1000;
@@ -12,36 +13,37 @@
     bottom: 100%;
     background-color: rgba(0, 0, 0, 0.7);
 
-    .dialog {
-        @include transition(all, 500ms);
+    .dialog-controls {
+        padding: 14px 5px;
 
-        position: relative;
-        color: #999;
-        background-color: #000;
-        border-top: 3px solid #0099CC;
-        max-height: 80%;
-        overflow: auto;
-        box-shadow: rgba(0, 0, 0, 0.5) 0 5px 20px;
-
-        h1, h2, h3, h4, h5 {
-            color: #fff;
-        }
-
-        button.close {
-            position: absolute;
-            right: 10px;
-            top: 10px;
+        button {
+            border: none;
             cursor: pointer;
             background-color: transparent;
             border: none;
             border-radius: 30px;
             font-size: 16px;
             padding: 6px 5px;
-            color: #999;
+            color: $palette_bw_f;
+            background-color: $palette_dark_red;
 
             &:hover {
-                color: #FF4444;
+                background-color: $palette_light_red;
             }
+        }
+    }
+
+    .dialog-content {
+        @include transition(all, 500ms);
+
+        color: $palette_bw_9;
+        background-color: $palette_bw_0;
+        border-top: 3px solid $palette_dark_blue;
+        max-height: 480px;
+        overflow: auto;
+
+        h1, h2, h3, h4, h5 {
+            color: #fff;
         }
 
         a {
@@ -57,10 +59,8 @@
             @include transition(all, 250ms);
 
             padding: 20px 25px;
-            overflow: auto;
             min-width: 240px;
             max-width: 480px;
-            max-height: 100%;
         }
 
         .actions {
@@ -69,7 +69,7 @@
 
             a {
                 display: block;
-                background-color: #333;
+                background-color: $palette_bw_3;
                 color: #fff;
                 padding: 10px 20px;
                 text-decoration: none;
@@ -81,11 +81,11 @@
                 .text {}
 
                 &.close {
-                    background-color: #CC0000;
+                    background-color: $palette_dark_red;
                 }
 
                 &:hover {
-                    background-color: #0099CC;
+                    background-color: $palette_bw_6;
                     text-decoration: none;
                 }
             }
@@ -112,6 +112,15 @@
                 }
             }
         }
+    }
+
+    .dialog {
+        @include flex-container-default();
+        @include flex-container-align-items(flex-start);
+        @include flex-justify-content(center);
+
+        position: relative;
+        max-height: 80%;
 
         &.inactive {
             zoom: 0;
@@ -119,7 +128,14 @@
             border-width: 0;
             width: 0;
 
-            button.close {
+            .dialog-content {
+                zoom: 0;
+                opacity: 0;
+                border-width: 0;
+                width: 0;
+            }
+
+            .dialog-control {
                 display: none;
             }
         }
@@ -158,7 +174,6 @@
     }
 
     &.active {
-        @include flex-container();
         top: 0;
         bottom: 0;
     }

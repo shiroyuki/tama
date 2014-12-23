@@ -8,7 +8,10 @@ from tori.socket.websocket import WebSocket
 
 class Controller(BaseController):
     def render_template(self, template_name, **contexts):
-        contexts['static_path'] = self.resolve_static_path
+        contexts.update({
+            'static_path': self.resolve_static_path,
+            'json':        json.dumps
+        })
 
         return super(Controller, self).render_template(template_name, **contexts)
 
@@ -39,7 +42,7 @@ class UIBrowser(Controller):
         self.render(
             'browser.html',
             menu             = menu_config,
-            menu_in_json     = json.dumps(menu_config),
+            menu_in_json     = json.dumps(menu_config, indent = 4),
             request_location = request_location,
             parent_path      = parent_path,
             fs_nodes         = self.component('internal.finder').find(path)

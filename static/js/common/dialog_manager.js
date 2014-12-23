@@ -1,6 +1,9 @@
 define(
-    ['jquery'],
-    function ($) {
+    [
+        'jquery',
+        'common/helper'
+    ],
+    function ($, helper) {
         function DialogManager(context, templateManager) {
             this.dropZone        = context;
             this.templateManager = templateManager;
@@ -105,7 +108,7 @@ define(
             },
 
             getDialogs: function () {
-                return this.dropZone.children('div');
+                return this.dropZone.children('div.dialog');
             },
 
             cancelLastDialog: function () {

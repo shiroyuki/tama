@@ -7,6 +7,48 @@
         "\\.svn$",
         "\\.DS_Store$"
     ],
+    "editor": {
+        "only_enabled_modes": [
+            "python",
+            "php",
+            "django",
+            "c_cpp",
+            "coffee",
+            "css",
+            "dart",
+            "dockerfile",
+            "ejs",
+            "erlang",
+            "java",
+            "javascript",
+            "json",
+            "jsp",
+            "latex",
+            "lucene",
+            "makefile",
+            "markdown",
+            "matlab",
+            "mysql",
+            "objectivec",
+            "perl",
+            "php",
+            "plain_text",
+            "text",
+            "r",
+            "rdoc",
+            "rhtml",
+            "ruby",
+            "sass",
+            "scala"m
+            "scss",
+            "sh",
+            "sql",
+            "svg",
+            "typescript",
+            "xml",
+            "yaml"
+        ]
+    },
     "asset_manager": {
         "enabled": true,
         "remote": {

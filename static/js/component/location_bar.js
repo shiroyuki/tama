@@ -1,10 +1,10 @@
 define(
     [
         'jquery',
-        'common/misc',
+        'common/helper',
         'common/event_base_class'
     ],
-    function ($, misc, EventBaseClass) {
+    function ($, helper, EventBaseClass) {
         function LocationBar(context, templateManager, options) {
             this.EventBaseClass();
 
@@ -29,7 +29,7 @@ define(
 
                 this.context.empty();
 
-                if (misc.isStringEmpty(path)) {
+                if (helper.isStringEmpty(path)) {
                     return false;
                 }
 

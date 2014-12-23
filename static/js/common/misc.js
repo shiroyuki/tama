@@ -1,9 +1,10 @@
 define(
     [
         'common/template_manager',
-        'common/dialog_manager'
+        'common/dialog_manager',
+        'common/helper'
     ],
-    function (TemplateManager, DialogManager) {
+    function (TemplateManager, DialogManager, helper) {
         var templateManager = new TemplateManager(),
             dialogManager   = new DialogManager($('.dialog-backdrop'), templateManager)
         ;
@@ -15,10 +16,6 @@ define(
         return {
             templateManager: templateManager,
             dialogManager:   dialogManager,
-            
-            isStringEmpty: function (sample) {
-                return sample === undefined || sample === null || sample.length === 0;
-            },
 
             /**
              * An event handler to cancel dragging/highlighting.
@@ -34,4 +31,4 @@ define(
             }
         };
     }
-)
+);

@@ -7,7 +7,7 @@ define(
     function ($, EventBaseClass) {
         var modelist = ace.require('ace/ext/modelist');
 
-        function Editor(id, socket) {
+        function Editor(id, socket, options) {
             this.EventBaseClass();
 
             this.id       = id;
@@ -15,8 +15,10 @@ define(
             this.editor   = null;
             this.theme    = this.themes[this.defaultTheme];
             this.mode     = null;
+            this.modes    = [];
             this.node     = null;
             this.filename = null;
+            this.options  = options || {};
 
             this.activate();
         };
@@ -37,11 +39,31 @@ define(
             modes: null,
 
             activate: function () {
+                var k, mode;
+
                 this.editor = ace.edit(this.id);
                 this.editor.setTheme('ace/theme/' + this.theme);
 
-                if (!this.modes) {
-                    this.modes = modelist.modes;
+                if (this.modes.length === 0) {
+                    if (this.options.only_enabled_modes !== undefined) {
+                        for (k in modelist.modes) {
+                            mode = modelist.modes[k];
+
+                            if (this.options.only_enabled_modes.indexOf(mode.name) > -1) {
+                                console.log('O', mode.name);
+
+                                this.modes.push(mode);
+
+                                continue;
+                            }
+
+                            console.log('X', mode.name);
+                        }
+
+                        console.log('after', modelist.modes);
+
+                        modelist.modes = this.modes;
+                    }
                 }
 
                 this.socket.on('rpc.finder.get', $.proxy(this.onFinderGet, this));

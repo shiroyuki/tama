@@ -56,6 +56,7 @@
         parentPath     = '{{ parent_path }}';
         rpcSocketUrl   = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
         filename       = '{{ request_location }}';
+        editorOptions  = {{ json(app.settings['editor'], indent = 4) }};
     </script>
     <script src="{{ static_path('ace.ace') }}"></script>
     <script src="{{ static_path('ace.ext.modelist') }}"></script>

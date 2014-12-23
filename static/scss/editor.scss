@@ -134,10 +134,7 @@ $base-color: #222; // #33342d; // #23251e;
 }
 
 .dialog[data-name="dialog/mode-selection"] {
-    max-width: 90%;
-
     .dialog-inner {
-        max-width: none;
 
         .options a {
             @include flex-order(3);
@@ -145,7 +142,7 @@ $base-color: #222; // #33342d; // #23251e;
             min-width: 120px;
 
             &.used {
-                @include flex-order(1);
+                @include flex-order(2);
 
                 background-color: #669900;
 
@@ -153,9 +150,11 @@ $base-color: #222; // #33342d; // #23251e;
                     background-color: #99CC00;
                 }
             }
+            
+            &.suggest
 
             &.close {
-                @include flex-order(2);
+                @include flex-order(1);
             }
         }
     }

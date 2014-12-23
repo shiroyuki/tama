@@ -10,7 +10,7 @@ dependencies = [
 function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
     var isLoaded    = false,
         core        = new Core(rpcSocketUrl),
-        editor      = new Editor('editor', core.rpc),
+        editor      = new Editor('editor', core.rpc, editorOptions),
         locationBar = new LocationBar($('.location-bar .current-location'), misc.templateManager, {
             enablePJAX:       true,
             stepTemplateName: 'editor/step'
@@ -84,10 +84,14 @@ function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
     }
 
     function onEditNewModeSelected(e) {
-        var mode = $(this).attr('data-value');
+        var $anchor = $(this),
+            mode = $anchor.attr('data-value');
 
-        dialogManager.cancelLastDialog();
+        //dialogManager.cancelLastDialog();
         editor.setMode(mode);
+        
+        $anchor.parent().children('.used').removeClass('used');
+        $anchor.addClass('used');
     }
 
     core.on('connected', onCoreConnected);

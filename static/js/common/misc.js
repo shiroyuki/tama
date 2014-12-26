@@ -28,6 +28,11 @@ define(
 
             eventHandlerNoPropagation: function (e) {
                 e.stopPropagation();
+            },
+            
+            disableHighlighting: function ($selector) {
+                $selector.on('mouseup', this.eventHandlerDisableDragging);
+                $selector.on('mousedown', this.eventHandlerDisableDragging);
             }
         };
     }

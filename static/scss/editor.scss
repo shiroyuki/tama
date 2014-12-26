@@ -1,4 +1,5 @@
 @import 'css3';
+@import 'colours';
 @import 'component_location_bar';
 
 $base-color: #222; // #33342d; // #23251e;
@@ -119,7 +120,7 @@ $base-color: #222; // #33342d; // #23251e;
 
 .dialog-backdrop {
     &.active {
-        background-color: rgba(255, 255, 255, 0.3);
+        background-color: rgba(0, 0, 0, 0.3);
 
         & ~ div {
             &.app-container > * {
@@ -144,17 +145,21 @@ $base-color: #222; // #33342d; // #23251e;
             &.used {
                 @include flex-order(2);
 
-                background-color: #669900;
+                background-color: $palette_dark_green;
 
                 &:hover {
-                    background-color: #99CC00;
+                    background-color: $palette_light_green;
                 }
             }
-            
-            &.suggest
 
-            &.close {
+            &.default {
                 @include flex-order(1);
+
+                background-color: $palette_dark_blue;
+
+                &:hover {
+                    background-color: $palette_light_blue;
+                }
             }
         }
     }

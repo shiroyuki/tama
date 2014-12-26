@@ -78,32 +78,34 @@ function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
     }
 
     function onEditorModeSwitchPrompt() {
-        var $dialog = dialogManager.use('dialog/mode-selection', { modes: editor.modes });
+        var $dialog = dialogManager.use('dialog/mode-selection', {
+            modes: editor.modes
+        });
 
         $dialog.find('[data-value="' + editor.mode + '"]').addClass('used');
+        $dialog.find('[data-value="' + editor.defaultMode + '"]').addClass('default');
     }
 
     function onEditNewModeSelected(e) {
         var $anchor = $(this),
             mode = $anchor.attr('data-value');
 
-        //dialogManager.cancelLastDialog();
         editor.setMode(mode);
-        
+
         $anchor.parent().children('.used').removeClass('used');
         $anchor.addClass('used');
     }
 
     core.on('connected', onCoreConnected);
 
-    editor.on('mode.change', onEditorModeChange);
+    editor.on('mode.change',      onEditorModeChange);
     editor.on('save.in_progress', onEditorSaveInProgress);
-    editor.on('save.ok', onEditorSaveOk);
-    editor.on('save.failed', onEditorSaveFailed);
+    editor.on('save.ok',          onEditorSaveOk);
+    editor.on('save.failed',      onEditorSaveFailed);
 
     dialogManager.on('dialog/mode-selection', 'click', 'a[data-option="mode.change"]', onEditNewModeSelected);
 
-    $metadataFile.on('click', '.mode', onEditorModeSwitchPrompt);
+    $metadataFile.on('click', '.mode',    onEditorModeSwitchPrompt);
     $metadataMenu.on('click', '.options', onMoreOptionClick);
 
     core.rpc.connect();

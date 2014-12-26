@@ -1,3 +1,4 @@
+import codecs
 import logging
 import mimetypes
 import os
@@ -89,8 +90,12 @@ class FSNode(object):
         FSNode.logger.debug('Loaded {}'.format(self.real_path))
 
     def save(self):
-        with open(self.real_path, 'w') as f:
-            f.write(self.content)
+        try:
+            with open(self.real_path, 'w') as f:
+                f.write(self.content)
+        except UnicodeEncodeError as exception:
+            with codecs.open(self.real_path, 'w', 'utf-8') as f:
+                f.write(self.content)
 
         FSNode.logger.debug('Saved {}'.format(self.real_path))
 

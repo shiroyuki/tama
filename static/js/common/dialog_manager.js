@@ -10,7 +10,10 @@ define(
             this.nameToEventMap  = {};
             this.lastId          = 0;
 
-            this.dropZone.on('click', $.proxy(this.onClickCancelLastDialog, this));
+            this.dropZone.on('click', $.proxy(this.onBackdropClickCancelLastDialog, this));
+
+            this.dropZone.on('mouseup',   this.eventHandlerDisableDragging);
+            this.dropZone.on('mousedown', this.eventHandlerDisableDragging);
         }
 
         $.extend(DialogManager.prototype, {
@@ -141,7 +144,27 @@ define(
                 e.preventDefault();
 
                 this.cancelLastDialog();
-            }
+            },
+
+            onBackdropClickCancelLastDialog: function (e) {
+                var $reference = this.getDialogs().last();
+
+                e.preventDefault();
+
+                if ($reference.hasClass('option-disabled-close-button')) {
+                    $reference.animate({zoom: 1.1}, 50, function () {
+                        $reference.animate({zoom: 1.0}, 50);
+                    });
+
+                    return;
+                }
+
+                this.cancelLastDialog();
+            },
+
+            eventHandlerDisableDragging: function (e) {
+                e.preventDefault();
+            },
         });
 
         return DialogManager;

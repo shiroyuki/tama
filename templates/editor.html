@@ -3,14 +3,13 @@
 {% block head_title %}{{ request_location or '<home>' }}{% endblock %}
 
 {% block dialogs %}
-    {%- call c.dialog_template('dialog/mode-selection', ['prompt', 'horizontal'], ['disabled-close-button']) -%}
+    {%- call c.dialog_template('dialog/mode-selection', ['prompt', 'horizontal']) -%}
         {%- raw -%}
             <p>Change the syntax highlighter for:</p>
             <div class="options">
                 {{#each modes}}
                     <a data-option="mode.change" data-value="{{ name }}">{{ caption }}</a>
                 {{/each}}
-                <a class="close">Not now</a>
             </div>
         {%- endraw -%}
     {%- endcall -%}

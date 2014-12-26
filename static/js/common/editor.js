@@ -10,15 +10,16 @@ define(
         function Editor(id, socket, options) {
             this.EventBaseClass();
 
-            this.id       = id;
-            this.socket   = socket;
-            this.editor   = null;
-            this.theme    = this.themes[this.defaultTheme];
-            this.mode     = null;
-            this.modes    = [];
-            this.node     = null;
-            this.filename = null;
-            this.options  = options || {};
+            this.id          = id;
+            this.socket      = socket;
+            this.editor      = null;
+            this.theme       = this.themes[this.defaultTheme];
+            this.modes       = [];
+            this.mode        = null;
+            this.defaultMode = null;
+            this.node        = null;
+            this.filename    = null;
+            this.options     = options || {};
 
             this.activate();
         };
@@ -50,17 +51,11 @@ define(
                             mode = modelist.modes[k];
 
                             if (this.options.only_enabled_modes.indexOf(mode.name) > -1) {
-                                console.log('O', mode.name);
-
                                 this.modes.push(mode);
 
                                 continue;
                             }
-
-                            console.log('X', mode.name);
                         }
-
-                        console.log('after', modelist.modes);
 
                         modelist.modes = this.modes;
                     }
@@ -72,6 +67,10 @@ define(
 
             setMode: function (mode) {
                 var aceMode = modelist.getModeForPath(filename);
+
+                if (this.mode === null) {
+                    this.defaultMode = aceMode.name;
+                }
 
                 this.mode = mode
                     || aceMode.name

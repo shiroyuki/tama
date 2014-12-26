@@ -122,6 +122,12 @@
         position: relative;
         max-height: 80%;
 
+        &.option-disabled-close-button {
+            .dialog-controls .close {
+                display: none;
+            }
+        }
+
         &.inactive {
             zoom: 0;
             opacity: 0;

@@ -6,8 +6,13 @@ define(
         'common/event_base_class'
     ],
     function ($, misc, RpcSocket, EventBaseClass) {
-        function Core(rpcSocketUrl) {
+        function Core(rpcSocketUrl, options) {
             this.EventBaseClass();
+
+            options = options || {};
+
+            this.reconnectionCount      = 0;
+            this.reconnectionCountLimit = options.reconnectionCountLimit || 10;
 
             this.rpcSocketUrl = rpcSocketUrl;
             this.rpc          = new RpcSocket(this.rpcSocketUrl);
@@ -52,15 +57,31 @@ define(
             },
 
             onConnected: function (e) {
+                this.reconnectionCount = 0;
+
                 this.$syncStatus.addClass('socket-connected');
                 this.dispatch('connected');
             },
 
             onDisconnected: function (e) {
-                misc.dialogManager.use('dialog/reconnection');
+                this.reconnectionCount++;
+
+                if (this.reconnectionCount >= this.reconnectionCountLimit) {
+                    misc.dialogManager.use('dialog/reconnection');
+
+                    this.$syncStatus.removeClass('socket-connected');
+                    this.dispatch('disconnected');
+
+                    return;
+                }
+
+                misc.dialogManager.use('dialog/reconnecting', {
+                    reconnectionCount:      this.reconnectionCount,
+                    reconnectionCountLimit: this.reconnectionCountLimit
+                });
 
                 this.$syncStatus.removeClass('socket-connected');
-                this.dispatch('disconnected');
+                this.dispatch('reconnecting');
             }
         });
 

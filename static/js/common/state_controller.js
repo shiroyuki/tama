@@ -26,12 +26,16 @@ define(
                 }
 
                 if (this.popStateCount === 0) {
-                    window.history.pushState(state || null, null, url);
-
-                    this.dispatch('push', {
+                    var eventData = {
                         url:   url,
                         state: state
-                    });
+                    };
+
+                    console.log(eventData);
+
+                    window.history.pushState(state || null, null, url);
+
+                    this.dispatch('push', eventData);
 
                     return true;
                 }

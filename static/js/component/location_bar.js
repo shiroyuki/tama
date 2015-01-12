@@ -34,8 +34,9 @@ define(
                 }
 
                 for (i in steps) {
-                    var step_name = steps[i],
-                        step_path = steps.slice(0, i + 1).join('/')
+                    var index = parseInt(i, 10),
+                        step_name = steps[index],
+                        step_path = steps.slice(0, index + 1).join('/'),
                         contexts = {
                             name: step_name,
                             path: step_path,

@@ -31,6 +31,9 @@ define(
             reBrowsingUrlPrefix: new RegExp('^\/tree\/'),
 
             open: function (path) {
+                if (path === undefined) {
+                    throw 'something';
+                }
                 this.rpc.request('rpc.finder', 'find', { path: path });
             },
 

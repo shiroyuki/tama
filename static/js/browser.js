@@ -118,7 +118,7 @@ require(
         }
 
         function onNextState(e) {
-            browser.open(e.state);
+            browser.open(e.url.replace(/^\/tree\//, '')); // temporary solution to why e.state return undefined.
         }
 
         function onPreviousState(e) {

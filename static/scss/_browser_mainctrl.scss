@@ -1,4 +1,9 @@
 .main-controller {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    right: 0;
     color: #666;
     width: 50px;
     padding: 10px;
@@ -35,16 +40,6 @@
             border-bottom-right-radius: 10px;
         }
 
-        &:hover {
-            background-color: #000;
-            color: #fff;
-
-            .text {
-                opacity: 1;
-                margin-left: 5px;
-            }
-        }
-
         &.prev-group {
             display: none;
             color: #ff0000;
@@ -65,7 +60,6 @@
         }
 
         &.active {
-
             color: #fff;
             background-color: #0099CC;
 
@@ -88,6 +82,18 @@
 
         &.active {
             display: block;
+        }
+    }
+}
+
+.ua-computer .main-controller {
+    a:hover {
+        background-color: #000;
+        color: #fff;
+
+        .text {
+            opacity: 1;
+            margin-left: 5px;
         }
     }
 }

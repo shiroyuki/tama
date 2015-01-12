@@ -7,10 +7,32 @@ from tori.socket.rpc import Interface
 from tori.socket.websocket import WebSocket
 
 class Controller(BaseController):
+    RE_MOBILE_UA = re.compile('(Android|iPad|iPhone|Mobile)')
+    RE_PHONE_UA  = re.compile('(Mobile)')
+
+    @property
+    def is_mobile(self):
+        return bool(
+            'User-Agent' in self.request.headers\
+            and Controller.RE_MOBILE_UA.search(self.request.headers['User-Agent'])
+        )
+
+    @property
+    def device_form_factor(self):
+        if not self.is_mobile:
+            return 'computer'
+
+        if Controller.RE_PHONE_UA.search(self.request.headers['User-Agent']):
+            return 'phone'
+
+        return 'tablet'
+
     def render_template(self, template_name, **contexts):
         contexts.update({
-            'static_path': self.resolve_static_path,
-            'json':        json.dumps
+            'static_path':        self.resolve_static_path,
+            'json':               json.dumps,
+            'is_mobile':          self.is_mobile,
+            'device_form_factor': self.device_form_factor
         })
 
         return super(Controller, self).render_template(template_name, **contexts)

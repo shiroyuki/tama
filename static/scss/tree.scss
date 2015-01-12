@@ -3,11 +3,6 @@
 @import 'browser_mainctrl';
 
 .app-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
 }
 
 .dialog[data-name="dialog/open-node"] {
@@ -22,7 +17,7 @@
 
 .explorer-chrome {
     @include flex-item(1);
-    padding: 40px;
+    padding: 40px 60px;
     overflow-x: hidden;
     overflow-y: auto;
 

@@ -9,7 +9,7 @@
 <link href="{{ app.path('static', path='css/layout_base.css') }}" rel="stylesheet">
 {% block css %}{% endblock %}
 </head>
-<body>
+<body class="ua-{{ device_form_factor }}{% if is_mobile %} ua-mobile{% endif %}">
     {% include '_dialog_base.html' %}
     {%- block dialogs -%}{%- endblock -%}
     {% include '_header.html' %}

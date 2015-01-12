@@ -20,6 +20,20 @@ script[type="text/x-handlebars-template"] {
     display: none !important;
 }
 
+dl {
+    margin: 0 0 15px 0;
+    padding: 0;
+
+    dt {
+        font-weight: 700;
+    }
+
+    dd {
+        margin: 0 0 5px 0;
+        padding: 0;
+    }
+}
+
 .app-container {
     @include flex-container-default();
 }
@@ -60,7 +74,7 @@ script[type="text/x-handlebars-template"] {
 
     .sync-status {
         @include flex-container-default();
-        
+
         cursor: pointer;
 
         .indicator {

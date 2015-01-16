@@ -13,6 +13,7 @@ require(
         var features = {
                 inEditMode: false
             },
+            $body           = $('body'),
             $chrome         = null,
             sctrl           = new StateController(),
             mctrl           = new MainController('.main-controller'),
@@ -67,18 +68,14 @@ require(
 
         browser = new FileBrowser($('.explorer-chrome'), trpc, locationBar, fsNodeGrid);
 
-        function onMCtrlToggleEditMode() {
-            var inEditMode     = !browser.getFeature('inEditMode'),
-                selectionCount = browser.fsNodeGrid.context.children('.selected').length
-            ;
+        function onMCtrlDeleteObjects(e) {
+            //...
+            alert('Deleting?');
+        }
 
-            browser.setFeature('inEditMode', inEditMode);
-
-            if (!inEditMode && selectionCount > 0) {
-                dialogManager.use('dialog/batch-operation', {
-                    selectionCount: selectionCount + ' node' + (selectionCount === 1 ? '' : 's')
-                });
-            }
+        function onMCtrlUpdateOnSelection(e) {
+            console.log(e);
+            $body.attr('data-selection-count', e.count);
         }
 
         function onMCtrlTriggerNewFolder() {
@@ -136,7 +133,6 @@ require(
         }
 
         function onNodeDrive(e) {
-            //console.log('onNodeDrive', e, e.anchor.attr('href'));
             sctrl.push(e.anchor.attr('href'), e.node.path);
         }
 
@@ -160,10 +156,10 @@ require(
             mctrl.setTriggerActive('manage-objects', enabled);
         }
 
-        mctrl.on('manage-objects', onMCtrlToggleEditMode);
         mctrl.on('new-folder',     onMCtrlTriggerNewFolder);
         mctrl.on('new-file',       onMCtrlTriggerNewFilefunction);
         mctrl.on('app-about',      onMCtrlOpenAbout);
+        mctrl.on('delete-objects', onMCtrlDeleteObjects);
 
         sctrl.on('push', onNextState);
         sctrl.on('pop', onPreviousState);
@@ -171,14 +167,16 @@ require(
         core.on('connected', onCoreConnected);
         core.on('disconnected', onCoreDisconnected);
 
-        browser.on('feature.inEditMode.change', onSwitchToEditMode);
-        browser.on('node.drive',                onNodeDrive);
-        browser.on('node.drive.blocked',        onNodeDriveBlocked);
-        browser.on('node.open.unknown',         onNodeOpenUnknown);
+        browser.on('node.drive',         onNodeDrive);
+        browser.on('node.drive.blocked', onNodeDriveBlocked);
+        browser.on('node.open.unknown',  onNodeOpenUnknown);
+        browser.on('node.select',        onMCtrlUpdateOnSelection);
 
         // Initialization
         trpc.connect();
         mctrl.enable();
         sctrl.enable();
+        
+        $body.attr('data-selection-count', 0);
     }
 );

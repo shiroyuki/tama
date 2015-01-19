@@ -42,7 +42,11 @@ define(
                 var k, mode;
 
                 this.editor = ace.edit(this.id);
-                this.editor.setTheme('ace/theme/' + this.theme);
+                //this.editor.setTheme('ace/theme/' + this.theme);
+                this.editor.setOptions({
+                    maxLines: 99999, // for tablets
+                    autoScrollEditorIntoView: true
+                });
 
                 if (this.modes.length === 0) {
                     if (this.options.only_enabled_modes !== undefined) {

@@ -69,10 +69,24 @@
                             "target": "object-creator"
                         },
                         {
-                            "name":  "manage-objects",
-                            "class": null,
-                            "label": "Manage files or folder",
-                            "icon":  "edit",
+                            "name":  "delete-objects",
+                            "class": "at-least-one-selection",
+                            "label": "Delete selected files or folders",
+                            "icon":  "trash",
+                            "target": null
+                        },
+                        {
+                            "name":  "move-objects",
+                            "class": "at-least-one-selection",
+                            "label": "Move selected files or folders",
+                            "icon":  "truck",
+                            "target": null
+                        },
+                        {
+                            "name":  "rename-objects",
+                            "class": "at-least-one-selection",
+                            "label": "Rename selected files or folders",
+                            "icon":  "pencil-square-o",
                             "target": null
                         },
                         {

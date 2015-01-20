@@ -8,29 +8,31 @@ define(
         function FileBrowser(context, rpc, locationBar, fsNodeGrid) {
             this.EventBaseClass();
 
+            this.debugMode = true;
+
             this.rpc = rpc;
 
             this.context     = context;
             this.locationBar = locationBar;
             this.fsNodeGrid  = fsNodeGrid;
 
-            this.features = {
-                inEditMode: false
-            };
+            this.features = {};
 
             this.rpc.on('rpc.finder.find',          $.proxy(this.onSocketRpcFind, this));
             this.rpc.on('rpc.finder.create_folder', $.proxy(this.onSocketRpcCreateFolder, this));
             this.rpc.on('rpc.finder.create_file',   $.proxy(this.onSocketRpcCreateFile, this));
 
-            this.fsNodeGrid.on('node.click', $.proxy(this.onNodeClickUpdate, this));
-
-            this.on('feature.inEditMode.change', $.proxy(this.onSwitchToEditMode, this));
+            this.fsNodeGrid.on('node.click',        $.proxy(this.onNodeClickUpdate, this));
+            this.fsNodeGrid.on('node.marker.click', $.proxy(this.onNodeMarkerClick, this));
         };
 
         $.extend(FileBrowser.prototype, EventBaseClass.prototype, {
             reBrowsingUrlPrefix: new RegExp('^\/tree\/'),
 
             open: function (path) {
+                if (path === undefined) {
+                    throw 'something';
+                }
                 this.rpc.request('rpc.finder', 'find', { path: path });
             },
 
@@ -71,7 +73,7 @@ define(
             },
 
             refresh: function () {
-                this.browser.open(browser.getNodePath());
+                this.open(this.getNodePath());
             },
 
             onSocketRpcFind: function (response) {
@@ -117,16 +119,6 @@ define(
                     }
                 ;
 
-                if (this.features.inEditMode) {
-                    e.preventDefault();
-
-                    $node.toggleClass('selected');
-
-                    this.dispatch('node.select', eventData);
-
-                    return;
-                }
-
                 if (node.is_link) {
                     e.preventDefault();
 
@@ -152,14 +144,28 @@ define(
                 this.dispatch('node.open.editor', eventData);
             },
 
-            onSwitchToEditMode: function (enabled) {
-                if (enabled) {
-                    this.context.addClass('edit-mode');
+            onNodeMarkerClick: function (e) {
+                var $anchor = $(e.currentTarget),
+                    $node   = $anchor.closest('.node'),
+                    path    = $node.attr('data-path'),
+                    node    = this.fsNodeGrid.nodes[path],
+                    eventData = {
+                        anchor:   $anchor,
+                        context:  $node,
+                        node:     node,
+                        selected: false,
+                        count:    0
+                    }
+                ;
 
-                    return;
-                }
+                e.preventDefault();
 
-                this.context.removeClass('edit-mode');
+                $node.toggleClass('selected');
+
+                eventData.selected = $node.hasClass('selected');
+                eventData.count    = this.context.find('.node.selected').length;
+
+                this.dispatch('node.select', eventData);
             }
         });
 

@@ -3,6 +3,11 @@ import logging
 import mimetypes
 import os
 
+try:
+    import codecs
+except ImportError as e:
+    print('Cannot import codecs. Unicode handling is disabled.')
+
 logging.basicConfig(level = logging.WARN)
 
 class FSNodeNotFoundError(IOError):
@@ -83,26 +88,39 @@ class FSNode(object):
     def load(self):
         if not self.exists:
             raise FSNodeNotFoundError('Unable to load.')
-        
+
         with open(self.real_path, 'r') as f:
             self._content = f.read()
 
         FSNode.logger.debug('Loaded {}'.format(self.real_path))
 
     def save(self):
+<<<<<<< HEAD
         try:
             with open(self.real_path, 'w') as f:
                 f.write(self.content)
         except UnicodeEncodeError as exception:
             with codecs.open(self.real_path, 'w', 'utf-8') as f:
                 f.write(self.content)
+=======
+        tmp_file = self.real_path + '.tmp'
+
+        try:
+            with open(tmp_file, 'w') as f:
+                f.write(self.content)
+        except UnicodeEncodeError as e:
+            with codecs.open(tmp_file, 'w', 'utf8') as f:
+                f.write(self.content)
+
+        os.rename(tmp_file, self.real_path)
+>>>>>>> 092492d51d3ef1ad3e1c09cc0940a6cb98830fc2
 
         FSNode.logger.debug('Saved {}'.format(self.real_path))
 
     def delete(self, path):
         if not self.exists:
             raise FSNodeNotFoundError('Unable to locate the node.')
-        
+
         if self.is_file:
             os.unlink(self.real_path)
             return

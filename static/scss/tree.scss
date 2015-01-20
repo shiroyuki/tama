@@ -1,13 +1,11 @@
+@import 'colours';
 @import 'css3';
 @import 'component_location_bar';
 @import 'browser_mainctrl';
 
+$tree_animation_speed: 250ms;
+
 .app-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
 }
 
 .dialog[data-name="dialog/open-node"] {
@@ -22,7 +20,7 @@
 
 .explorer-chrome {
     @include flex-item(1);
-    padding: 40px;
+    padding: 40px 40px 40px 80px;
     overflow-x: hidden;
     overflow-y: auto;
 
@@ -35,7 +33,7 @@
 
         .node {
             a {
-                @include transition(all, 500ms);
+                @include transition(all, $tree_animation_speed);
 
                 display: block;
                 width: 160px;
@@ -53,19 +51,17 @@
                 border: 1px solid #ccc;
 
                 .node-marker {
-                    @include transition(all, 500ms);
+                    @include transition(all, $tree_animation_speed);
 
                     position: absolute;
                     top: 10px;
                     left: 10px;
                     font-size: 48px;
                     color: #999;
-
-                    display: none;
                 }
 
                 .node-icon {
-                    @include transition(all, 500ms);
+                    @include transition(all, $tree_animation_speed);
 
                     height: 160px;
                     display: block;
@@ -87,33 +83,28 @@
                     text-decoration: none;
 
                     .node-icon {
-                        color: #000;
+                        color: $palette_bw_0;
                     }
                 }
             }
         }
-    }
-
-    &.edit-mode .node-list {
-        .node a {
-            opacity: 0.5;
-
-            .node-marker {
-                display: block;
-            }
-        }
-
+        
         .node.selected a {
             opacity: 1;
 
             .node-marker {
-                color: #33B5E5;
+                color: $palette_light_blue;
             }
 
             .node-icon {
-                color: #000;
+                color: $palette_dark_orange;
             }
         }
     }
 }
 
+body[data-selection-count="0"] {
+    .main-controller .at-least-one-selection {
+        display: none;
+    }
+}

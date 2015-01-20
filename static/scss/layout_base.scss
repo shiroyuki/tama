@@ -20,79 +20,16 @@ script[type="text/x-handlebars-template"] {
     display: none !important;
 }
 
-.app-container {
-    @include flex-container-default();
-}
+dl {
+    margin: 0 0 15px 0;
+    padding: 0;
 
-.app-header {
-    @include flex-container-default();
-    @include flex-justify-content(space-between);
-
-    z-index:100;
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    padding: 0 10px;
-    background-color: #000;
-    border-bottom: 1px solid #888;
-    color: #ccc;
-    overflow: hidden;
-
-    .section {
-        @include flex-container-default();
-
-        & > div {
-            padding: 5px;
-        }
-
-        &.alpha {
-            @include flex-container-align-items(flex-start);
-        }
-
-        &.bravo {
-            @include flex-container-align-items(flex-end);
-        }
+    dt {
+        font-weight: 700;
     }
 
-    .user {
-    }
-
-    .sync-status {
-        @include flex-container-default();
-        
-        cursor: pointer;
-
-        .indicator {
-            display: block;
-            color: #FF4444;
-        }
-
-        .desc {
-            display: none;
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-
-        .desc:before {
-            content: 'Offline';
-        }
-
-        &:hover .desc {
-            display: block;
-        }
-
-        &.socket-connected {
-            .indicator {
-                @include transition_with_delay(all, 250ms, 250ms);
-
-                display: block;
-                color: #99CC00;
-            }
-
-            .desc:before {
-                content: 'Online';
-            }
-        }
+    dd {
+        margin: 0 0 5px 0;
+        padding: 0;
     }
 }

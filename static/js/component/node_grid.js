@@ -30,6 +30,7 @@ define(
                 this.context.on('click', misc.eventHandlerNoPropagation);
 
                 this.context.on('click',             '.node a', $.proxy(this.onNodeClick, this));
+                this.context.on('click',             '.node a .node-marker', $.proxy(this.onNodeMarkerClick, this));
                 this.context.on('mousedown mouseup', '.node a', misc.eventHandlerDisableDragging);
             },
 
@@ -55,6 +56,12 @@ define(
 
             onNodeClick: function (e) {
                 this.dispatch('node.click', e);
+            },
+
+            onNodeMarkerClick: function (e) {
+                e.stopPropagation();
+
+                this.dispatch('node.marker.click', e);
             }
         });
 

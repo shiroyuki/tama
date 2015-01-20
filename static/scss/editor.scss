@@ -4,21 +4,21 @@
 
 $base-color: #222; // #33342d; // #23251e;
 
+body {
+    background-color: #fff;
+}
+
 .app-header {
     border-bottom: none;
+    top: auto;
+    bottom: 0;
+    z-index: 20;
 }
 
 .app-container {
-    @include flex-container-default();
-    @include flex-item(1 1 auto);
-    @include flex-direction(column);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
     .location-bar {
+        display: none; // temporary measure
+
         background-color: $base-color;
 
         [class*="-location"] {
@@ -48,6 +48,12 @@ $base-color: #222; // #33342d; // #23251e;
     .metadata {
         @include flex-container-default();
         @include flex-justify-content(space-between);
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 20;
 
         background-color: $base-color;
         padding: 10px 20px;
@@ -151,6 +157,11 @@ $base-color: #222; // #33342d; // #23251e;
                     background-color: $palette_light_green;
                 }
             }
+<<<<<<< HEAD
+=======
+
+            &.suggest
+>>>>>>> 092492d51d3ef1ad3e1c09cc0940a6cb98830fc2
 
             &.default {
                 @include flex-order(1);

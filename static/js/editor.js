@@ -112,7 +112,8 @@ function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
 
     locationBar.set(parentPath);
 
-    $('.app-container').css('top', $('.app-header').outerHeight());
+    $('.app-container').css('margin-top', $('.metadata').outerHeight());
+    $('.app-container').css('margin-bottom', $('.app-header').outerHeight());
 }
 
 try {

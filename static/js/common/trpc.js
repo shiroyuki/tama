@@ -3,6 +3,8 @@ define(
     function ($, WebSocketClient) {
         function ToriRpcClient(url) {
             this.WebSocketClient(url);
+
+            this.debugMode = true;
         };
 
         $.extend(ToriRpcClient.prototype, WebSocketClient.prototype, {

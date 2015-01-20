@@ -54,20 +54,26 @@
 {% endcall %}
 
 {% call c.dialog_template('dialog/about') %}
-    {%- raw -%}
-        <h3>Project Tama v0.1-dev</h3>
-        <p>&copy; 2014 Juti Noppornpitak</p>
-        <p>
-            The trademark and intellectual properties of any used open-source libraries
-            and software are copyrighted by respective owners.
-        </p>
-        <p>
-            This (demo) service is operating in read-only mode and for demonstration purposes.
-        </p>
-        <p>{%- endraw -%}
-            This project uses the libraries, software and/or media from
-            {{ ', '.join(app.settings.opensource_projects) }}
-            under respective open-source licenses.
-        {%- raw -%}</p>
-    {%- endraw -%}
+    <h3>Project Tama v0.1-dev</h3>
+    <p>&copy; 2014 Juti Noppornpitak</p>
+    <p>
+        The trademark and intellectual properties of any used open-source libraries
+        and software are copyrighted by respective owners.
+    </p>
+    <p>
+        This (demo) service is operating in read-only mode and for demonstration purposes.
+    </p>
+    <p>
+        This project uses the libraries, software and/or media from
+        {{ ', '.join(app.settings.opensource_projects) }}
+        under respective open-source licenses.
+    </p>
+    <p>
+        <dl>
+            <dt>Device Form Factor</dt>
+            <dd>{{ device_form_factor }}</dd>
+            <dt>UI Mode</dt>
+            <dd>{{ 'Mobile' if is_mobile else 'Normal' }}</dd>
+        </dl>
+    </p>
 {% endcall %}

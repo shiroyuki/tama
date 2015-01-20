@@ -78,6 +78,10 @@ define(
             onReconnecting: function (e) {
                 var $dialog;
 
+                if (this.reconnectionDialogId !== null) {
+                    return;
+                }
+
                 $dialog = misc.dialogManager.use('dialog/reconnecting', {
                     reconnectionCount:      this.rpc._reconnectionTries,
                     reconnectionCountLimit: this.rpc._maxReconnections

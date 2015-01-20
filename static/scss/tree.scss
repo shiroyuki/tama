@@ -103,6 +103,10 @@ $tree_animation_speed: 250ms;
     }
 }
 
+.location-bar {
+    padding: 0 10px;
+}
+
 body[data-selection-count="0"] {
     .main-controller .at-least-one-selection {
         display: none;

@@ -16,38 +16,10 @@ body {
 }
 
 .app-container {
-    .location-bar {
-        display: none; // temporary measure
-
-        background-color: $base-color;
-
-        [class*="-location"] {
-            border: none;
-        }
-
-        .root-location a {
-            background-color: #000;
-            padding-left: 17px;
-            margin-left: -10px;
-        }
-
-        .current-location li {
-            border: none;
-        }
-
-        a {
-            color: #fff;
-            background-color: #000;
-
-            &:hover {
-                background-color: #FF8800;
-            }
-        }
-    }
-
     .metadata {
         @include flex-container-default();
         @include flex-justify-content(space-between);
+        @include flex-container-align-items(center);
 
         position: fixed;
         top: 0;
@@ -59,12 +31,61 @@ body {
         padding: 10px 20px;
         color: #fff;
 
+        .location-bar {
+            //display: none; // temporary measure
+            background-color: $base-color;
+            margin-left: -10px;
+
+            [class*="-location"] {
+                border: none;
+            }
+
+            .root-location a {
+                background-color: #000;
+            }
+
+            .current-location {
+                background-color: transparent;
+
+                .step {
+                    display: none;
+                    border: none;
+                    margin-left: 1px;
+                }
+
+                .step:last-child {
+                    display: inline-block;
+                }
+            }
+
+            a {
+                color: #fff;
+                background-color: #000;
+
+                &:hover {
+                    background-color: #FF8800;
+                }
+            }
+
+            &:hover {
+                .current-location {
+                    .step {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+
         .file {
-            .icon {
-                padding-right: 10px;
+            @include flex-container-default();
+
+            .name {
+                @include flex-order(1);
             }
 
             .mode {
+                @include flex-order(2);
+
                 display: inline-block;
                 color: #333;
                 background-color: #000;
@@ -73,10 +94,6 @@ body {
                 border-radius: 3px;
                 font-weight: 400;
                 cursor: pointer;
-
-                &:after {
-                    content: " →";
-                }
 
                 &:hover {
                     background-color: #0099CC;

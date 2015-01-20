@@ -1,8 +1,6 @@
 .location-bar {
     @include flex-container-default();
 
-    padding: 0 10px;
-
     [class*="-location"] {
         border: 1px solid #000;
         background-color: #fff;

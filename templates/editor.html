@@ -1,6 +1,6 @@
 {% extends '_layout_base.html' %}
 
-{% block head_title %}{{ request_location or '<home>' }}{% endblock %}
+{% block head_title %}Edit: {{ request_location or '<home>' }}{% endblock %}
 
 {% block dialogs %}
     {%- call c.dialog_template('dialog/mode-selection', ['prompt', 'horizontal']) -%}
@@ -17,10 +17,16 @@
 
 {% block content %}
     <div class="metadata">
+        <header class="location-bar">
+            <ul class="current-location"></ul>
+            <div class="root-location">
+                <a href="{{ app.path('ui.tree.default') }}">{{ c.icon('home') }}</a>
+            </div>
+        </header>
+
         <div class="file" title="{{ request_location }}">
-            {{ c.icon('file-o', classes=['icon']) }}
             <span class="name">{{ file_name or '<new>' | escape }}</span>
-            <span class="mode"></span>
+            <span class="mode" title="Change the syntax highlighter"></span>
         </div>
         <div class="menu" data-key-bind="[escape]">
             <a class="options">{{ c.icon('bars', ['fw']) }}</a>
@@ -28,13 +34,6 @@
     </div>
 
     <div id="editor"></div>
-
-    <header class="location-bar">
-        <ul class="current-location"></ul>
-        <div class="root-location">
-            <a href="{{ app.path('ui.tree.default') }}">{{ c.icon('home') }}</a>
-        </div>
-    </header>
 
     {%- call c.hb_template('editor/step') -%}
         {%- raw -%}

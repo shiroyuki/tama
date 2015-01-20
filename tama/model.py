@@ -95,14 +95,6 @@ class FSNode(object):
         FSNode.logger.debug('Loaded {}'.format(self.real_path))
 
     def save(self):
-<<<<<<< HEAD
-        try:
-            with open(self.real_path, 'w') as f:
-                f.write(self.content)
-        except UnicodeEncodeError as exception:
-            with codecs.open(self.real_path, 'w', 'utf-8') as f:
-                f.write(self.content)
-=======
         tmp_file = self.real_path + '.tmp'
 
         try:
@@ -113,7 +105,6 @@ class FSNode(object):
                 f.write(self.content)
 
         os.rename(tmp_file, self.real_path)
->>>>>>> 092492d51d3ef1ad3e1c09cc0940a6cb98830fc2
 
         FSNode.logger.debug('Saved {}'.format(self.real_path))
 

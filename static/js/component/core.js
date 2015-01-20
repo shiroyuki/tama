@@ -11,6 +11,7 @@ define(
 
             options = options || {};
 
+            this.reconnectionDialogId   = null;
             this.reconnectionCount      = 0;
             this.reconnectionCountLimit = options.reconnectionCountLimit || 10;
 
@@ -25,6 +26,9 @@ define(
 
             this.rpc.on('open',  $.proxy(this.onConnected, this));
             this.rpc.on('close', $.proxy(this.onDisconnected, this));
+            this.rpc.on('reconnecting', $.proxy(this.onReconnecting, this));
+
+            this.rpc.setAutoReconnect(true);
 
             misc.dialogManager.on('dialog/reconnection', 'click', '.reconnect', $.proxy(this.onAlertReconnectButtonClickReconnect, this));
         }
@@ -57,31 +61,39 @@ define(
             },
 
             onConnected: function (e) {
-                this.reconnectionCount = 0;
+                console.log(this.reconnectionDialogId);
+
+                if (this.reconnectionDialogId !== null) {
+                    console.log('Reconnected.');
+
+                    misc.dialogManager.cancelDialog(this.reconnectionDialogId);
+
+                    this.reconnectionDialogId = null;
+                }
 
                 this.$syncStatus.addClass('socket-connected');
                 this.dispatch('connected');
             },
 
-            onDisconnected: function (e) {
-                this.reconnectionCount++;
+            onReconnecting: function (e) {
+                var $dialog;
 
-                if (this.reconnectionCount >= this.reconnectionCountLimit) {
-                    misc.dialogManager.use('dialog/reconnection');
-
-                    this.$syncStatus.removeClass('socket-connected');
-                    this.dispatch('disconnected');
-
-                    return;
-                }
-
-                misc.dialogManager.use('dialog/reconnecting', {
-                    reconnectionCount:      this.reconnectionCount,
-                    reconnectionCountLimit: this.reconnectionCountLimit
+                $dialog = misc.dialogManager.use('dialog/reconnecting', {
+                    reconnectionCount:      this.rpc._reconnectionTries,
+                    reconnectionCountLimit: this.rpc._maxReconnections
                 });
+
+                this.reconnectionDialogId = $dialog.attr('data-id');
 
                 this.$syncStatus.removeClass('socket-connected');
                 this.dispatch('reconnecting');
+            },
+
+            onDisconnected: function (e) {
+                misc.dialogManager.use('dialog/reconnection');
+
+                this.$syncStatus.removeClass('socket-connected');
+                this.dispatch('disconnected');
             }
         });
 

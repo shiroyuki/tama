@@ -17,6 +17,10 @@ define(
                     this.handlerMap[eventType] = [];
                 }
 
+                if (eventHandler === undefined) {
+                    throw 'common.UndefinedEventHandler for ' + eventType;
+                }
+
                 this.handlerMap[eventType].push(eventHandler);
 
                 return this;

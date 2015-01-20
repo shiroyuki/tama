@@ -7,6 +7,8 @@ define(
         };
 
         $.extend(WebSocketClient.prototype, EventBaseClass.prototype, {
+            _maxReconnections: 6,
+
             WebSocketClient: function (url) {
                 this.EventBaseClass({
                     open:  [],
@@ -18,6 +20,9 @@ define(
                 this._connected = false;
                 this.url    = url;
                 this.client = null;
+
+                this._autoReconnect     = false;
+                this._reconnectionTries = 0;
             },
 
             isConnected: function () {
@@ -43,6 +48,14 @@ define(
 
             connect: function () {
                 if (this.client !== null) {
+                    this.inspectActivity('ws.connect', 'warning.connected');
+
+                    return;
+                }
+
+                if (this.isConnecting() || this.isConnected()) {
+                    this.inspectActivity('ws.connect', 'warning.connecting');
+
                     return;
                 }
 
@@ -58,6 +71,10 @@ define(
                 return event.data !== undefined ? JSON.parse(event.data) : null;
             },
 
+            setAutoReconnect: function (enabled) {
+                this._autoReconnect = enabled;
+            },
+
             onMessage: function (event) {
                 var data = this.extractDataFromEvent(event);
 
@@ -66,15 +83,29 @@ define(
             },
 
             onOpen: function (event) {
-                this._connected = true;
+                this._connected         = true;
+                this._reconnectionTries = 0;
 
                 this.inspectActivity('ws.open', event);
                 this.dispatch('open', event);
             },
 
             onClose: function (event) {
+                var delay;
+
                 this.client     = null;
                 this._connected = false;
+
+                if (this._autoReconnect && this._reconnectionTries < this._maxReconnections) {
+                    delay = Math.pow(2, this._reconnectionTries++);
+
+                    setTimeout($.proxy(this.connect, this), delay * 1000);
+
+                    this.inspectActivity('ws.reconnecting', {delay: delay});
+                    this.dispatch('reconnecting', {delay: delay});
+
+                    return;
+                }
 
                 this.inspectActivity('ws.close', event);
                 this.dispatch('close', event);

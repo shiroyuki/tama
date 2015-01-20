@@ -29,6 +29,8 @@ class FSNode(object):
         'application/x-sql'
     ]
 
+    TRASH_PREFIX = '_tmtrash_'
+
     def __init__(self, referred_path, real_path, name = None, content = None):
         FSNode.logger.debug('FSNode({}, {})'.format(referred_path, real_path))
         self.referred_path = referred_path
@@ -117,3 +119,6 @@ class FSNode(object):
             return
 
         os.removedirs(self.real_path)
+
+    def mark_to_delete(self):
+        os.renames(self.real_path, TRASH_PREFIX + self.real_path)

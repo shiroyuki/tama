@@ -95,3 +95,14 @@
         }
     }
 }
+
+// Temporary Disabled for Preview Release
+.main-controller > [data-group="mode-switches"] {
+    [data-id="move-objects"] {
+        display: none;
+    }
+
+    [data-id="rename-objects"] {
+        display: none;
+    }
+}

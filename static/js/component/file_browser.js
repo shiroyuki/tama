@@ -21,6 +21,7 @@ define(
             this.rpc.on('rpc.finder.find',          $.proxy(this.onSocketRpcFind, this));
             this.rpc.on('rpc.finder.create_folder', $.proxy(this.onSocketRpcCreateFolder, this));
             this.rpc.on('rpc.finder.create_file',   $.proxy(this.onSocketRpcCreateFile, this));
+            this.rpc.on('rpc.finder.delete',        $.proxy(this.onSocketRpcDelete, this));
 
             this.fsNodeGrid.on('node.click',        $.proxy(this.onNodeClickUpdate, this));
             this.fsNodeGrid.on('node.marker.click', $.proxy(this.onNodeMarkerClick, this));
@@ -31,12 +32,36 @@ define(
 
             open: function (path) {
                 if (path === undefined) {
-                    throw 'something';
+                    throw 'tama.component.FileBrowser.UndefinedPath';
                 }
+
                 this.rpc.request('rpc.finder', 'find', { path: path });
             },
 
-            getFeature: function(k) {
+            deleteSelections: function () {
+                var $targets = this.context.find('li.node.selected'),
+                    paths = []
+                ;
+
+                if ($targets.length === 0) {
+                    return;
+                }
+
+                $targets.each(function () {
+                    var $target = $(this);
+
+                    paths.push($target.attr('data-path'));
+                });
+
+                $targets.addClass('deleting');
+                $targets.removeClass('selected');
+
+                this.rpc.request('rpc.finder', 'delete', { paths: paths });
+
+                this.dispatch('node.select', this.makeSelectionNotificationData());
+            },
+
+            getFeature: function (k) {
                 if (this.features[k] === undefined) {
                     throw 'tama.component.FileBrowser.UnknownFeature';
                 }
@@ -44,7 +69,7 @@ define(
                 return this.features[k];
             },
 
-            setFeature: function(k, v) {
+            setFeature: function (k, v) {
                 if (this.features[k] === undefined) {
                     throw 'tama.component.FileBrowser.UnknownFeature';
                 }
@@ -79,6 +104,31 @@ define(
             onSocketRpcFind: function (response) {
                 this.locationBar.set(response.result.path);
                 this.fsNodeGrid.update(response.result.nodes);
+
+                this.dispatch('open', response.result);
+            },
+
+            onSocketRpcDelete: function (response) {
+                var $targets = this.context.find('li.node.deleting')
+                ;
+
+                if ($targets.length === 0) {
+                    return;
+                }
+
+                $targets.each(function () {
+                    var $target = $(this),
+                        path    = $target.attr('data-path')
+                    ;
+
+                    if (response.result[path]) {
+                        $targets.remove();
+
+                        return;
+                    }
+
+                    $targets.removeClass('deleting');
+                });
             },
 
             onSocketRpcCreateFolder: function (response) {
@@ -119,6 +169,14 @@ define(
                     }
                 ;
 
+                if ($node.hasClass('deleting')) {
+                    e.preventDefault();
+
+                    alert('Being removed. Not available.');
+
+                    return;
+                }
+
                 if (node.is_link) {
                     e.preventDefault();
 
@@ -149,16 +207,20 @@ define(
                     $node   = $anchor.closest('.node'),
                     path    = $node.attr('data-path'),
                     node    = this.fsNodeGrid.nodes[path],
-                    eventData = {
-                        anchor:   $anchor,
-                        context:  $node,
-                        node:     node,
-                        selected: false,
-                        count:    0
-                    }
+                    eventData = this.makeSelectionNotificationData(
+                        $anchor,
+                        $node,
+                        node
+                    )
                 ;
 
                 e.preventDefault();
+
+                if ($node.hasClass('deleting')) {
+                    alert('Being removed. Not available.');
+
+                    return;
+                }
 
                 $node.toggleClass('selected');
 
@@ -166,6 +228,16 @@ define(
                 eventData.count    = this.context.find('.node.selected').length;
 
                 this.dispatch('node.select', eventData);
+            },
+
+            makeSelectionNotificationData: function ($anchor, $node, node) {
+                return {
+                    anchor:   $anchor || null,
+                    context:  $node   || null,
+                    node:     node    || null,
+                    selected: false,
+                    count:    0
+                };
             }
         });
 

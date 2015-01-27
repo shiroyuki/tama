@@ -88,10 +88,8 @@ $tree_animation_speed: 250ms;
                 }
             }
         }
-        
-        .node.selected a {
-            opacity: 1;
 
+        .node.selected a {
             .node-marker {
                 color: $palette_light_blue;
             }
@@ -99,6 +97,10 @@ $tree_animation_speed: 250ms;
             .node-icon {
                 color: $palette_dark_orange;
             }
+        }
+
+        .node.deleting a {
+            opacity: 0.3;
         }
     }
 }

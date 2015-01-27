@@ -2,6 +2,7 @@ import codecs
 import logging
 import mimetypes
 import os
+import shutil
 
 try:
     import codecs
@@ -110,15 +111,14 @@ class FSNode(object):
 
         FSNode.logger.debug('Saved {}'.format(self.real_path))
 
-    def delete(self, path):
+    def delete(self):
         if not self.exists:
             raise FSNodeNotFoundError('Unable to locate the node.')
 
-        if self.is_file:
+        try:
             os.unlink(self.real_path)
-            return
-
-        os.removedirs(self.real_path)
+        except OSError as e:
+            shutil.rmtree(self.real_path)
 
     def mark_to_delete(self):
         os.renames(self.real_path, TRASH_PREFIX + self.real_path)

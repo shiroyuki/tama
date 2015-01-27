@@ -23,7 +23,8 @@ require(
             trpc            = core.rpc,
             locationBar,
             fsNodeGrid,
-            browser
+            browser,
+            selections
         ;
 
         locationBar = new LocationBar($('.explorer-chrome .current-location'), templateManager, {
@@ -69,12 +70,25 @@ require(
         browser = new FileBrowser($('.explorer-chrome'), trpc, locationBar, fsNodeGrid);
 
         function onMCtrlDeleteObjects(e) {
-            //...
-            alert('Deleting?');
+            var $selectedNodes = browser.context.find('li.node.selected'),
+                nodeCount      = $selectedNodes.length,
+                confirmDeletion
+            ;
+
+            if (nodeCount === 0) {
+                return;
+            }
+
+            confirmDeletion = confirm(['Deleting ', nodeCount, ' node', (nodeCount === 1? '' : 's'), '?'].join(''));
+
+            if (!confirmDeletion) {
+                return;
+            }
+
+            browser.deleteSelections();
         }
 
         function onMCtrlUpdateOnSelection(e) {
-            console.log(e);
             $body.attr('data-selection-count', e.count);
         }
 
@@ -91,10 +105,10 @@ require(
                 return;
             }
 
-            browser.createFile(currentLocation, name);
+            browser.createFolder(currentLocation, name);
         }
 
-        function onMCtrlTriggerNewFilefunction() {
+        function onMCtrlTriggerNewFile() {
             var name = prompt('What is the name of the new file?');
 
             if (name === null) {
@@ -152,12 +166,16 @@ require(
             dialogManager.use('dialog/open-node', contexts);
         }
 
+        function onBrowserOpen(e) {
+            currentLocation = e.path;
+        }
+
         function onSwitchToEditMode(enabled) {
             mctrl.setTriggerActive('manage-objects', enabled);
         }
 
         mctrl.on('new-folder',     onMCtrlTriggerNewFolder);
-        mctrl.on('new-file',       onMCtrlTriggerNewFilefunction);
+        mctrl.on('new-file',       onMCtrlTriggerNewFile);
         mctrl.on('app-about',      onMCtrlOpenAbout);
         mctrl.on('delete-objects', onMCtrlDeleteObjects);
 
@@ -167,6 +185,7 @@ require(
         core.on('connected', onCoreConnected);
         core.on('disconnected', onCoreDisconnected);
 
+        browser.on('open',               onBrowserOpen);
         browser.on('node.drive',         onNodeDrive);
         browser.on('node.drive.blocked', onNodeDriveBlocked);
         browser.on('node.open.unknown',  onNodeOpenUnknown);
@@ -176,7 +195,7 @@ require(
         trpc.connect();
         mctrl.enable();
         sctrl.enable();
-        
+
         $body.attr('data-selection-count', 0);
     }
 );

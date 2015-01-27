@@ -22,8 +22,6 @@
         border-radius: 50px;
 
         .text {
-            @include transition_with_delay(all, 500ms, 250ms);
-
             position: absolute;
             top: 0;
             left: 100%;

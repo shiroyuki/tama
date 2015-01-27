@@ -1,4 +1,5 @@
 import re
+import time
 from tori.centre import settings as app_settings
 from tama.service import NotFoundError
 
@@ -57,16 +58,21 @@ class Finder(object):
 
         return self._make_response(True)
 
-    def delete(self, path):
+    def delete(self, paths):
         if app_settings['read_only']:
             return self._make_response(False, 'app.ReadOnlyMode')
 
-        try:
-            self.finder.delete(path)
-        except NotFoundError as e:
-            return self._make_response(False, e)
+        result = {}
 
-        return self._make_response(True)
+        for path in paths:
+            try:
+                self.finder.delete(path)
+
+                result[path] = True
+            except NotFoundError as e:
+                result[path] = False
+
+        return result
 
     def create_folder(self, path, name):
         if app_settings['read_only']:

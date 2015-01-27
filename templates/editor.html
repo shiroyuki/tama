@@ -52,6 +52,7 @@
     <script>
         url_prefix_dir = '{{ app.path('ui.tree', path = '')}}';
         parentPath     = '{{ parent_path }}';
+        fullParentPath = '{{ app.path('ui.tree', path = parent_path)}}';
         rpcSocketUrl   = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
         filename       = '{{ request_location }}';
         editorOptions  = {{ json(app.settings['editor'], indent = 4) }};

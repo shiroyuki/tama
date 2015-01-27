@@ -45,7 +45,8 @@ define(
                 this.editor = ace.edit(this.id);
                 //this.editor.setTheme('ace/theme/' + this.theme);
                 this.editor.setOptions({
-                    maxLines: 99999, // for tablets
+                    minLines: 10,
+                    maxLines: 999999, // for tablets
                     autoScrollEditorIntoView: true
                 });
 
@@ -65,8 +66,9 @@ define(
                     }
                 }
 
-                this.socket.on('rpc.finder.get', $.proxy(this.onFinderGet, this));
-                this.socket.on('rpc.finder.put', $.proxy(this.onFinderPut, this));
+                this.socket.on('rpc.finder.get',    $.proxy(this.onFinderGet,    this));
+                this.socket.on('rpc.finder.put',    $.proxy(this.onFinderPut,    this));
+                this.socket.on('rpc.finder.delete', $.proxy(this.onFinderDelete, this));
             },
 
             setMode: function (mode) {
@@ -92,9 +94,9 @@ define(
 
             enableKeyBinding: function () {
                 this.editor.commands.addCommand({
-                    name: 'Mock Save',
-                    bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-                    exec: $.proxy(this.onShortCutSave, this),
+                    name:     'Save files',
+                    bindKey:  {win: 'Ctrl-S',  mac: 'Command-S'},
+                    exec:     $.proxy(this.onShortCutSave, this),
                     readOnly: false
                 });
             },
@@ -120,9 +122,19 @@ define(
             },
 
             save: function () {
+                this.dispatch('save.in_progress', this.node);
+
                 this.socket.request('rpc.finder', 'put', {
                     path:    this.node.path,
                     content: this.editor.getValue()
+                });
+            },
+
+            remove: function () {
+                this.dispatch('delete.in_progress', this.node);
+
+                this.socket.request('rpc.finder', 'delete', {
+                    paths: [this.node.path]
                 });
             },
 
@@ -183,17 +195,23 @@ define(
                 this.dispatch('save.ok', result);
             },
 
+            onFinderDelete: function (response) {
+                var result = response.result;
+
+                if (!result[this.filename]) {
+                    console.error(result.error_code);
+
+                    this.dispatch('delete.failed');
+
+                    return;
+                }
+
+                this.dispatch('delete.ok');
+            },
+
             onShortCutSave: function (editor) {
                 this.save();
-            },
-
-            onClickSave: function (e) {
-                e.preventDefault();
-
-                this.dispatch('save.in_progress', this.node);
-
-                this.save();
-            },
+            }
         });
 
         return Editor;

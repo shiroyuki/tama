@@ -16,6 +16,7 @@ function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
             stepTemplateName: 'editor/step'
         }),
         dialogManager = misc.dialogManager,
+        $appContainer = $('.app-container'),
         $metadataMenu = $('.metadata .menu'),
         $metadataFile = $('.metadata .file')
     ;
@@ -40,15 +41,17 @@ function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
                 {
                     id:    'save',
                     label: 'Save the changes',
-                    action: $.proxy(editor.onClickSave, editor)
+                    action: onClickSave
                 },
                 {
                     id:    'delete',
-                    label: 'Delete this file'
+                    label: 'Delete this file',
+                    action: onClickDelete
                 },
                 {
                     id:    'revert',
-                    label: 'Revert the changes'
+                    label: 'Revert the unsaved changes',
+                    action: onClickRevert
                 },
                 {
                     id:    'mode-switch',
@@ -65,12 +68,25 @@ function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
 
     function onEditorSaveOk() {
         dialogManager.cancelLastDialog();
-        alert('Saved');
     }
 
     function onEditorSaveFailed(result) {
         dialogManager.cancelLastDialog();
         alert('Failed to save (' + result.error_code + ')');
+    }
+
+    function onEditorDeleteInProgress(node) {
+        alert('Deleting...');
+    }
+
+    function onEditorDeleteOk() {
+        dialogManager.cancelLastDialog();
+        window.location = fullParentPath;
+    }
+
+    function onEditorDeleteFailed(result) {
+        dialogManager.cancelLastDialog();
+        alert('Failed to delete');
     }
 
     function onEditorModeChange(event) {
@@ -96,12 +112,34 @@ function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
         $anchor.addClass('used');
     }
 
+    function onClickRevert(e) {
+        e.preventDefault();
+
+        editor.open(filename);
+        dialogManager.cancelLastDialog();
+    }
+
+    function onClickSave(e) {
+        e.preventDefault();
+
+        editor.save();
+    }
+
+    function onClickDelete(e) {
+        e.preventDefault();
+
+        editor.remove();
+    }
+
     core.on('connected', onCoreConnected);
 
     editor.on('mode.change',      onEditorModeChange);
     editor.on('save.in_progress', onEditorSaveInProgress);
     editor.on('save.ok',          onEditorSaveOk);
     editor.on('save.failed',      onEditorSaveFailed);
+    editor.on('delete.in_progress', onEditorDeleteInProgress);
+    editor.on('delete.ok',          onEditorDeleteOk);
+    editor.on('delete.failed',      onEditorDeleteFailed);
 
     dialogManager.on('dialog/mode-selection', 'click', 'a[data-option="mode.change"]', onEditNewModeSelected);
 
@@ -112,8 +150,8 @@ function main(misc, RpcInterface, Editor, misc, Core, LocationBar) {
 
     locationBar.set(parentPath);
 
-    $('.app-container').css('margin-top', $('.metadata').outerHeight());
-    $('.app-container').css('margin-bottom', $('.app-header').outerHeight());
+    $appContainer.css('margin-top', $('.metadata').outerHeight());
+    $appContainer.css('margin-bottom', $('.app-header').outerHeight());
 }
 
 try {

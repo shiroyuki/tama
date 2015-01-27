@@ -5,6 +5,7 @@ from tornado.web     import HTTPError
 from tori.controller import Controller as BaseController
 from tori.socket.rpc import Interface
 from tori.socket.websocket import WebSocket
+from tama.service import *
 
 class Controller(BaseController):
     RE_MOBILE_UA = re.compile('(Android|iPad|iPhone|Mobile)')
@@ -74,6 +75,16 @@ class UIFileEditor(Controller):
     def get(self, path=''):
         parent_path = os.path.dirname(path)
         file_name   = os.path.split(path)[1]
+
+        fs_node = None
+
+        try:
+            fs_node = self.component('internal.finder').get(path)
+        except NotFoundError as e:
+            raise HTTPError(404)
+
+        if not fs_node.is_file:
+            raise HTTPError(403)
 
         self.render(
             'editor.html',

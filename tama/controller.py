@@ -62,14 +62,17 @@ class UIBrowser(Controller):
                                 if len(request_path_blocks) > 1\
                                 else ''
 
-        self.render(
-            'browser.html',
-            menu             = menu_config,
-            menu_in_json     = json.dumps(menu_config, indent = 4),
-            request_location = request_location,
-            parent_path      = parent_path,
-            fs_nodes         = self.component('internal.finder').find(path)
-        )
+        try:
+            self.render(
+                'browser.html',
+                menu             = menu_config,
+                menu_in_json     = json.dumps(menu_config, indent = 4),
+                request_location = request_location,
+                parent_path      = parent_path,
+                fs_nodes         = self.component('internal.finder').find(path)
+            )
+        except NotFoundError as e:
+            raise HTTPError(404)
 
 class UIFileEditor(Controller):
     def get(self, path=''):

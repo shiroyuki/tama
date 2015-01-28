@@ -67,7 +67,16 @@
             <div class="message">This set of selections will be moved or renamed as followed.</div>
         </div>
         <div class="inner-middle">
-            <ul></ul>
+            <form>
+                {% for i in range(100) %}
+                <div class="node">
+                    <a class="undo">{{ c.icon('undo')}}</a>
+                    <label>ABC</label>
+                    <span class="aid">{{ c.icon('angle-right') }}</span>
+                    <input type="text" value="ABC"/>
+                </div>
+                {% endfor %}
+            </form>
         </div>
     </article>
 

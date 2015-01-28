@@ -2,7 +2,6 @@
 
 // For from-the-left slide panels at the moment
 .slide-panel {
-    display: none;
     z-index: 3;
     background-color: $palette_bw_e;
     box-shadow: $palette_bw_f 0 0 20px;
@@ -24,7 +23,6 @@
     }
 
     .hide-button {
-        left: 90%;
         bottom: 45%;
         color: $palette_bw_9;
         background-color: $palette_bw_e;
@@ -36,6 +34,10 @@
     }
 
     // containers
+    [class*="inner-"] {
+        display: none;
+    }
+
     .inner-upper {
         position: absolute;
         top: 0;
@@ -52,7 +54,6 @@
         right: 0;
         padding: 5px 10px;
         overflow: auto;
-        background-color: red;
     }
 
     // active state
@@ -61,15 +62,23 @@
             display: block;
         }
 
+        .hide-button {
+            left: 50%;
+        }
+
         // visible state
         &.visible {
-            display:  block;
+            margin-left: 0;
             position: fixed;
             top:    0;
             left:   0;
             bottom: 0;
-            right:  10%;
+            right:  50%;
             box-shadow: $palette_bw_9 0 0 20px;
+
+            [class*="inner-"] {
+                display: block;
+            }
 
             .show-button {
                 display: none;

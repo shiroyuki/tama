@@ -233,7 +233,13 @@ require(
                 }
 
                 this.$middle.css('top', lowerPartTopOffset);
-                this.$middle.html(nodes); // experimental
+
+                // TODO reset the form.
+
+                if (nodes.length > 0) {
+                    // TODO render the entries in the form.
+                    //this.$middle.html(nodes); // experimental
+                }
 
                 setTimeout(function () {
                     lowerPartTopOffset = useUpperPart ? self.$upper.outerHeight() : 0;
@@ -269,7 +275,7 @@ require(
         });
 
         uiMover = new UIMover($mover);
-        //uiMover.set(output.join(''), 'DEF');
+        uiMover.set([], 'DEF');
         //uiMover.activate();
         //uiMover.show();
     }

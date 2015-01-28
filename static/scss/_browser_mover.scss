@@ -1,4 +1,75 @@
+@import 'font';
+@import 'css3';
 @import 'slide_panel';
 
 .mover {
+    .inner-middle {
+        padding: 0;
+        //background-color: $palette_bw_f;
+    }
+
+    form {
+        padding: 0;
+        margin: 0;
+
+        .node {
+            @include flex-container-default();
+            @include flex-container-align-items(center);
+
+            border-bottom: 1px solid $palette_bw_d;
+
+            .undo {
+                @include flex-order(4);
+
+                cursor: pointer;
+                padding: 5px 10px;
+                margin-left: 5px;
+                margin-right: 5px;
+                color: $palette_bw_0;
+                border-radius: 20px;
+
+                &:hover {
+                    color: $palette_bw_f;
+                    background-color: $palette_bw_0;
+                }
+            }
+
+            label {
+                @include flex-order(1);
+                @include flex-grow(1);
+
+                padding: 5px 5px 5px 10px;
+                text-align: right;
+                color: $palette_bw_9;
+                margin: 4px 0;
+            }
+
+            .aid {
+                @include flex-order(2);
+
+                padding: 5px 10px;
+                color: $palette_bw_d;
+            }
+
+            input {
+                @include font-sans-serif-set();
+                @include flex-order(3);
+                @include flex-grow(1);
+
+                outline: none;
+                background-color: transparent;
+                border: none;
+                padding: 5px 10px 5px 5px;
+                font-size: 16px;
+                border-bottom: 2px solid $palette_bw_d;
+                color: $palette_bw_6;
+                margin: 4px 0 2px 0;
+
+                &:focus {
+                    color: $palette_bw_0;
+                    border-bottom-color: $palette_light_blue;
+                }
+            }
+        }
+    }
 }

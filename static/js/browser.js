@@ -14,6 +14,8 @@ require(
                 inEditMode: false
             },
             $body           = $('body'),
+            $appContainer   = $('.app-container'),
+            $mover          = $('.mover'),
             $chrome         = null,
             sctrl           = new StateController(),
             mctrl           = new MainController('.main-controller'),
@@ -21,11 +23,15 @@ require(
             dialogManager   = misc.dialogManager,
             core            = new Core(rpcSocketUrl),
             trpc            = core.rpc,
+            uiMover,
+            appContainerHeight,
             locationBar,
             fsNodeGrid,
             browser,
             selections
         ;
+
+        appContainerHeight = $('.app-header').outerHeight();
 
         locationBar = new LocationBar($('.explorer-chrome .current-location'), templateManager, {
             enablePJAX:       true,
@@ -197,5 +203,74 @@ require(
         sctrl.enable();
 
         $body.attr('data-selection-count', 0);
+        $mover.css('margin-top', appContainerHeight);
+        $appContainer.css('margin-top', appContainerHeight);
+
+        // Experimental
+        function UIMover($context) {
+            this.active  = false;
+            this.context = $context;
+            this.$upper  = $context.find('.inner-upper');
+            this.$middle = $context.find('.inner-middle');
+        }
+
+        $.extend(UIMover.prototype, {
+            states: {
+                inactive: 1,
+                active:   2,
+                shown:    3,
+                done:     4
+            },
+
+            set: function (nodes, message) {
+                var self = this,
+                    useUpperPart       = message && String(message).length > 0,
+                    lowerPartTopOffset = 0;
+                ;
+
+                if (useUpperPart) {
+                    this.$upper.html(message);
+                }
+
+                this.$middle.css('top', lowerPartTopOffset);
+                this.$middle.html(nodes); // experimental
+
+                setTimeout(function () {
+                    lowerPartTopOffset = useUpperPart ? self.$upper.outerHeight() : 0;
+                    self.$middle.css('top', lowerPartTopOffset);
+                }, 100);
+            },
+
+            activate: function () {
+                this.active = true;
+                this.context.addClass('active');
+            },
+
+            deactivate: function () {
+                this.active = false;
+                this.context.removeClass('active');
+            },
+
+            show: function () {
+                if (!this.active) {
+                    throw 'tama.component.Mover.InactiveState';
+                }
+
+                this.context.addClass('visible');
+            },
+
+            hide: function () {
+                if (!this.active) {
+                    throw 'tama.component.Mover.InactiveState';
+                }
+
+                this.context.removeClass('visible');
+            }
+        });
+
+        uiMover = new UIMover($mover);
+        //uiMover.set(output.join(''), 'DEF');
+        //uiMover.activate();
+        //uiMover.show();
     }
 );

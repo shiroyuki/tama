@@ -8,7 +8,7 @@ Requirements
 ============
 
 - Python 2.7 or Python 3.3+
-- Latest version of tori, tornado, redis, jinja2, imagination, kotoba
+- Latest version of tori, tornado, redis, jinja2, imagination, kotoba, redis (only to satisfy **tori**'s requirement)
 
 Installation
 ============

@@ -1,0 +1,83 @@
+@import 'colours';
+
+// For from-the-left slide panels at the moment
+.slide-panel {
+    display: none;
+    z-index: 3;
+    background-color: $palette_bw_e;
+    box-shadow: $palette_bw_f 0 0 20px;
+
+    // action buttons
+    .action-button {
+        position: fixed;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    .show-button {
+        left: 0;
+        bottom: 45%;
+        color: $palette_bw_f;
+        background-color: $palette_bw_3;
+
+        display: none;
+    }
+
+    .hide-button {
+        left: 90%;
+        bottom: 45%;
+        color: $palette_bw_9;
+        background-color: $palette_bw_e;
+        border-top: 1px solid $palette_bw_d;
+        border-right: 1px solid $palette_bw_d;
+        border-bottom: 1px solid $palette_bw_d;
+
+        display: none;
+    }
+
+    // containers
+    .inner-upper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 5px 10px;
+        border-bottom: 1px solid $palette_bw_d;
+    }
+
+    .inner-middle {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 5px 10px;
+        overflow: auto;
+        background-color: red;
+    }
+
+    // active state
+    &.active {
+        .show-button {
+            display: block;
+        }
+
+        // visible state
+        &.visible {
+            display:  block;
+            position: fixed;
+            top:    0;
+            left:   0;
+            bottom: 0;
+            right:  10%;
+            box-shadow: $palette_bw_9 0 0 20px;
+
+            .show-button {
+                display: none;
+            }
+
+            .hide-button {
+                display: block;
+            }
+        }
+    }
+}

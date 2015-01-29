@@ -104,13 +104,6 @@
                             "target": null
                         },
                         {
-                            "name":  "rename-objects",
-                            "class": "at-least-one-selection",
-                            "label": "Rename selected files or folders",
-                            "icon":  "pencil-square-o",
-                            "target": null
-                        },
-                        {
                             "name":  "app-about",
                             "class": "app-about",
                             "label": "About",

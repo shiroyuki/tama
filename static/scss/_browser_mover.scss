@@ -1,75 +1,74 @@
 @import 'font';
 @import 'css3';
-@import 'slide_panel';
+@import 'colours';
 
 .mover {
-    .inner-middle {
-        padding: 0;
-        //background-color: $palette_bw_f;
+    .mover-iterator {
+        display: block;
+        margin: 0 -25px 1px -25px;
+        background-color: $palette_bw_2;
+        color: $palette_bw_6 !important;
+
+        .icon {
+            padding: 5px;
+            text-align: center;
+            width: 15px;
+            color: $palette_bw_6;
+        }
+
+        .text {
+            padding: 5px 25px 5px 0;
+        }
+
+        &:hover {
+            color: $palette_bw_f;
+            background-color: $palette_bw_0;
+        }
     }
 
-    form {
-        padding: 0;
-        margin: 0;
+    .mover-browser {
+        max-height: 180px;
+        overflow:   auto;
+        margin: 0 -25px 20px -25px;
+        background-color: $palette_bw_2;
 
         .node {
             @include flex-container-default();
-            @include flex-container-align-items(center);
 
-            border-bottom: 1px solid $palette_bw_d;
+            .next-button {
+                @include flex-order(2);
 
-            .undo {
-                @include flex-order(4);
-
-                cursor: pointer;
-                padding: 5px 10px;
-                margin-left: 5px;
-                margin-right: 5px;
-                color: $palette_bw_0;
-                border-radius: 20px;
+                padding: 5px 12px;
+                color: $palette_bw_6;
 
                 &:hover {
                     color: $palette_bw_f;
-                    background-color: $palette_bw_0;
+                    background-color: $palette_dark_green;
                 }
             }
 
-            label {
+            .name {
+                @include flex-grow(1);
                 @include flex-order(1);
-                @include flex-grow(1);
 
-                padding: 5px 5px 5px 10px;
-                text-align: right;
-                color: $palette_bw_9;
-                margin: 4px 0;
+                cursor: pointer;
+                padding: 5px 10px 5px 25px;
+                color: $palette_bw_f;
             }
 
-            .aid {
-                @include flex-order(2);
-
-                padding: 5px 10px;
-                color: $palette_bw_d;
+            &:hover {
+                color: $palette_bw_f;
+                background-color: $palette_bw_0;
             }
+        }
+    }
 
-            input {
-                @include font-sans-serif-set();
-                @include flex-order(3);
-                @include flex-grow(1);
+    .mover-browser:empty {
+        padding: 40px 25px;
 
-                outline: none;
-                background-color: transparent;
-                border: none;
-                padding: 5px 10px 5px 5px;
-                font-size: 16px;
-                border-bottom: 2px solid $palette_bw_d;
-                color: $palette_bw_6;
-                margin: 4px 0 2px 0;
-
-                &:focus {
-                    color: $palette_bw_0;
-                    border-bottom-color: $palette_light_blue;
-                }
-            }
+        &:before {
+            content: "No folder available.";
+            color: $palette_bw_3;
         }
     }
 }

@@ -4,12 +4,13 @@ require(
         'common/misc',
         'common/state_controller',
         'common/mainctrl',
+        'common/rest_api_client',
         'component/core',
         'component/file_browser',
         'component/location_bar',
         'component/node_grid',
     ],
-    function ($, misc, StateController, MainController, Core, FileBrowser, LocationBar, NodeGrid) {
+    function ($, misc, StateController, MainController, RestAPI, Core, FileBrowser, LocationBar, NodeGrid) {
         var features = {
                 inEditMode: false
             },
@@ -22,6 +23,7 @@ require(
             templateManager = misc.templateManager,
             dialogManager   = misc.dialogManager,
             core            = new Core(rpcSocketUrl),
+            fileRestAPI     = new RestAPI(restApiFileUrl),
             trpc            = core.rpc,
             uiMover,
             appContainerHeight,
@@ -134,6 +136,55 @@ require(
             dialogManager.use('dialog/about');
         }
 
+        function onMCtrlMoveObjects(e) {
+            var $selectedNodes = browser.context.find('li.node.selected'),
+                nodeCount      = $selectedNodes.length,
+                $dialog,
+                $dropzone
+            ;
+
+            if (nodeCount === 0) {
+                return;
+            }
+
+            $dialog = dialogManager.use(
+                'dialog/mover-target',
+                {
+                    count: nodeCount,
+                    unit:  nodeCount === 1 ? 'node' : 'nodes'
+                }
+            );
+
+            $dialog.on('click', 'a.ok-button', function (e) {
+                e.preventDefault();
+
+                alert('Functionality disabled. (In development)');
+            });
+
+            $dropzone = $dialog.find('.mover-browser');
+
+            fileRestAPI.list(
+                { path: currentLocation },
+                function (response) {
+                    var i, node;
+
+                    $dialog.find('.mover-iterator .text').text(response.path);
+
+                    $dropzone.empty();
+
+                    for (i in response.nodes) {
+                        node = response.nodes[i];
+
+                        if (!node.is_dir) {
+                            continue;
+                        }
+
+                        $dropzone.append(templateManager.render('dialog/mover-target/iterating-node', node));
+                    }
+                }
+            );
+        }
+
         function onNextState(e) {
             browser.open(e.url.replace(/^\/tree\//, '')); // temporary solution to why e.state return undefined.
         }
@@ -174,6 +225,7 @@ require(
 
         function onBrowserOpen(e) {
             currentLocation = e.path;
+            $body.attr('data-location', currentLocation);
         }
 
         function onSwitchToEditMode(enabled) {
@@ -183,6 +235,7 @@ require(
         mctrl.on('new-folder',     onMCtrlTriggerNewFolder);
         mctrl.on('new-file',       onMCtrlTriggerNewFile);
         mctrl.on('app-about',      onMCtrlOpenAbout);
+        mctrl.on('move-objects',   onMCtrlMoveObjects);
         mctrl.on('delete-objects', onMCtrlDeleteObjects);
 
         sctrl.on('push', onNextState);
@@ -203,80 +256,11 @@ require(
         sctrl.enable();
 
         $body.attr('data-selection-count', 0);
+        $body.attr('data-location', currentLocation);
         $mover.css('margin-top', appContainerHeight);
         $appContainer.css('margin-top', appContainerHeight);
 
         // Experimental
-        function UIMover($context) {
-            this.active  = false;
-            this.context = $context;
-            this.$upper  = $context.find('.inner-upper');
-            this.$middle = $context.find('.inner-middle');
-        }
-
-        $.extend(UIMover.prototype, {
-            states: {
-                inactive: 1,
-                active:   2,
-                shown:    3,
-                done:     4
-            },
-
-            set: function (nodes, message) {
-                var self = this,
-                    useUpperPart       = message && String(message).length > 0,
-                    lowerPartTopOffset = 0;
-                ;
-
-                if (useUpperPart) {
-                    this.$upper.html(message);
-                }
-
-                this.$middle.css('top', lowerPartTopOffset);
-
-                // TODO reset the form.
-
-                if (nodes.length > 0) {
-                    // TODO render the entries in the form.
-                    //this.$middle.html(nodes); // experimental
-                }
-
-                setTimeout(function () {
-                    lowerPartTopOffset = useUpperPart ? self.$upper.outerHeight() : 0;
-                    self.$middle.css('top', lowerPartTopOffset);
-                }, 100);
-            },
-
-            activate: function () {
-                this.active = true;
-                this.context.addClass('active');
-            },
-
-            deactivate: function () {
-                this.active = false;
-                this.context.removeClass('active');
-            },
-
-            show: function () {
-                if (!this.active) {
-                    throw 'tama.component.Mover.InactiveState';
-                }
-
-                this.context.addClass('visible');
-            },
-
-            hide: function () {
-                if (!this.active) {
-                    throw 'tama.component.Mover.InactiveState';
-                }
-
-                this.context.removeClass('visible');
-            }
-        });
-
-        uiMover = new UIMover($mover);
-        uiMover.set([], 'DEF');
-        //uiMover.activate();
-        //uiMover.show();
+        dialogManager
     }
 );

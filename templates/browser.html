@@ -10,12 +10,21 @@
         url_prefix_file  = '{{ app.path('ui.file.editor', path = '')}}';
         url_prefix_dl    = '{{ app.path('api.file', path = '')}}';
         currentLocation  = '{{ request_location }}';
+        restApiFileUrl   = location.protocol + '//' + location.hostname + ':' + location.port + '{{ app.path("api.file.root") }}';
         rpcSocketUrl     = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';
     </script>
     <script src="{{ static_path('app.browser.js') }}"></script>
 {% endblock %}
 
 {% block dialogs %}
+    {%- call c.hb_template('dialog/mover-target/iterating-node') -%}
+        {%- raw -%}
+            <div class="node">
+                <a data-path="{{ path }}" class="next-button">{%- endraw -%}{{ c.icon('angle-right', classes=['icon']) }}{%- raw -%}</a>
+                <span class="name">{{ name }}</span>
+            </div>
+        {%- endraw -%}
+    {%- endcall -%}
     {%- call c.dialog_template('dialog/open-node') -%}
         {%- raw -%}
             <h3>Opening "{{ node.name }}" ...</h3>
@@ -45,6 +54,22 @@
             </div>
         {%- endraw -%}
     {%- endcall -%}
+
+    {%- call c.dialog_template('dialog/mover-target', classes=['mover']) -%}
+        {%- raw -%}
+            <h3>Moving {{ count }} {{ unit }} to</h3>
+
+            <a class="mover-iterator" title="View to the parent folder">
+                {%- endraw -%}{{ c.icon('arrow-up', classes=['icon']) }}{%- raw -%}
+                <span class="text"></span>
+            </a>
+            <div class="mover-browser"></div>
+
+            <div class="actions">
+                <a class="ok-button" href="{{ url_editor }}">{%- endraw -%}{{ c.icon('truck', classes=['icon']) }}{%- raw -%} <span class="text">Ok</span></a>
+            </div>
+        {%- endraw -%}
+    {%- endcall -%}
 {% endblock %}
 
 {% block content %}
@@ -58,26 +83,6 @@
         </header>
 
         <ul class="node-list"></ul>
-    </article>
-
-    <article class="mover slide-panel left">
-        <a class="action-button show-button">{{ c.icon('angle-right', ['fw']) }}</a>
-        <a class="action-button hide-button">{{ c.icon('angle-left', ['fw']) }}</a>
-        <div class="inner-upper">
-            <div class="message">This set of selections will be moved or renamed as followed.</div>
-        </div>
-        <div class="inner-middle">
-            <form>
-                {% for i in range(100) %}
-                <div class="node">
-                    <a class="undo">{{ c.icon('undo')}}</a>
-                    <label>ABC</label>
-                    <span class="aid">{{ c.icon('angle-right') }}</span>
-                    <input type="text" value="ABC"/>
-                </div>
-                {% endfor %}
-            </form>
-        </div>
     </article>
 
     {%- call c.hb_template('explorer/step') -%}

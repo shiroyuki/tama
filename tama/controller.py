@@ -3,9 +3,9 @@ import os
 import re
 from tornado.web     import HTTPError
 from tori.controller import Controller as BaseController
+from tori.controller import RestController
 from tori.socket.rpc import Interface
-from tori.socket.websocket import WebSocket
-from tama.service import *
+from tama.service    import *
 
 class Controller(BaseController):
     RE_MOBILE_UA = re.compile('(Android|iPad|iPhone|Mobile)')
@@ -96,8 +96,14 @@ class UIFileEditor(Controller):
             request_location = path
         )
 
-class APIFile(Controller):
-    def get(self, path=''):
+class APIFile(RestController):
+    def list(self):
+        path = self.get_argument('path', '')
+
+        self.set_header('Content-Type', 'application/json')
+        self.finish(self.component('rpc.finder').find(path))
+
+    def retrieve(self, key=''):
         fs_node = self.component('internal.finder').get(path)
 
         if fs_node.is_dir:

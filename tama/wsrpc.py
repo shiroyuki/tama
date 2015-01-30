@@ -1,6 +1,8 @@
 import re
+import sys
 import time
 from tori.centre import settings as app_settings
+from tornado     import gen
 from tama.service import NotFoundError
 
 class GhostCensor(object):
@@ -64,15 +66,19 @@ class Finder(object):
 
         result = {}
 
+        for path, deleted in self.idelete(paths):
+            result[path] = deleted
+
+        return result
+
+    def idelete(self, paths):
         for path in paths:
             try:
                 self.finder.delete(path)
 
-                result[path] = True
+                yield path, True
             except NotFoundError as e:
-                result[path] = False
-
-        return result
+                yield path, False
 
     def create_folder(self, path, name):
         if app_settings['read_only']:

@@ -1,6 +1,6 @@
 @import 'colours';
 
-// For from-the-left slide panels at the moment
+// For from-the-right slide panels at the moment
 .slide-panel {
     z-index: 3;
     background-color: $palette_bw_e;
@@ -14,7 +14,7 @@
     }
 
     .show-button {
-        left: 0;
+        right: 0;
         bottom: 45%;
         color: $palette_bw_f;
         background-color: $palette_bw_3;
@@ -27,7 +27,7 @@
         color: $palette_bw_9;
         background-color: $palette_bw_e;
         border-top: 1px solid $palette_bw_d;
-        border-right: 1px solid $palette_bw_d;
+        border-left: 1px solid $palette_bw_d;
         border-bottom: 1px solid $palette_bw_d;
 
         display: none;
@@ -63,7 +63,7 @@
         }
 
         .hide-button {
-            left: 50%;
+            right: 50%;
         }
 
         // visible state
@@ -71,9 +71,9 @@
             margin-left: 0;
             position: fixed;
             top:    0;
-            left:   0;
+            left:   50%;
             bottom: 0;
-            right:  50%;
+            right:  0;
             box-shadow: $palette_bw_9 0 0 20px;
 
             [class*="inner-"] {

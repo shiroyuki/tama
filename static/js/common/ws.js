@@ -1,5 +1,4 @@
 define(
-    'common/ws',
     ['jquery', 'common/event_base_class'],
     function ($, EventBaseClass) {
         function WebSocketClient(url) {

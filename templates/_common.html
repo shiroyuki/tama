@@ -6,7 +6,7 @@
             <div class="dialog-controls">
                 <button class="close">{{ icon('arrow-left', ['fw'])}}</button>
             </div>
-            <div class="dialog-content{% for class in classes %} {{ class }}{% endfor %}{% for option in options %} option-{{ option }}{% endfor %}" data-name="{{ name }}">
+            <div class="dialog-content">
                 {#{% if not 'disabled-close-button' in options %}<button class="close">{{ icon('close', ['fw']) }}</button>{% endif %}#}
                 <div class="dialog-inner">
                     {{ caller() }}
@@ -16,7 +16,7 @@
     </script>
 {%- endmacro %}
 
-{% macro hb_template(name, classes=[], options=[]) -%}
+{% macro hb_template(name) -%}
     <script data-name="{{ name }}" type="{{ mimetype_handlebar }}">{{ caller() }}</script>
 {%- endmacro %}
 

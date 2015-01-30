@@ -13,9 +13,11 @@
         <controller id="ui.tree.default" class="tama.controller.UIBrowser" pattern="/tree/"/>
         <controller id="ui.tree" class="tama.controller.UIBrowser" pattern="/tree/{path}"/>
         <controller id="ui.file.editor" class="tama.controller.UIFileEditor" pattern="/editor/{path}"/>
+        <controller id="api.file.root" class="tama.controller.APIFile" pattern="/api/file/"/>
         <controller id="api.file" class="tama.controller.APIFile" pattern="/api/file/{path}"/>
         <controller id="socket.rpc" class="tama.controller.SyncService" pattern="/sync"/>
         <redirection pattern="/" destination="/tree/"/>
+        <redirection pattern="/tree" destination="/tree/"/>
     </routes>
     <service>service.xml</service>
 </application>

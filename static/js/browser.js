@@ -9,9 +9,13 @@ require(
         'component/file_browser',
         'component/location_bar',
         'component/node_grid',
-        'component/mover',
+        //'component/mover',
     ],
-    function ($, misc, StateController, MainController, RestAPI, Core, FileBrowser, LocationBar, NodeGrid, Mover) {
+    function (
+        $, misc, StateController, MainController,
+        RestAPI, Core, FileBrowser, LocationBar,
+        NodeGrid//, Mover
+    ) {
         var features = {
                 inEditMode: false
             },
@@ -26,7 +30,7 @@ require(
             core            = new Core(rpcSocketUrl),
             fileRestAPI     = new RestAPI(restApiFileUrl),
             trpc            = core.rpc,
-            uiMover         = new Mover(fileRestAPI),
+            uiMover         = null, //new Mover(fileRestAPI), // disabled until the missing module is recovered.
             appContainerHeight,
             locationBar,
             fsNodeGrid,
@@ -147,48 +151,11 @@ require(
             if (nodeCount === 0) {
                 return;
             }
+            
+            alert('Functionality is disabled.');
 
-            uiMover.enable(nodeCount);
-            uiMover.go(currentLocation);
-
-            return;
-
-            $dialog = dialogManager.use(
-                'dialog/mover-target',
-                {
-                    count: nodeCount,
-                    unit:  nodeCount === 1 ? 'node' : 'nodes'
-                }
-            );
-
-            $dialog.on('click', 'a.ok-button', function (e) {
-                e.preventDefault();
-
-                alert('Functionality disabled. (In development)');
-            });
-
-            $dropzone = $dialog.find('.mover-browser');
-
-            fileRestAPI.list(
-                { path: currentLocation },
-                function (response) {
-                    var i, node;
-
-                    $dialog.find('.mover-iterator .text').text(response.path);
-
-                    $dropzone.empty();
-
-                    for (i in response.nodes) {
-                        node = response.nodes[i];
-
-                        if (!node.is_dir) {
-                            continue;
-                        }
-
-                        $dropzone.append(templateManager.render('dialog/mover-target/iterating-node', node));
-                    }
-                }
-            );
+            //uiMover.enable(nodeCount);
+            //uiMover.go(currentLocation);
         }
 
         function onNextState(e) {

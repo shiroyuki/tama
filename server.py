@@ -3,6 +3,7 @@
 
 # Compilation Prerequisite
 import distutils.version
+import encodings.ascii
 import encodings.idna
 import encodings.unicode_escape
 import tornado.websocket

@@ -1,12 +1,13 @@
 PYI=python
+PY_VER=3
 SERVICE_FLAG=
 GO_PATH=go
-PYC_FREEZE_PATH=../cpython/Tools/freeze/freeze.py
+PY_FPATH=../cpython/Tools/freeze/freeze.py
 SCSS_PATH=static/scss
 CSS_PATH=static/css
 
 compile: css #gocode
-	@./compile $(PYC_FREEZE_PATH)
+	@./compile $(PY_VER) $(PY_FPATH)
 	@echo "Done"
 
 clean: clean_gocode clean_css
@@ -19,7 +20,7 @@ clean_gocode:
 	@cd $(GO_PATH) && rm -v main
 
 service: css
-	@$(PYI) server.py $(SERVICE_FLAG)
+	@$(PYI)$(PY_VER) server.py $(SERVICE_FLAG)
 
 css:
 	@sass --update $(SCSS_PATH):$(CSS_PATH) --style compressed

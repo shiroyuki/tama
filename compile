@@ -1,5 +1,5 @@
 mv Makefile Makefile.original
-python3 $1 server.py
+python$1 $2 server.py
 make clean
 make
 rm -v *.c* *.o

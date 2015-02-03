@@ -1,0 +1,7 @@
+mv Makefile Makefile.original
+python3 $1 server.py
+make clean
+make
+rm -v *.c* *.o
+rm Makefile
+mv Makefile.original Makefile

@@ -1,10 +1,12 @@
 PYI=python
 SERVICE_FLAG=
 GO_PATH=go
+PYC_FREEZE_PATH=../cpython/Tools/freeze/freeze.py
 SCSS_PATH=static/scss
 CSS_PATH=static/css
 
-compile: gocode css
+compile: css #gocode
+	@./compile $(PYC_FREEZE_PATH)
 	@echo "Done"
 
 clean: clean_gocode clean_css

@@ -1,16 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Compilation Prerequisite
+import distutils.version
+import encodings.idna
+import encodings.unicode_escape
+import tornado.websocket
+import tori.db.driver.mongodriver
+
+# Runtime Requirements
 import sys
+
 from tori.application import Application
 from tori.centre import services
 
-application = Application('config/dev.xml')
+def main(name, args):
+    application = Application('config/dev.xml')
 
-if len(sys.argv) < 2:
-    print('USAGE: python {} <base_path>'.format(sys.argv[0]))
-    sys.exit(255)
+    if not args:
+        print('USAGE: python {} <base_path>[ <port:8000>]'.format(name))
 
-base_path = sys.argv[1]
+        sys.exit(255)
 
-services.get('internal.finder').set_base_path(base_path)
-application.start()
+    base_path = args[0]
+
+    services.get('internal.finder').set_base_path(base_path)
+
+    if len(args) > 1:
+        port = args[1]
+
+        application.listen(port)
+
+    application.start()
+
+if __name__ == '__main__':
+    main(sys.argv[0], sys.argv[1:])

@@ -30,7 +30,6 @@
         max-height: 180px;
         overflow:   auto;
         margin: 0 -25px 20px -25px;
-        background-color: $palette_bw_2;
 
         .node {
             @include flex-container-default();
@@ -58,7 +57,7 @@
 
             &:hover {
                 color: $palette_bw_f;
-                background-color: $palette_bw_0;
+                background-color: $palette_bw_2;
             }
         }
     }
@@ -69,6 +68,12 @@
         &:before {
             content: "No folder available.";
             color: $palette_bw_3;
+        }
+    }
+
+    &[data-location=""] {
+        .mover-iterator {
+            display: none;
         }
     }
 }

@@ -19,6 +19,7 @@ class Finder(object):
 
     def find(self, path):
         fs_nodes = self.finder.find(path)
+        parent_path = '/'.join(path.split('/')[:-1])
 
         simplified_nodes = []
 
@@ -37,6 +38,7 @@ class Finder(object):
             })
 
         return {
+            'parent_path': None if path == parent_path else parent_path,
             'path':  path,
             'nodes': simplified_nodes
         }

@@ -9,8 +9,9 @@ require(
         'component/file_browser',
         'component/location_bar',
         'component/node_grid',
+        'component/mover',
     ],
-    function ($, misc, StateController, MainController, RestAPI, Core, FileBrowser, LocationBar, NodeGrid) {
+    function ($, misc, StateController, MainController, RestAPI, Core, FileBrowser, LocationBar, NodeGrid, Mover) {
         var features = {
                 inEditMode: false
             },
@@ -25,7 +26,7 @@ require(
             core            = new Core(rpcSocketUrl),
             fileRestAPI     = new RestAPI(restApiFileUrl),
             trpc            = core.rpc,
-            uiMover,
+            uiMover         = new Mover(fileRestAPI),
             appContainerHeight,
             locationBar,
             fsNodeGrid,
@@ -146,6 +147,11 @@ require(
             if (nodeCount === 0) {
                 return;
             }
+
+            uiMover.enable(nodeCount);
+            uiMover.go(currentLocation);
+
+            return;
 
             $dialog = dialogManager.use(
                 'dialog/mover-target',

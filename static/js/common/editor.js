@@ -47,6 +47,9 @@ define(
                 this.editor.setOptions({
                     minLines: 10,
                     maxLines: 999999, // for tablets
+                    useSoftTabs: true,
+                    enableBasicAutocompletion: true,
+                    enableLiveAutocompletion: true,
                     autoScrollEditorIntoView: true
                 });
 

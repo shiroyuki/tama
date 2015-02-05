@@ -9,12 +9,12 @@ require(
         'component/file_browser',
         'component/location_bar',
         'component/node_grid',
-        //'component/mover',
+        'component/mover',
     ],
     function (
         $, misc, StateController, MainController,
         RestAPI, Core, FileBrowser, LocationBar,
-        NodeGrid//, Mover
+        NodeGrid, Mover
     ) {
         var features = {
                 inEditMode: false
@@ -30,7 +30,7 @@ require(
             core            = new Core(rpcSocketUrl),
             fileRestAPI     = new RestAPI(restApiFileUrl),
             trpc            = core.rpc,
-            uiMover         = null, //new Mover(fileRestAPI), // disabled until the missing module is recovered.
+            uiMover         = new Mover(fileRestAPI), // disabled until the missing module is recovered.
             appContainerHeight,
             locationBar,
             fsNodeGrid,
@@ -151,11 +151,11 @@ require(
             if (nodeCount === 0) {
                 return;
             }
-            
-            alert('Functionality is disabled.');
 
-            //uiMover.enable(nodeCount);
-            //uiMover.go(currentLocation);
+            //alert('Functionality is disabled.');
+
+            uiMover.enable(nodeCount);
+            uiMover.go(currentLocation);
         }
 
         function onNextState(e) {

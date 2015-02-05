@@ -8,8 +8,6 @@ define(
         function FileBrowser(context, rpc, locationBar, fsNodeGrid) {
             this.EventBaseClass();
 
-            this.debugMode = true;
-
             this.rpc = rpc;
 
             this.context     = context;
@@ -22,6 +20,7 @@ define(
             this.rpc.on('rpc.finder.create_folder', $.proxy(this.onSocketRpcCreateFolder, this));
             this.rpc.on('rpc.finder.create_file',   $.proxy(this.onSocketRpcCreateFile, this));
             this.rpc.on('rpc.finder.delete',        $.proxy(this.onSocketRpcDelete, this));
+            this.rpc.on('rpc.finder.move',          $.proxy(this.onSocketRpcMove, this));
 
             this.fsNodeGrid.on('node.click',        $.proxy(this.onNodeClickUpdate, this));
             this.fsNodeGrid.on('node.marker.click', $.proxy(this.onNodeMarkerClick, this));
@@ -58,6 +57,31 @@ define(
 
                 this.rpc.request('rpc.finder', 'delete', { paths: paths });
 
+                // Reset the selections
+                this.dispatch('node.select', this.makeSelectionNotificationData());
+            },
+
+            moveSelections: function (destination) {
+                var $targets = this.context.find('li.node.selected'),
+                    paths = []
+                ;
+
+                if ($targets.length === 0) {
+                    return;
+                }
+
+                $targets.each(function () {
+                    var $target = $(this);
+
+                    paths.push($target.attr('data-path'));
+                });
+
+                $targets.addClass('moving');
+                $targets.removeClass('selected');
+
+                this.rpc.request('rpc.finder', 'move', { paths: paths, destination: destination });
+
+                // Reset the selections
                 this.dispatch('node.select', this.makeSelectionNotificationData());
             },
 
@@ -109,8 +133,15 @@ define(
             },
 
             onSocketRpcDelete: function (response) {
-                var $targets = this.context.find('li.node.deleting')
-                ;
+                this.updateNodesOnBatchOperation('moving', response.result);
+            },
+
+            onSocketRpcMove: function (response) {
+                this.updateNodesOnBatchOperation('moving', response.result);
+            },
+
+            updateNodesOnBatchOperation: function (className, result) {
+                var $targets = this.context.find('li.node.' + className);
 
                 if ($targets.length === 0) {
                     return;
@@ -121,13 +152,13 @@ define(
                         path    = $target.attr('data-path')
                     ;
 
-                    if (response.result[path]) {
+                    if (result[path]) {
                         $targets.remove();
 
                         return;
                     }
 
-                    $targets.removeClass('deleting');
+                    $targets.removeClass(className);
                 });
             },
 

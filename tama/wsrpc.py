@@ -62,18 +62,38 @@ class Finder(object):
 
         return self._make_response(True)
 
+    def move(self, paths, destination):
+        if app_settings['read_only']:
+            return self._make_response(False, 'app.ReadOnlyMode')
+
+        result = {}
+
+        for path, moved in self.i_move(paths, destination):
+            result[path] = moved
+
+        return result
+
+    def i_move(self, paths, destination):
+        for path in paths:
+            try:
+                self.finder.move(path, destination)
+
+                yield path, True
+            except NotFoundError as e:
+                yield path, False
+
     def delete(self, paths):
         if app_settings['read_only']:
             return self._make_response(False, 'app.ReadOnlyMode')
 
         result = {}
 
-        for path, deleted in self.idelete(paths):
+        for path, deleted in self.i_delete(paths):
             result[path] = deleted
 
         return result
 
-    def idelete(self, paths):
+    def i_delete(self, paths):
         for path in paths:
             try:
                 self.finder.delete(path)

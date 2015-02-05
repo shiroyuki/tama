@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+import shutil
 from tama.model import FSNode, FSNodeNotFoundError
 
 logging.basicConfig(level = logging.WARN)
@@ -68,7 +69,10 @@ class Finder(object):
         if not os.path.exists(actual_iterating_path):
             raise NotFoundError('Failed to iterating on {} ({})'.format(path, actual_iterating_path))
 
-        for fs_node_name in os.listdir(actual_iterating_path):
+        sub_paths = os.listdir(actual_iterating_path)
+        sub_paths.sort()
+
+        for fs_node_name in sub_paths:
             next_path   = os.path.join(path, fs_node_name)
             actual_path = self._resolve_path(next_path)
             fs_node     = FSNode(next_path, actual_path)
@@ -76,6 +80,16 @@ class Finder(object):
             fs_nodes.append(fs_node)
 
         return fs_nodes
+
+    def move(self, old_path, new_path):
+        """ Find FS nodes. """
+        old_path = self._resolve_path(self._sanitize_path(old_path))
+        new_path = self._resolve_path(self._sanitize_path(new_path))
+
+        if not os.path.exists(old_path):
+            raise NotFoundError('Unable to find the source node at {}'.format(old_path))
+
+        shutil.move(old_path, new_path)
 
     def create_folder(self, path, name):
         """ Create a blank folder. """

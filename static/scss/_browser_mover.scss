@@ -60,6 +60,23 @@
                 background-color: $palette_bw_2;
             }
         }
+
+        .node.selected {
+            background-color: $palette_dark_blue;
+
+            .next-button {
+                color: $palette_light_blue;
+
+                &:hover {
+                    color: $palette_bw_f;
+                    background-color: $palette_light_blue;
+                }
+            }
+
+            &:hover {
+                background-color: $palette_dark_blue;
+            }
+        }
     }
 
     .mover-browser:empty {

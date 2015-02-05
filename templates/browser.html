@@ -19,9 +19,9 @@
 {% block dialogs %}
     {%- call c.hb_template('dialog/mover-target/iterating-node') -%}
         {%- raw -%}
-            <div class="node">
-                <a data-path="{{ path }}" class="next-button">{%- endraw -%}{{ c.icon('angle-right', classes=['icon']) }}{%- raw -%}</a>
-                <span class="name">{{ name }}</span>
+            <div class="node" data-path="{{ path }}">
+                <a class="next-button">{%- endraw -%}{{ c.icon('angle-right', classes=['icon']) }}{%- raw -%}</a>
+                <a class="name">{{ name }}</a>
             </div>
         {%- endraw -%}
     {%- endcall -%}

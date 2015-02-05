@@ -30,7 +30,7 @@ require(
             core            = new Core(rpcSocketUrl),
             fileRestAPI     = new RestAPI(restApiFileUrl),
             trpc            = core.rpc,
-            uiMover         = new Mover(fileRestAPI), // disabled until the missing module is recovered.
+            uiMover         = new Mover(fileRestAPI),
             appContainerHeight,
             locationBar,
             fsNodeGrid,
@@ -152,8 +152,6 @@ require(
                 return;
             }
 
-            //alert('Functionality is disabled.');
-
             uiMover.enable(nodeCount);
             uiMover.go(currentLocation);
         }
@@ -205,6 +203,10 @@ require(
             mctrl.setTriggerActive('manage-objects', enabled);
         }
 
+        function onMoverConfirm(e) {
+            browser.moveSelections(e.destination);
+        }
+
         mctrl.on('new-folder',     onMCtrlTriggerNewFolder);
         mctrl.on('new-file',       onMCtrlTriggerNewFile);
         mctrl.on('app-about',      onMCtrlOpenAbout);
@@ -222,6 +224,8 @@ require(
         browser.on('node.drive.blocked', onNodeDriveBlocked);
         browser.on('node.open.unknown',  onNodeOpenUnknown);
         browser.on('node.select',        onMCtrlUpdateOnSelection);
+
+        uiMover.on('confirm', onMoverConfirm);
 
         // Initialization
         trpc.connect();

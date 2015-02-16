@@ -6,6 +6,9 @@
         <secret></secret>
         <!-- <error>app.web.controller.ErrorController</error> -->
     </server>
+    <use src="assets.json"/>
+    <use src="menus.json"/>
+    <use src="editor.json"/>
     <use src="settings.json"/>
     <routes>
         <!-- Default Static Resources -->

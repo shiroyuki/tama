@@ -6,9 +6,9 @@
 
 {% block js %}
     <script>
-        url_prefix_dir   = '{{ app.path('ui.tree', path = '')}}';
-        url_prefix_file  = '{{ app.path('ui.file.editor', path = '')}}';
-        url_prefix_dl    = '{{ app.path('api.file', path = '')}}';
+        url_prefix_dir   = '{{ app.path('ui.tree',        {'path': ''})}}';
+        url_prefix_file  = '{{ app.path('ui.file.editor', {'path': ''})}}';
+        url_prefix_dl    = '{{ app.path('api.file',       {'path': ''})}}';
         currentLocation  = '{{ request_location }}';
         restApiFileUrl   = location.protocol + '//' + location.hostname + ':' + location.port + '{{ app.path("api.file.root") }}';
         rpcSocketUrl     = 'ws://' + location.hostname + ':' + location.port + '{{ app.path("socket.rpc") }}';

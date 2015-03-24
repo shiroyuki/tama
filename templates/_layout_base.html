@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale = 1.0, user-scalable = no"/>
 <title>{% block head_title %}Tama{% endblock %}</title>
 <link href="{{ static_path('font_awesome') }}" rel="stylesheet">
-<link href="{{ app.path('static', path='css/layout_base.css') }}" rel="stylesheet">
-<link href="{{ app.path('static', path='css/common.css') }}" rel="stylesheet">
+<link href="{{ app.path('static', { 'path': 'css/layout_base.css' }) }}" rel="stylesheet">
+<link href="{{ app.path('static', { 'path': 'css/common.css' }) }}" rel="stylesheet">
 {% block css %}{% endblock %}
 </head>
 <body class="ua-{{ device_form_factor }}{% if is_mobile %} ua-mobile{% endif %}">

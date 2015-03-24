@@ -1,7 +1,7 @@
 <script>
 try {
     var config = {
-        baseUrl: '{{ app.path('static', path='js') }}',
+        baseUrl: '{{ app.path('static', { 'path': 'js' }) }}',
         paths: {
             jquery: "{{ static_path('jquery') }}",
             handlebars: "{{ static_path('handlebars') }}",
